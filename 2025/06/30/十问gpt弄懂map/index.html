@@ -1,0 +1,785 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>十问chatgpt弄懂Map集合 | Joie's Blog</title><meta name="keywords" content="集合"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="十问chatgpt弄懂Map集合"><meta name="application-name" content="十问chatgpt弄懂Map集合"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="十问chatgpt弄懂Map集合"><meta property="og:url" content="http://example.com/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="第一问：哈希算法的原理与实现什么是 Hash 算法？Hash 算法（哈希函数）：将一个任意长度的输入（如字符串、对象）映射为一个固定长度的整数（称为 hash 值）。 在哈希表中，它的核心作用是： 把 key 映射到一个数组索引位置（bucket），用于快速查找、插入和删除。 二、映射流程（整体图解"><meta property="og:locale" content="en"><meta property="og:image" content="https://www.dineshonjava.com/wp-content/uploads/2018/10/hashmap-change-in-java8.jpg"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.dineshonjava.com/wp-content/uploads/2018/10/hashmap-change-in-java8.jpg"><meta name="description" content="第一问：哈希算法的原理与实现什么是 Hash 算法？Hash 算法（哈希函数）：将一个任意长度的输入（如字符串、对象）映射为一个固定长度的整数（称为 hash 值）。 在哈希表中，它的核心作用是： 把 key 映射到一个数组索引位置（bucket），用于快速查找、插入和删除。 二、映射流程（整体图解"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: '十问chatgpt弄懂Map集合',
+  postAI: '',
+  pageFillDescription: '第一问：哈希算法的原理与实现, 什么是 Hash 算法？, 二、映射流程（整体图解）, 三、获取 hashCode, 四：扰动函数（JDK8）, 五：定位桶, 六、几个经典的 Hash 算法, 1. Java 默认的 String.hashCode(), 2. DJB Hash（Daniel J. Bernstein）, 3. FNV Hash（Fowler–Noll–Vo）, 4. MurmurHash（推荐使用）, 第二问：HashMap 如何解决哈希冲突, 一、什么是 Hash 冲突？, 二、HashMap 如何处理冲突, 三、Hashtable 如何处理冲突, 第三问：HashMap 和 Hashtable 有什么区别, 一、共同点, 二、主要区别, 三、典型使用场景对比, 四、结论与建议, 第四问：Hashtable 和 ConcurrentHashMap 有什么区别, 一、共同点, 二、主要区别（核心对比）, 三、内部原理对比（重点）, 四、总结一句话, 第五问：ConcurrentHashMap 是如何保证线程安全的, 示例：1000 个线程并发写入 ConcurrentHashMap, 🔍 输出示例, 💡 内部实现细节简析（JDK8）, ✅ 总结, 第六问：ConcurrentHashMap 的无锁插入（CAS）过程是怎样的, 🧠 背景知识, 插入逻辑（简化版）, 1. tabAt(tab i), 2. casTabAt(tab i null new Nodeltgt(...)), 如果 CAS 失败呢？, 第七问：HashMap 中的核心数据结构是什么, 一、NodeltKVgt[] table：哈希桶数组, 🔍 它到底是啥？, NodeltK Vgt 是什么结构？, 二、红黑树：处理严重冲突, 红黑树的基本特性, 🧠 为什么要这么设计？第一问哈希算法的原理与实现什么是算法算法哈希函数将一个任意长度的输入如字符串对象映射为一个固定长度的整数称为值在哈希表中它的核心作用是把映射到一个数组索引位置用于快速查找插入和删除二映射流程整体图解第一步计算用户可自定义第二步扰动函数进一步散列减少冲突第三步取模与运算定位桶三获取每个对象都有方法这个值由类重写得来例如如果你不重写它默认使用对象地址四扰动函数为了防止低位哈希冲突对做了进一步扰动为什么要这么干因为数组索引是用计算的只保留低位如果原始的低位质量差就会导致冲突集中所以通过高位和低位异或混合提高的分布质量在的中定位数组索引的方式是其中是数组长度且是的幂所以的二进制就是一串代表只保留低位例如这意味着只有的低位参与计算索引高位被丢弃低位质量差会导致冲突扰动函数的设计目的就是把高位的信息混合进低位这样即便的低位质量差通过右移高位并异或也能改善低位的分布五定位桶必须是的幂如这样刚好是一个掩码能通过位运算快速取模比如即相当于只保留低位比运算快得多六几个经典的算法默认的特点使用乘累加是一个奇素数避免太多重复分布较均匀性能也好非常经典轻量高速的字符串哈希函数适合哈希大文本和二进制数据速度和散列质量兼具比更复杂冲突更低常用于文件查重图像指纹等领域推荐使用这是一种现代非加密型高质量的哈希函数没有内建但很多中间件使用它位版本都有极低冲突率高性能算法速度冲突率是否适合加密备注极快极低不适合最适合大数据哈希很快极低一般推荐慢很低安全用途但慢更慢更低安全用途快中不适合高性能哈希场景第二问如何解决哈希冲突一什么是冲突哈希表通过如下方式存储数据但由于数组长度有限不同的可能计算出相同的这就叫冲突二如何处理冲突链地址法及以前每个桶数组的一个元素其实是一个链表冲突的元素会被追加到该链表尾部是头插链表红黑树若链表长度超过阈值默认为且数组长度大于则链表转为红黑树提高查询效率示例结构结构大致如下查询过程根据计算确定数组位置如果该位置有链表或红黑树则遍历或查找节点匹配通过方法判断是否是目标三如何处理冲突和早期一样也是使用链地址法链表每个桶是一个链表插入冲突元素时会在链表头部插入头插法同样通过方法判断是否相等第三问和有什么区别和都是中用于存储键值对的哈希表结构但它们之间有以下几个核心区别与联系一共同点都实现了接口都是通过哈希表实现的内部通过哈希函数计算的值确定位置都是以键值对形式存储数据允许通过快速查找不允许重复可以重复都不保证元素的顺序不是有序容器二主要区别特性线程安全非线程安全线程安全加了同步锁性能较高适合单线程较低适合并发使用键值允许一个键多个值不允许键或值引入时间属于早期类是否过时否推荐使用是已被替代用于多线程场景底层数据结构数组链表红黑树数组链表替代方案多线程下可用应避免新代码中使用三典型使用场景对比示例单线程或手动加锁使用示例老旧多线程场景现代已不推荐推荐多线程请使用四结论与建议单线程环境用多线程环境推荐比更优避免使用因其全表同步效率低属于早期遗留产物第四问和有什么区别一共同点都实现了接口都是线程安全的哈希表结构都不允许键或值这点不同于都通过来计算桶的位置二主要区别核心对比特性线程安全方式分段锁无锁优化整体加锁性能高适合高并发低适合低并发是否允许不允许不允许引入版本已过时是否过时推荐使用不推荐使用遗留锁粒度精细桶级别粗粒度整张表扩容机制支持并发扩容同步扩容效率低底层结构数组链表红黑树数组链表三内部原理对比重点核心结构数组链表红黑树仅用于链表树插入使用避免整个表加锁查询大多是无锁读保证可见性扩容多线程协同扩容效率更高并发度高非常适合高并发读写场景核心结构数组链表每个操作如都加了全表锁线程阻塞严重不支持并发扩容在现代多线程代码中已被取代四总结一句话是为高并发而设计的现代哈希表采用了更高效的并发机制而是早期的产物全表锁已不适合现代并发编程应避免使用第五问是如何保证线程安全的示例个线程并发写入创建个线程同时写入插入数据使用局部等待所有线程执行完最终大小验证部分值输出示例最终大小多线程并发写入不会抛出中所有都成功写入没有覆盖或丢失底层的插入操作由锁桶或节点保证原子性和一致性内部实现细节简析计算确定初始化或获取如果该桶为空使用插入新节点无锁桶非空说明有冲突使用锁定该桶节点链表插入或红黑树插入总结无冲突桶使用插入无锁非常高效有冲突桶只锁定该桶节点不影响其他桶支持高并发链表超过阈值会自动转换为红黑树特性写入方式局部性能高支持多线程同时写扩容支持并发扩容不阻塞写入使用场景高并发读写场景如缓存计数器等第六问的无锁插入过程是怎样的背景知识在中数据存储在一个数组中通过决定存入哪个桶即数组下标位置什么是无冲突桶指的是某个数组槽位当前是即该位置还没有存任何节点在这种情况下我们可以无锁地把数据放进去因为没人和我们争这个位置插入逻辑简化版的一部分逻辑插入成功退出循环是一个读取是最关键的一步无锁插入意思是如果当前是那么我就把放进去整个过程是原子操作由指令如支持无需加锁如果有别的线程抢先放了一个值进去即就会失败我会退让并改用去竞争处理冲突桶如果失败呢说明别的线程抢先插入了该桶即产生了冲突这时会退化为锁该桶头节点在链表或红黑树中插入新节点这就进入冲突桶处理流程第七问中的核心数据结构是什么的核心数据结构是数组链表红黑树的组合让我们深入了解每个部分一哈希桶数组是和中存储数据的核心数组结构可以理解为一个数组每个元素是一个桶桶中存放的是链表或红黑树结构用表示用来存储对它到底是啥中的声明是哈希表的主存储结构它是一个数组类型是每个槽位即每个下标代表一个桶桶里可能是一个单独的节点一个链表一个红黑树当冲突过多时引入是什么结构在和中都有类似结构链表的下一个节点冲突链总结你可以把理解为一个哈希桶数组结构描述主数组保存对每个保存一个桶内冲突时用链表或红黑树解决容量总大小必须是的幂二红黑树处理严重冲突红黑树是一种自平衡的二叉搜索树在插入和删除节点时通过颜色标记和旋转操作来维持树的平衡从而保证在最坏情况下依然能保持的时间复杂度红黑树的基本特性红黑树是在普通二叉搜索树的基础上增加了颜色属性红黑其核心特性如下每个节点要么是红色要么是黑色根节点是黑色每个叶子节点是黑色可省略如果一个节点是红色则它的子节点必须是黑色不能连续两个红节点从任意节点出发到其所有叶子节点的路径上黑色节点数量相同黑高一致为什么要这么设计这些性质保证了红黑树的最长路径不会超过最短路径的两倍从而让插入删除查找都保持的性能',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-06-30 16:40:29',
+  postMainColor: '#c0e0e0',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://joie.top/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://image.anheyu.com/" title="安知鱼图床"><img class="back-menu-item-icon" src="https://image.anheyu.com/favicon.ico" alt="安知鱼图床"/><span class="back-menu-item-text">安知鱼图床</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/Hexo/" style="font-size: 1.05rem;">Hexo<sup>1</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>2</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>4</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 1.05rem;">推荐<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">8</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9B%86%E5%90%88/" itemprop="url">集合</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E9%9B%86%E5%90%88/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>集合</span></a></span></div></div><h1 class="post-title" itemprop="name headline">十问chatgpt弄懂Map集合</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2025-06-30T08:29:27.134Z" title="Created 2025-06-30 16:29:27">2025-06-30</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2025-06-30T08:40:29.587Z" title="Updated 2025-06-30 16:40:29">2025-06-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://www.dineshonjava.com/wp-content/uploads/2018/10/hashmap-change-in-java8.jpg"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/"><header><a class="post-meta-categories" href="/categories/%E9%9B%86%E5%90%88/" itemprop="url">集合</a><a href="/tags/%E9%9B%86%E5%90%88/" tabindex="-1" itemprop="url">集合</a><h1 id="CrawlerTitle" itemprop="name headline">十问chatgpt弄懂Map集合</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2025-06-30T08:29:27.134Z" title="Created 2025-06-30 16:29:27">2025-06-30</time><time itemprop="dateCreated datePublished" datetime="2025-06-30T08:40:29.587Z" title="Updated 2025-06-30 16:40:29">2025-06-30</time></header><h2 id="第一问：哈希算法的原理与实现"><a href="#第一问：哈希算法的原理与实现" class="headerlink" title="第一问：哈希算法的原理与实现"></a>第一问：哈希算法的原理与实现</h2><h3 id="什么是-Hash-算法？"><a href="#什么是-Hash-算法？" class="headerlink" title="什么是 Hash 算法？"></a>什么是 Hash 算法？</h3><p>Hash 算法（哈希函数）：将一个任意长度的输入（如字符串、对象）映射为一个固定长度的整数（称为 hash 值）。</p>
+<p>在哈希表中，它的核心作用是：</p>
+<p>把 key 映射到一个数组索引位置（bucket），用于快速查找、插入和删除。</p>
+<h3 id="二、映射流程（整体图解）"><a href="#二、映射流程（整体图解）" class="headerlink" title="二、映射流程（整体图解）"></a>二、映射流程（整体图解）</h3><p>put(key, value)<br>  ↓<br>key.hashCode()        &#x2F;&#x2F; 第一步：计算 hashCode（用户可自定义）<br>  ↓<br>hash()                &#x2F;&#x2F; 第二步：扰动函数，进一步散列（减少冲突）<br>  ↓<br>index &#x3D; hash % table.length  &#x2F;&#x2F; 第三步：取模 &#x2F; 与运算，定位桶</p>
+<h3 id="三、获取-hashCode"><a href="#三、获取-hashCode" class="headerlink" title="三、获取 hashCode"></a>三、获取 hashCode</h3><p>每个 Java 对象都有 hashCode() 方法：</p>
+<p>int h1 &#x3D; key.hashCode();</p>
+<p>这个值由类重写得来，例如：</p>
+<p>public int hashCode() {<br>    return id * 31 + name.hashCode();<br>}</p>
+<p>如果你不重写，它默认使用对象地址（Object#hashCode）。</p>
+<h3 id="四：扰动函数（JDK8）"><a href="#四：扰动函数（JDK8）" class="headerlink" title="四：扰动函数（JDK8）"></a>四：扰动函数（JDK8）</h3><p>为了防止低位哈希冲突，HashMap 对 hashCode() 做了进一步扰动：</p>
+<p>static final int hash(Object key) {<br>    int h;<br>    return (key &#x3D;&#x3D; null) ? 0 : (h &#x3D; key.hashCode()) ^ (h &gt;&gt;&gt; 16);<br>}</p>
+<p>为什么要这么干？<br>因为数组索引是用 (n - 1) &amp; hash 计算的（只保留低位）；</p>
+<p>如果原始 hashCode() 的低位质量差，就会导致冲突集中；</p>
+<p>所以通过高位和低位”异或”混合，提高 hash 的分布质量。</p>
+<p>在 JDK 8 的 HashMap 中，定位数组索引的方式是：<br>int index &#x3D; (n - 1) &amp; hash;</p>
+<p>其中 n 是数组长度，且是 2 的幂，所以 (n - 1) 的二进制就是一串 1，代表只保留低位（例如：n &#x3D; 16，n - 1 &#x3D; 0b1111）。</p>
+<p>这意味着：只有 hash 的低位参与计算索引，高位被丢弃！</p>
+<p>低位 hashCode 质量差会导致冲突，扰动函数的设计：目的就是：把高位的信息”混合”进低位。这样即便 hashCode() 的低位质量差，通过右移高位并异或，也能改善低位的分布。</p>
+<h3 id="五：定位桶"><a href="#五：定位桶" class="headerlink" title="五：定位桶"></a>五：定位桶</h3><p>int index &#x3D; (table.length - 1) &amp; hash;</p>
+<p>table.length 必须是 2 的幂（如 16, 32, 64）；</p>
+<p>这样 (length - 1) 刚好是一个掩码，能通过位运算快速取模；</p>
+<p>比如：hash &#x3D; 0b101001110，length &#x3D; 16（即 0b10000）：</p>
+<p>index &#x3D; hash &amp; (length - 1) 相当于只保留低 4 位。</p>
+<p>比 % 运算快得多。</p>
+<h3 id="六、几个经典的-Hash-算法"><a href="#六、几个经典的-Hash-算法" class="headerlink" title="六、几个经典的 Hash 算法"></a>六、几个经典的 Hash 算法</h3><h4 id="1-Java-默认的-String-hashCode"><a href="#1-Java-默认的-String-hashCode" class="headerlink" title="1. Java 默认的 String.hashCode()"></a>1. Java 默认的 String.hashCode()</h4><p>public int hashCode() {<br>    int h &#x3D; 0;<br>    for (int i &#x3D; 0; i &lt; value.length; i++) {<br>        h &#x3D; 31 * h + value[i];<br>    }<br>    return h;<br>}<br>特点：<br>使用 乘 31 累加；</p>
+<p>31 是一个奇素数，避免太多重复；</p>
+<p>分布较均匀，性能也好。</p>
+<h4 id="2-DJB-Hash（Daniel-J-Bernstein）"><a href="#2-DJB-Hash（Daniel-J-Bernstein）" class="headerlink" title="2. DJB Hash（Daniel J. Bernstein）"></a>2. DJB Hash（Daniel J. Bernstein）</h4><p>非常经典、轻量、高速的字符串哈希函数：<br>public int djbHash(String str) {<br>    int hash &#x3D; 5381;<br>    for (int i &#x3D; 0; i &lt; str.length(); i++) {<br>        hash &#x3D; ((hash &lt;&lt; 5) + hash) + str.charAt(i); &#x2F;&#x2F; hash * 33 + c<br>    }<br>    return hash;<br>}</p>
+<h4 id="3-FNV-Hash（Fowler–Noll–Vo）"><a href="#3-FNV-Hash（Fowler–Noll–Vo）" class="headerlink" title="3. FNV Hash（Fowler–Noll–Vo）"></a>3. FNV Hash（Fowler–Noll–Vo）</h4><p>适合哈希大文本和二进制数据：</p>
+<p>public int fnvHash(String str) {<br>    final int p &#x3D; 16777619;<br>    int hash &#x3D; (int)2166136261L;<br>    for (int i &#x3D; 0; i &lt; str.length(); i++) {<br>        hash &#x3D; (hash ^ str.charAt(i)) * p;<br>    }<br>    hash +&#x3D; hash &lt;&lt; 13;<br>    hash ^&#x3D; hash &gt;&gt; 7;<br>    hash +&#x3D; hash &lt;&lt; 3;<br>    hash ^&#x3D; hash &gt;&gt; 17;<br>    hash +&#x3D; hash &lt;&lt; 5;<br>    return hash;<br>}</p>
+<p>速度和散列质量兼具；</p>
+<p>比 DJB 更复杂，冲突更低；</p>
+<p>常用于文件查重、图像指纹等领域。</p>
+<h4 id="4-MurmurHash（推荐使用）"><a href="#4-MurmurHash（推荐使用）" class="headerlink" title="4. MurmurHash（推荐使用）"></a>4. MurmurHash（推荐使用）</h4><p>这是一种现代、非加密型、高质量的哈希函数。</p>
+<p>Java 没有内建，但很多中间件使用它（Hadoop、Lucene、Guava）；</p>
+<p>32&#x2F;64&#x2F;128 位版本都有；</p>
+<p>极低冲突率，高性能。</p>
+<p>int hash &#x3D; Hashing.murmur3_32().hashString(“hello”, StandardCharsets.UTF_8).asInt();</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>速度</th>
+<th>冲突率</th>
+<th>是否适合加密</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>xxHash</strong></td>
+<td>✅ 极快</td>
+<td>✅ 极低</td>
+<td>❌ 不适合</td>
+<td>最适合大数据哈希</td>
+</tr>
+<tr>
+<td>MurmurHash</td>
+<td>很快</td>
+<td>极低</td>
+<td>❌</td>
+<td>一般推荐</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>慢</td>
+<td>很低</td>
+<td>✅</td>
+<td>安全用途，但慢</td>
+</tr>
+<tr>
+<td>SHA-1</td>
+<td>更慢</td>
+<td>更低</td>
+<td>✅</td>
+<td>安全用途</td>
+</tr>
+<tr>
+<td>Java String.hashCode()</td>
+<td>快</td>
+<td>中</td>
+<td>❌</td>
+<td>不适合高性能哈希场景</td>
+</tr>
+</tbody></table>
+<h2 id="第二问：HashMap-如何解决哈希冲突"><a href="#第二问：HashMap-如何解决哈希冲突" class="headerlink" title="第二问：HashMap 如何解决哈希冲突"></a>第二问：HashMap 如何解决哈希冲突</h2><h3 id="一、什么是-Hash-冲突？"><a href="#一、什么是-Hash-冲突？" class="headerlink" title="一、什么是 Hash 冲突？"></a>一、什么是 Hash 冲突？</h3><p>哈希表通过如下方式存储数据：</p>
+<p>int hash &#x3D; key.hashCode();<br>int index &#x3D; hash % table.length;<br>但由于数组长度有限，不同的 key 可能计算出相同的 index，这就叫 Hash 冲突。</p>
+<h3 id="二、HashMap-如何处理冲突"><a href="#二、HashMap-如何处理冲突" class="headerlink" title="二、HashMap 如何处理冲突"></a>二、HashMap 如何处理冲突</h3><ol>
+<li><p><strong>链地址法（JDK7及以前）</strong><br>每个桶（数组的一个元素）其实是一个链表。<br>冲突的元素会被追加到该链表尾部（JDK7 是头插）</p>
+</li>
+<li><p><strong>链表 + 红黑树（JDK8+）</strong><br>若链表长度超过阈值（默认为 8），且数组长度大于 64，则链表转为红黑树，提高查询效率。</p>
+</li>
+</ol>
+<p>示例结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// HashMap 结构大致如下：</span><br><span class="line">table[3] → Entry(key1, value1) → Entry(key2, value2) → ...</span><br></pre></td></tr></table></figure>
+
+<p>查询过程：<br>根据 key 计算 hash，确定 bucket（数组位置）；</p>
+<p>如果该位置有链表或红黑树，则遍历或查找节点匹配 key；</p>
+<p>通过 equals() 方法判断是否是目标 key。</p>
+<h3 id="三、Hashtable-如何处理冲突"><a href="#三、Hashtable-如何处理冲突" class="headerlink" title="三、Hashtable 如何处理冲突"></a>三、Hashtable 如何处理冲突</h3><p>和早期 HashMap 一样，也是使用 <strong>链地址法（链表）</strong>；<br>每个桶是一个链表；<br>插入冲突元素时，会在链表头部插入（头插法）；<br>同样通过 equals() 方法判断 key 是否相等。</p>
+<h2 id="第三问：HashMap-和-Hashtable-有什么区别"><a href="#第三问：HashMap-和-Hashtable-有什么区别" class="headerlink" title="第三问：HashMap 和 Hashtable 有什么区别"></a>第三问：HashMap 和 Hashtable 有什么区别</h2><p>HashMap 和 Hashtable 都是 Java 中用于存储键值对（Key-Value）的哈希表结构，但它们之间有以下几个核心区别与联系：</p>
+<h3 id="一、共同点"><a href="#一、共同点" class="headerlink" title="一、共同点"></a>一、共同点</h3><p>都实现了 Map 接口。</p>
+<p>都是通过哈希表实现的，内部通过哈希函数计算 key 的 hash 值确定位置。</p>
+<p>都是以 键值对形式 存储数据，允许通过 key 快速查找 value。</p>
+<p>key 不允许重复，value 可以重复。</p>
+<p>都不保证元素的顺序（不是有序容器）。</p>
+<h3 id="二、主要区别"><a href="#二、主要区别" class="headerlink" title="二、主要区别"></a>二、主要区别</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>HashMap</code></th>
+<th><code>Hashtable</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>线程安全</strong></td>
+<td>❌ 非线程安全</td>
+<td>✅ 线程安全（加了同步锁）</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>较高，适合单线程</td>
+<td>较低，适合并发使用</td>
+</tr>
+<tr>
+<td><strong>null 键值</strong></td>
+<td>允许一个 <code>null</code> 键，多个 <code>null</code> 值</td>
+<td>不允许 <code>null</code> 键或值</td>
+</tr>
+<tr>
+<td><strong>引入时间</strong></td>
+<td>JDK 1.2（属于 Java Collections Framework）</td>
+<td>JDK 1.0（早期类）</td>
+</tr>
+<tr>
+<td><strong>是否过时</strong></td>
+<td>否，推荐使用</td>
+<td>是，已被 ConcurrentHashMap 替代用于多线程场景</td>
+</tr>
+<tr>
+<td><strong>底层数据结构</strong></td>
+<td>数组 + 链表 &#x2F; 红黑树（JDK8+）</td>
+<td>数组 + 链表</td>
+</tr>
+<tr>
+<td><strong>替代方案</strong></td>
+<td>多线程下可用 <code>ConcurrentHashMap</code></td>
+<td>应避免新代码中使用</td>
+</tr>
+</tbody></table>
+<h3 id="三、典型使用场景对比"><a href="#三、典型使用场景对比" class="headerlink" title="三、典型使用场景对比"></a>三、典型使用场景对比</h3><p><strong>HashMap 示例（单线程或手动加锁使用）：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> map.get(<span class="string">&quot;key&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>Hashtable 示例（老旧多线程场景，现代已不推荐）：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">Hashtable</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> map.get(<span class="string">&quot;key&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>推荐：多线程请使用 ConcurrentHashMap</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、结论与建议"><a href="#四、结论与建议" class="headerlink" title="四、结论与建议"></a>四、结论与建议</h3><ul>
+<li><strong>单线程环境</strong> ➜ 用 HashMap</li>
+<li><strong>多线程环境</strong> ➜ 推荐 ConcurrentHashMap（比 Hashtable 更优）</li>
+<li>避免使用 Hashtable，因其全表同步效率低，属于早期遗留产物</li>
+</ul>
+<h2 id="第四问：Hashtable-和-ConcurrentHashMap-有什么区别"><a href="#第四问：Hashtable-和-ConcurrentHashMap-有什么区别" class="headerlink" title="第四问：Hashtable 和 ConcurrentHashMap 有什么区别"></a>第四问：Hashtable 和 ConcurrentHashMap 有什么区别</h2><h3 id="一、共同点-1"><a href="#一、共同点-1" class="headerlink" title="一、共同点"></a>一、共同点</h3><p>都实现了 Map 接口。</p>
+<p>都是线程安全的哈希表结构。</p>
+<p>都不允许 null 键或 null 值（这点不同于 HashMap）。</p>
+<p>都通过 hashCode() 来计算桶的位置。  </p>
+<h3 id="二、主要区别（核心对比）"><a href="#二、主要区别（核心对比）" class="headerlink" title="二、主要区别（核心对比）"></a>二、主要区别（核心对比）</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>ConcurrentHashMap</code></th>
+<th><code>Hashtable</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>线程安全方式</strong></td>
+<td>分段锁 &#x2F; CAS 无锁优化</td>
+<td>整体加锁（<code>synchronized</code>）</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>高，适合高并发</td>
+<td>低，适合低并发</td>
+</tr>
+<tr>
+<td><strong>是否允许 null</strong></td>
+<td>❌ 不允许 null key&#x2F;value</td>
+<td>❌ 不允许 null key&#x2F;value</td>
+</tr>
+<tr>
+<td><strong>引入版本</strong></td>
+<td>JDK 1.5</td>
+<td>JDK 1.0（已过时）</td>
+</tr>
+<tr>
+<td><strong>是否过时</strong></td>
+<td>推荐使用</td>
+<td>不推荐使用（遗留）</td>
+</tr>
+<tr>
+<td><strong>锁粒度</strong></td>
+<td>精细（桶级别）</td>
+<td>粗粒度（整张表）</td>
+</tr>
+<tr>
+<td><strong>扩容机制</strong></td>
+<td>支持并发扩容</td>
+<td>同步扩容，效率低</td>
+</tr>
+<tr>
+<td><strong>底层结构（JDK8）</strong></td>
+<td>数组 + 链表 &#x2F; 红黑树 + CAS + synchronized</td>
+<td>数组 + 链表 + synchronized</td>
+</tr>
+</tbody></table>
+<h3 id="三、内部原理对比（重点）"><a href="#三、内部原理对比（重点）" class="headerlink" title="三、内部原理对比（重点）"></a>三、内部原理对比（重点）</h3><p>✅ <strong>ConcurrentHashMap（JDK8+）</strong></p>
+<ul>
+<li><strong>核心结构</strong>：数组 + 链表&#x2F;红黑树 + CAS + synchronized（仅用于链表&#x2F;树）</li>
+<li><strong>插入</strong>：使用 CAS + synchronized 避免整个表加锁；</li>
+<li><strong>查询</strong>：大多是无锁读（volatile 保证可见性）；</li>
+<li><strong>扩容</strong>：多线程协同扩容，效率更高；</li>
+<li>并发度高，非常适合高并发读写场景；</li>
+</ul>
+<p>🚫  <strong>Hashtable</strong></p>
+<ul>
+<li><strong>核心结构</strong>：数组 + 链表 + synchronized</li>
+<li>每个操作（如 get()、put()）都加了全表锁，线程阻塞严重；</li>
+<li>不支持并发扩容；</li>
+<li>在现代多线程代码中已被 ConcurrentHashMap 取代；</li>
+</ul>
+<h3 id="四、总结一句话"><a href="#四、总结一句话" class="headerlink" title="四、总结一句话"></a>四、总结一句话</h3><p>ConcurrentHashMap 是为高并发而设计的现代哈希表，采用了更高效的并发机制；<br>而 Hashtable 是早期 Java 的产物，全表锁已不适合现代并发编程，应避免使用。</p>
+<h2 id="第五问：ConcurrentHashMap-是如何保证线程安全的"><a href="#第五问：ConcurrentHashMap-是如何保证线程安全的" class="headerlink" title="第五问：ConcurrentHashMap 是如何保证线程安全的"></a>第五问：ConcurrentHashMap 是如何保证线程安全的</h2><h3 id="示例：1000-个线程并发写入-ConcurrentHashMap"><a href="#示例：1000-个线程并发写入-ConcurrentHashMap" class="headerlink" title="示例：1000 个线程并发写入 ConcurrentHashMap"></a>示例：1000 个线程并发写入 ConcurrentHashMap</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ConcurrentHashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConcurrentHashMapDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="keyword">final</span> Map&lt;Integer, String&gt; map = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line">        <span class="type">int</span> <span class="variable">threadCount</span> <span class="operator">=</span> <span class="number">1000</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">CountDownLatch</span> <span class="variable">latch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(threadCount);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建 1000 个线程同时写入 map</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; threadCount; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">int</span> <span class="variable">key</span> <span class="operator">=</span> i;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">                <span class="comment">// 插入数据：使用 CAS + synchronized（局部）</span></span><br><span class="line">                map.put(key, <span class="string">&quot;value&quot;</span> + key);</span><br><span class="line">                latch.countDown();</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 等待所有线程执行完</span></span><br><span class="line">        latch.await();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;最终 map 大小：&quot;</span> + map.size());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 验证部分值</span></span><br><span class="line">        System.out.println(<span class="string">&quot;map.get(500) = &quot;</span> + map.get(<span class="number">500</span>));</span><br><span class="line">        System.out.println(<span class="string">&quot;map.get(999) = &quot;</span> + map.get(<span class="number">999</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="🔍-输出示例"><a href="#🔍-输出示例" class="headerlink" title="🔍 输出示例"></a>🔍 输出示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">最终 map 大小：1000</span><br><span class="line">map.get(500) = value500</span><br><span class="line">map.get(999) = value999</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>多线程并发写入 不会抛出 <code>ConcurrentModificationException</code>；</li>
+<li>map 中所有 key 都成功写入，没有覆盖或丢失；</li>
+<li>底层的插入操作由 CAS（compareAndSwap）+ synchronized（锁桶或节点） 保证原子性和一致性。</li>
+</ul>
+<h3 id="💡-内部实现细节简析（JDK8）"><a href="#💡-内部实现细节简析（JDK8）" class="headerlink" title="💡 内部实现细节简析（JDK8）"></a>💡 内部实现细节简析（JDK8）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> putVal(key, value, <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(K key, V value, <span class="type">boolean</span> onlyIfAbsent)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 计算 hash，确定 bucket</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">hash</span> <span class="operator">=</span> spread(key.hashCode());</span><br><span class="line">    <span class="comment">// 2. CAS 初始化 table 或获取 bucket</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 3. 如果该桶为空，使用 CAS 插入新节点（无锁）</span></span><br><span class="line">    <span class="keyword">if</span> (casTabAt(tab, i, <span class="literal">null</span>, <span class="keyword">new</span> <span class="title class_">Node</span>&lt;&gt;(hash, key, value))) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 4. 桶非空，说明有冲突，使用 synchronized 锁定该桶节点</span></span><br><span class="line">        <span class="keyword">synchronized</span> (f) &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="comment">// 链表插入或红黑树插入</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="✅-总结"><a href="#✅-总结" class="headerlink" title="✅ 总结"></a>✅ 总结</h3><ul>
+<li><strong>无冲突桶</strong>：使用 CAS 插入，无锁，非常高效</li>
+<li><strong>有冲突桶</strong>：只锁定该桶节点，不影响其他桶，支持高并发</li>
+<li><strong>链表超过阈值</strong>：会自动转换为红黑树</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ConcurrentHashMap</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>写入方式</td>
+<td><strong>CAS + synchronized（局部）</strong></td>
+</tr>
+<tr>
+<td>性能</td>
+<td>高，支持多线程同时写</td>
+</tr>
+<tr>
+<td>扩容</td>
+<td>支持并发扩容，不阻塞写入</td>
+</tr>
+<tr>
+<td>使用场景</td>
+<td>高并发读写场景（如缓存、计数器等）</td>
+</tr>
+</tbody></table>
+<h2 id="第六问：ConcurrentHashMap-的无锁插入（CAS）过程是怎样的"><a href="#第六问：ConcurrentHashMap-的无锁插入（CAS）过程是怎样的" class="headerlink" title="第六问：ConcurrentHashMap 的无锁插入（CAS）过程是怎样的"></a>第六问：ConcurrentHashMap 的无锁插入（CAS）过程是怎样的</h2><h3 id="🧠-背景知识"><a href="#🧠-背景知识" class="headerlink" title="🧠 背景知识"></a>🧠 背景知识</h3><p>在 ConcurrentHashMap 中，数据存储在一个 Node&lt;K,V&gt;[] table 数组中，key 通过 hash 决定存入哪个桶（即数组下标位置）。</p>
+<p>✅ 什么是”无冲突桶”？<br>指的是：某个数组槽位（table[i]）当前是 null，即该位置还没有存任何节点。</p>
+<p>在这种情况下，我们可以”无锁”地把数据放进去，因为没人和我们争这个位置。</p>
+<h3 id="插入逻辑（简化版）"><a href="#插入逻辑（简化版）" class="headerlink" title="插入逻辑（简化版）"></a>插入逻辑（简化版）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// putVal 的一部分逻辑</span></span><br><span class="line"><span class="keyword">if</span> ((f = tabAt(tab, i = (n - <span class="number">1</span>) &amp; hash)) == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (casTabAt(tab, i, <span class="literal">null</span>, <span class="keyword">new</span> <span class="title class_">Node</span>&lt;&gt;(hash, key, value))) &#123;</span><br><span class="line">        <span class="keyword">break</span>; <span class="comment">// 插入成功，退出循环</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="1-tabAt-tab-i"><a href="#1-tabAt-tab-i" class="headerlink" title="1. tabAt(tab, i)"></a>1. <code>tabAt(tab, i)</code></h4><p>是一个 volatile 读取：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> &lt;K,V&gt; Node&lt;K,V&gt; <span class="title function_">tabAt</span><span class="params">(Node&lt;K,V&gt;[] tab, <span class="type">int</span> i)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (Node&lt;K,V&gt;) U.getObjectVolatile(tab, ((<span class="type">long</span>)i &lt;&lt; ASHIFT) + ABASE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-casTabAt-tab-i-null-new-Node"><a href="#2-casTabAt-tab-i-null-new-Node" class="headerlink" title="2. casTabAt(tab, i, null, new Node&lt;&gt;(...))"></a>2. <code>casTabAt(tab, i, null, new Node&lt;&gt;(...))</code></h4><p>是最关键的一步：CAS（Compare-And-Swap）无锁插入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> &lt;K,V&gt; <span class="type">boolean</span> <span class="title function_">casTabAt</span><span class="params">(Node&lt;K,V&gt;[] tab, <span class="type">int</span> i,</span></span><br><span class="line"><span class="params">                                    Node&lt;K,V&gt; c, Node&lt;K,V&gt; v)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> U.compareAndSwapObject(tab, ((<span class="type">long</span>)i &lt;&lt; ASHIFT) + ABASE, c, v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>意思是：”如果当前 table[i] 是 null，那么我就把 new Node(…) 放进去”；</li>
+<li>整个过程是 原子操作，由 CPU 指令（如 cmpxchg）支持，无需加锁；</li>
+<li>如果 有别的线程抢先放了一个值进去（即 table[i] ≠ null），CAS 就会失败，我会退让并改用 synchronized 去竞争（处理冲突桶）；</li>
+</ul>
+<h3 id="如果-CAS-失败呢？"><a href="#如果-CAS-失败呢？" class="headerlink" title="如果 CAS 失败呢？"></a>如果 CAS 失败呢？</h3><p>说明别的线程抢先插入了该桶（即产生了冲突），这时：</p>
+<ul>
+<li>会退化为锁该桶头节点（<code>synchronized(f)</code>）；</li>
+<li>在链表或红黑树中插入新节点；</li>
+<li>这就进入”冲突桶”处理流程。</li>
+</ul>
+<h2 id="第七问：HashMap-中的核心数据结构是什么"><a href="#第七问：HashMap-中的核心数据结构是什么" class="headerlink" title="第七问：HashMap 中的核心数据结构是什么"></a>第七问：HashMap 中的核心数据结构是什么</h2><p>HashMap 的核心数据结构是 <strong>数组 + 链表 &#x2F; 红黑树</strong> 的组合。让我们深入了解每个部分。</p>
+<h3 id="一、Node-table：哈希桶数组"><a href="#一、Node-table：哈希桶数组" class="headerlink" title="一、Node&lt;K,V&gt;[] table：哈希桶数组"></a>一、<code>Node&lt;K,V&gt;[] table</code>：哈希桶数组</h3><p><code>Node&lt;K, V&gt;[] table</code> 是 ConcurrentHashMap 和 HashMap 中存储数据的核心数组结构，可以理解为：<br>一个数组，每个元素是一个”桶”，桶中存放的是链表或红黑树结构（用 <code>Node&lt;K, V&gt;</code> 表示），用来存储 key-value 对。</p>
+<h4 id="🔍-它到底是啥？"><a href="#🔍-它到底是啥？" class="headerlink" title="🔍 它到底是啥？"></a>🔍 它到底是啥？</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ConcurrentHashMap / HashMap 中的声明</span></span><br><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>table</code> 是哈希表的主存储结构；</li>
+<li>它是一个数组，类型是 <code>Node&lt;K, V&gt;[]</code>；</li>
+<li>每个槽位（即每个下标）代表一个”桶”，桶里可能是：<ul>
+<li>一个单独的节点；</li>
+<li>一个链表；</li>
+<li>一个红黑树（当冲突过多时，JDK8 引入）；</li>
+</ul>
+</li>
+</ul>
+<h4 id="Node-是什么结构？"><a href="#Node-是什么结构？" class="headerlink" title="Node&lt;K, V&gt; 是什么结构？"></a><code>Node&lt;K, V&gt;</code> 是什么结构？</h4><p>在 ConcurrentHashMap 和 HashMap 中都有类似结构：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Node</span>&lt;K, V&gt; <span class="keyword">implements</span> <span class="title class_">Map</span>.Entry&lt;K, V&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> hash;</span><br><span class="line">    <span class="keyword">final</span> K key;</span><br><span class="line">    <span class="keyword">volatile</span> V value;</span><br><span class="line">    <span class="keyword">volatile</span> Node&lt;K, V&gt; next; <span class="comment">// 链表的下一个节点（冲突链）</span></span><br><span class="line"></span><br><span class="line">    Node(<span class="type">int</span> hash, K key, V value, Node&lt;K, V&gt; next) &#123;</span><br><span class="line">        <span class="built_in">this</span>.hash = hash;</span><br><span class="line">        <span class="built_in">this</span>.key = key;</span><br><span class="line">        <span class="built_in">this</span>.value = value;</span><br><span class="line">        <span class="built_in">this</span>.next = next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>总结：你可以把 table 理解为一个”哈希桶数组”</strong></p>
+<table>
+<thead>
+<tr>
+<th>结构</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Node&lt;K,V&gt;[] table</code></td>
+<td>主数组，保存 key-value 对</td>
+</tr>
+<tr>
+<td>每个 <code>Node</code></td>
+<td>保存一个 entry：key、value、hash、next</td>
+</tr>
+<tr>
+<td>桶内冲突时</td>
+<td>用链表或红黑树解决</td>
+</tr>
+<tr>
+<td><code>table.length</code></td>
+<td>容量总大小，必须是 2 的幂</td>
+</tr>
+</tbody></table>
+<h3 id="二、红黑树：处理严重冲突"><a href="#二、红黑树：处理严重冲突" class="headerlink" title="二、红黑树：处理严重冲突"></a>二、红黑树：处理严重冲突</h3><p>红黑树（Red-Black Tree）是一种自平衡的二叉搜索树（BST），在插入和删除节点时通过颜色标记和旋转操作来维持树的平衡，从而保证在最坏情况下依然能保持 O(log n) 的时间复杂度。</p>
+<h4 id="红黑树的基本特性"><a href="#红黑树的基本特性" class="headerlink" title="红黑树的基本特性"></a>红黑树的基本特性</h4><p>红黑树是在普通二叉搜索树的基础上增加了颜色属性（红 &#x2F; 黑），其核心特性如下：</p>
+<ol>
+<li>每个节点要么是红色，要么是黑色；</li>
+<li>根节点是黑色；</li>
+<li>每个叶子节点（null&#x2F;NIL）是黑色（可省略）；</li>
+<li>如果一个节点是红色，则它的子节点必须是黑色（不能连续两个红节点）；</li>
+<li>从任意节点出发，到其所有叶子节点的路径上黑色节点数量相同（黑高一致）。</li>
+</ol>
+<h4 id="🧠-为什么要这么设计？"><a href="#🧠-为什么要这么设计？" class="headerlink" title="🧠 为什么要这么设计？"></a>🧠 为什么要这么设计？</h4><p>这些性质保证了红黑树的最长路径不会超过最短路径的两倍，从而让插入、删除、查找都保持 O(log n) 的性能。</p>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/')">十问chatgpt弄懂Map集合</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=十问chatgpt弄懂Map集合&amp;url=http://example.com/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/&amp;pic=https://www.dineshonjava.com/wp-content/uploads/2018/10/hashmap-change-in-java8.jpg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/%E9%9B%86%E5%90%88/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>集合<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://www.dineshonjava.com/wp-content/uploads/2018/10/hashmap-change-in-java8.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2025/06/30/%E5%8A%9B%E6%89%A3_2025_06_30/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/27/e824b899a9014c086e064650a03315087bf40bd15ea7a77627fc2417becc.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">力扣2025_06_30</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/anzhiyu-c" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%97%AE%EF%BC%9A%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">第一问：哈希算法的原理与实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Hash-%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是 Hash 算法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%98%A0%E5%B0%84%E6%B5%81%E7%A8%8B%EF%BC%88%E6%95%B4%E4%BD%93%E5%9B%BE%E8%A7%A3%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">二、映射流程（整体图解）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%8E%B7%E5%8F%96-hashCode"><span class="toc-number">1.3.</span> <span class="toc-text">三、获取 hashCode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%EF%BC%9A%E6%89%B0%E5%8A%A8%E5%87%BD%E6%95%B0%EF%BC%88JDK8%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">四：扰动函数（JDK8）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%EF%BC%9A%E5%AE%9A%E4%BD%8D%E6%A1%B6"><span class="toc-number">1.5.</span> <span class="toc-text">五：定位桶</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%87%A0%E4%B8%AA%E7%BB%8F%E5%85%B8%E7%9A%84-Hash-%E7%AE%97%E6%B3%95"><span class="toc-number">1.6.</span> <span class="toc-text">六、几个经典的 Hash 算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Java-%E9%BB%98%E8%AE%A4%E7%9A%84-String-hashCode"><span class="toc-number">1.6.1.</span> <span class="toc-text">1. Java 默认的 String.hashCode()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-DJB-Hash%EF%BC%88Daniel-J-Bernstein%EF%BC%89"><span class="toc-number">1.6.2.</span> <span class="toc-text">2. DJB Hash（Daniel J. Bernstein）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-FNV-Hash%EF%BC%88Fowler%E2%80%93Noll%E2%80%93Vo%EF%BC%89"><span class="toc-number">1.6.3.</span> <span class="toc-text">3. FNV Hash（Fowler–Noll–Vo）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-MurmurHash%EF%BC%88%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%EF%BC%89"><span class="toc-number">1.6.4.</span> <span class="toc-text">4. MurmurHash（推荐使用）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%97%AE%EF%BC%9AHashMap-%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81"><span class="toc-number">2.</span> <span class="toc-text">第二问：HashMap 如何解决哈希冲突</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF-Hash-%E5%86%B2%E7%AA%81%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">一、什么是 Hash 冲突？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81HashMap-%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%86%B2%E7%AA%81"><span class="toc-number">2.2.</span> <span class="toc-text">二、HashMap 如何处理冲突</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81Hashtable-%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%86%B2%E7%AA%81"><span class="toc-number">2.3.</span> <span class="toc-text">三、Hashtable 如何处理冲突</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%97%AE%EF%BC%9AHashMap-%E5%92%8C-Hashtable-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-number">3.</span> <span class="toc-text">第三问：HashMap 和 Hashtable 有什么区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%B1%E5%90%8C%E7%82%B9"><span class="toc-number">3.1.</span> <span class="toc-text">一、共同点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB"><span class="toc-number">3.2.</span> <span class="toc-text">二、主要区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%85%B8%E5%9E%8B%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%AF%B9%E6%AF%94"><span class="toc-number">3.3.</span> <span class="toc-text">三、典型使用场景对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%BB%93%E8%AE%BA%E4%B8%8E%E5%BB%BA%E8%AE%AE"><span class="toc-number">3.4.</span> <span class="toc-text">四、结论与建议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%97%AE%EF%BC%9AHashtable-%E5%92%8C-ConcurrentHashMap-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-number">4.</span> <span class="toc-text">第四问：Hashtable 和 ConcurrentHashMap 有什么区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%B1%E5%90%8C%E7%82%B9-1"><span class="toc-number">4.1.</span> <span class="toc-text">一、共同点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB%EF%BC%88%E6%A0%B8%E5%BF%83%E5%AF%B9%E6%AF%94%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">二、主要区别（核心对比）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86%E5%AF%B9%E6%AF%94%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">三、内部原理对比（重点）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%80%BB%E7%BB%93%E4%B8%80%E5%8F%A5%E8%AF%9D"><span class="toc-number">4.4.</span> <span class="toc-text">四、总结一句话</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%97%AE%EF%BC%9AConcurrentHashMap-%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84"><span class="toc-number">5.</span> <span class="toc-text">第五问：ConcurrentHashMap 是如何保证线程安全的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A1000-%E4%B8%AA%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E5%86%99%E5%85%A5-ConcurrentHashMap"><span class="toc-number">5.1.</span> <span class="toc-text">示例：1000 个线程并发写入 ConcurrentHashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%8D-%E8%BE%93%E5%87%BA%E7%A4%BA%E4%BE%8B"><span class="toc-number">5.2.</span> <span class="toc-text">🔍 输出示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%A1-%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82%E7%AE%80%E6%9E%90%EF%BC%88JDK8%EF%BC%89"><span class="toc-number">5.3.</span> <span class="toc-text">💡 内部实现细节简析（JDK8）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E6%80%BB%E7%BB%93"><span class="toc-number">5.4.</span> <span class="toc-text">✅ 总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%97%AE%EF%BC%9AConcurrentHashMap-%E7%9A%84%E6%97%A0%E9%94%81%E6%8F%92%E5%85%A5%EF%BC%88CAS%EF%BC%89%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84"><span class="toc-number">6.</span> <span class="toc-text">第六问：ConcurrentHashMap 的无锁插入（CAS）过程是怎样的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%A7%A0-%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="toc-number">6.1.</span> <span class="toc-text">🧠 背景知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E9%80%BB%E8%BE%91%EF%BC%88%E7%AE%80%E5%8C%96%E7%89%88%EF%BC%89"><span class="toc-number">6.2.</span> <span class="toc-text">插入逻辑（简化版）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-tabAt-tab-i"><span class="toc-number">6.2.1.</span> <span class="toc-text">1. tabAt(tab, i)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-casTabAt-tab-i-null-new-Node"><span class="toc-number">6.2.2.</span> <span class="toc-text">2. casTabAt(tab, i, null, new Node&lt;&gt;(...))</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C-CAS-%E5%A4%B1%E8%B4%A5%E5%91%A2%EF%BC%9F"><span class="toc-number">6.3.</span> <span class="toc-text">如果 CAS 失败呢？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E9%97%AE%EF%BC%9AHashMap-%E4%B8%AD%E7%9A%84%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">7.</span> <span class="toc-text">第七问：HashMap 中的核心数据结构是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81Node-table%EF%BC%9A%E5%93%88%E5%B8%8C%E6%A1%B6%E6%95%B0%E7%BB%84"><span class="toc-number">7.1.</span> <span class="toc-text">一、Node&lt;K,V&gt;[] table：哈希桶数组</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%94%8D-%E5%AE%83%E5%88%B0%E5%BA%95%E6%98%AF%E5%95%A5%EF%BC%9F"><span class="toc-number">7.1.1.</span> <span class="toc-text">🔍 它到底是啥？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Node-%E6%98%AF%E4%BB%80%E4%B9%88%E7%BB%93%E6%9E%84%EF%BC%9F"><span class="toc-number">7.1.2.</span> <span class="toc-text">Node&lt;K, V&gt; 是什么结构？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%BA%A2%E9%BB%91%E6%A0%91%EF%BC%9A%E5%A4%84%E7%90%86%E4%B8%A5%E9%87%8D%E5%86%B2%E7%AA%81"><span class="toc-number">7.2.</span> <span class="toc-text">二、红黑树：处理严重冲突</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7"><span class="toc-number">7.2.1.</span> <span class="toc-text">红黑树的基本特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%A7%A0-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%99%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-number">7.2.2.</span> <span class="toc-text">🧠 为什么要这么设计？</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/" title="十问chatgpt弄懂Map集合"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://www.dineshonjava.com/wp-content/uploads/2018/10/hashmap-change-in-java8.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="十问chatgpt弄懂Map集合"/></a><div class="content"><a class="title" href="/2025/06/30/%E5%8D%81%E9%97%AEgpt%E5%BC%84%E6%87%82map/" title="十问chatgpt弄懂Map集合">十问chatgpt弄懂Map集合</a><time datetime="2025-06-30T08:29:27.134Z" title="Created 2025-06-30 16:29:27">2025-06-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/30/%E5%8A%9B%E6%89%A3_2025_06_30/" title="力扣2025_06_30"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/27/e824b899a9014c086e064650a03315087bf40bd15ea7a77627fc2417becc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="力扣2025_06_30"/></a><div class="content"><a class="title" href="/2025/06/30/%E5%8A%9B%E6%89%A3_2025_06_30/" title="力扣2025_06_30">力扣2025_06_30</a><time datetime="2025-06-29T16:00:00.000Z" title="Created 2025-06-30 00:00:00">2025-06-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/29/%E5%8A%9B%E6%89%A32025_06_29/" title="力扣2025_06_29"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/27/e824b899a9014c086e064650a03315087bf40bd15ea7a77627fc2417becc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="力扣2025_06_29"/></a><div class="content"><a class="title" href="/2025/06/29/%E5%8A%9B%E6%89%A32025_06_29/" title="力扣2025_06_29">力扣2025_06_29</a><time datetime="2025-06-28T16:00:00.000Z" title="Created 2025-06-29 00:00:00">2025-06-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/28/%E5%8A%9B%E6%89%A3_2025_06_28/" title="力扣2025_06_28"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/27/e824b899a9014c086e064650a03315087bf40bd15ea7a77627fc2417becc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="力扣2025_06_28"/></a><div class="content"><a class="title" href="/2025/06/28/%E5%8A%9B%E6%89%A3_2025_06_28/" title="力扣2025_06_28">力扣2025_06_28</a><time datetime="2025-06-27T16:00:00.000Z" title="Created 2025-06-28 00:00:00">2025-06-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/27/Java%E5%85%AB%E8%82%A1/" title="Java常见八股"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img02.anheyu.com/adminuploads/1/2022/09/05/6315e1487d0f0.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java常见八股"/></a><div class="content"><a class="title" href="/2025/06/27/Java%E5%85%AB%E8%82%A1/" title="Java常见八股">Java常见八股</a><time datetime="2025-06-26T17:14:00.051Z" title="Created 2025-06-27 01:14:00">2025-06-27</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">8</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">7</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">5</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://joie.top/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://image.anheyu.com/" title="安知鱼图床"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://image.anheyu.com/favicon.ico" alt="安知鱼图床"/><span class="back-menu-item-text">安知鱼图床</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/Hexo/" style="font-size: 0.88rem;">Hexo<sup>1</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>2</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>4</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 0.88rem;">推荐<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
