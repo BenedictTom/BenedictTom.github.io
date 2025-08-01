@@ -1,0 +1,1083 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>权限校验_CST | Joie's Blog</title><meta name="keywords" content="权限校验"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="权限校验_CST"><meta name="application-name" content="权限校验_CST"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="权限校验_CST"><meta property="og:url" content="http://example.com/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="CSTCookieCookie 概述Cookie 是一种由服务器发送并在用户的浏览器中存储的小型数据片段。它们主要用于在客户端和服务器之间传递状态信息，以支持会话管理和个性化设置等功能。Cookie 的设计初衷是为了弥补 HTTP 协议无状态的特性，使得网站能够记住用户的行为或偏好。 设计思想 持久"><meta property="og:locale" content="en"><meta property="og:image" content="https://img.picgo.net/2025/08/01/Frame-28-1024x838ca25f53ef910b53f.png"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://img.picgo.net/2025/08/01/Frame-28-1024x838ca25f53ef910b53f.png"><meta name="description" content="CSTCookieCookie 概述Cookie 是一种由服务器发送并在用户的浏览器中存储的小型数据片段。它们主要用于在客户端和服务器之间传递状态信息，以支持会话管理和个性化设置等功能。Cookie 的设计初衷是为了弥补 HTTP 协议无状态的特性，使得网站能够记住用户的行为或偏好。 设计思想 持久"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: '权限校验_CST',
+  postAI: '',
+  pageFillDescription: 'CST, Cookie, Cookie 概述, 设计思想, 常用场景, 不足之处, 补充说明, Session, 一、设计思想, 1. 弥补 HTTP 的无状态性, 2. 服务端存储 + 客户端标识, 3. 生命周期控制, 二、常用场景, 1. 用户登录状态保持, 2. 购物车管理, 3. 临时数据存储, 4. 访问控制, 三、Session 的结构和实现机制, 1. Session 的结构, 2. Session 的实现方式, Java Web（Servlet）中的 Session：, Spring 中的 Session：, 分布式环境中的 Session：, 四、Session 的不足之处, 1. 服务器资源消耗大, 2. 不适合分布式架构, 3. 依赖 Cookie, 4. 安全性问题, 五、Session 与 Token 的对比, 六、Session 的发展趋势, 七、总结, Token, 一、设计思想与出现背景, 1. 为什么会出现 Token？, 2. 核心设计思想, 二、Token 的常见类型, 1. JWT（JSON Web Token）, 2. Opaque Token（不透明 Token）, 3. OAuth 2.0 Token, 三、常用场景, 四、Token 的生命周期管理, 五、Token 的优势, 六、Token 的不足之处, 七、Token 与 Cookiex2FSession 的对比, 八、Token 的发展趋势, 九、总结, Token也是存储在Cookie吗, 1. 存储在 Cookie 中, 2. 存储在 localStorage 或 sessionStorage 中, 3. 存储在内存中, 4. 作为 Bearer Token 在 HTTP 请求头中传递, 选择合适的存储策略, Cookie跨域, Cookie 跨域问题概述, 同源策略与 Cookie, 实现 Cookie 跨域的主要方式, 1. 设置 Domain 属性, 2. 使用 CORS 和 withCredentials, 3. SameSite 属性, 注意事项, 总结, 1. 基本的跨域请求失败, 2. 包含凭证的跨域请求, 3. 预检请求（Preflight Request）失败, 4. Cookie 的 SameSite 属性导致的问题, 5. CORS 配置不当导致的安全漏洞, 6. 开发环境与生产环境差异引起的问题, JWT（JSON Web Token）详细介绍, 一、什么是JWT？, 二、结构组成, 三、工作流程, 四、优缺点, 优点, 缺点, 五、常见面试题, 六、总结概述是一种由服务器发送并在用户的浏览器中存储的小型数据片段它们主要用于在客户端和服务器之间传递状态信息以支持会话管理和个性化设置等功能的设计初衷是为了弥补协议无状态的特性使得网站能够记住用户的行为或偏好设计思想持久化状态是无状态协议这意味着每次请求都是独立的服务器无法识别之前是否已经与该用户进行过交互通过使用服务器可以为每个用户分配一个唯一的标识符并在后续请求中接收这个标识符来维持会话状态客户端存储存储在用户的浏览器中因此可以在不同页面加载时保持一致的状态而无需每次都从服务器获取相关信息安全性考虑为了防止恶意网站读取其他站点设置的浏览器实施了同源策略即只有来自相同域名的网页才能访问该域名下的常用场景会话管理最常见的是用于登录验证当用户成功登录后服务器会生成一个包含用户身份信息的发送给客户端之后的每次请求都会自动附带这个使得服务器能够识别用户并提供相应的服务个性化设置例如记住用户的语言偏好主题选择等让用户下次访问时不需要重新配置这些选项购物车功能电子商务网站常用来临时保存用户的购物车内容即使在用户未登录的情况下也能保留已添加的商品列表跟踪用户行为用于分析用户如何浏览网站帮助改进用户体验或投放定向广告不足之处大小限制单个的最大尺寸通常被限制为左右这限制了它可以存储的信息量性能影响每当请求涉及带有的域名时所有的都会被自动发送给服务器增加了网络传输的数据量可能导致性能下降尤其是在移动网络环境下隐私问题由于可以用来跟踪用户的在线活动因此引发了关于用户隐私保护的担忧现代浏览器提供了多种方式让用户控制的接受和拒绝以及清除现有的跨域限制虽然同源策略提高了安全性但也意味着无法直接在不同子域或完全不同的域名间共享除非特别设置属性安全性风险如果被不当处理可能会遭受跨站脚本攻击或跨站请求伪造攻击因此重要的是要正确地设置和标志来增强安全性补充说明标志如果设置了此标志则无法访问该有助于防止攻击标志指示浏览器仅通过连接发送增加了一层加密保护减少中间人攻击的风险属性这是一个较新的属性旨在减轻攻击的影响它有三个可能值和分别对应不同程度的跨站请求限制前者没有设定过期时间在浏览器关闭时即失效后者则指定了具体的过期时间可在多次浏览器会话间保持有效总的来说尽管存在一些局限性和潜在的安全隐患但由于其简单易用性仍然是开发中不可或缺的一部分随着技术的发展出现了如认证等替代方案但在许多场景下仍然具有不可替代的作用会话是开发中用于维护用户状态的一种机制是协议无状态特性的补充的核心思想是在服务器端为每个用户创建一个独立的存储空间用来保存该用户的临时状态信息从而实现跨请求的用户识别与状态保持一设计思想弥补的无状态性协议本身是无状态的每次请求之间互不关联的出现就是为了解决这个问题使得服务器能够识别连续的请求来自同一个用户服务端存储客户端标识服务器为每个用户生成一个唯一的通常是一个随机字符串传递这个一般通过发送给客户端客户端在后续请求中携带这个服务器通过查找对应的数据服务端存储数据实际的用户状态信息如登录信息购物车等存储在服务器端的中而不是暴露给客户端生命周期控制有明确的生命周期开始用户第一次访问服务器时服务器创建结束用户主动注销超时如分钟无操作或服务器重启二常用场景用户登录状态保持用户登录后服务器将用户身份信息如用户角色等保存在中后续请求通过获取用户信息实现免登录状态购物车管理将用户添加的商品信息保存在中直到用户下单或清空购物车临时数据存储表单分步提交验证码验证一次性等场景中使用存储中间状态访问控制通过判断用户是否有权限访问某些资源如后台管理页面三的结构和实现机制的结构一个通常是一个键值对例如键字符串值对象的实现方式中的使用接口通过获取当前用户的通常通过传输默认名为中的提供了抽象也支持使用实现分布式分布式环境中的复制多个节点之间同步数据不推荐性能差共享使用数据库等集中式存储是主流方案四的不足之处服务器资源消耗大每个用户的数据都保存在内存中随着用户量增加服务器压力增大需要合理设置过期时间避免内存溢出不适合分布式架构默认是本地存储的多个服务器节点之间无法共享需要额外机制如数据库实现共享依赖通常通过传递如果用户禁用将失效可以通过重写来传递但不够优雅安全性问题被窃取会导致会话劫持需要启用设置等措施增强安全性五与的对比特性如存储位置服务器端客户端如传输方式如状态性有状态无状态扩展性不适合分布式系统需共享适合分布式系统安全性依赖的安全性依赖签名和加密机制生命周期控制明确可主动销毁通常依赖过期时间六的发展趋势随着微服务前后端分离架构的普及的使用正在逐渐减少取而代之的是自包含无状态适合分布式系统现代认证授权体系主流方案传统在分布式环境下的现代化解决方案七总结项目内容设计思想服务端存储用户状态通过识别用户常用场景登录状态保持购物车临时数据访问控制实现方式等不足之处消耗服务器资源不天然支持分布式依赖存在安全风险未来趋势向如迁移或结合实现分布式如果你的应用是传统的单体应用是一个简单而有效的状态管理方式如果你的应用是分布式微服务架构建议考虑使用或的方式来实现更灵活可扩展的会话管理令牌是一种广泛应用于现代和移动应用中的身份认证与授权机制它本质上是一个字符串用于在客户端和服务器之间传递身份信息和权限信息以实现无状态的认证和授权流程一设计思想与出现背景为什么会出现协议是无状态的服务器无法知道这次请求是谁发来的传统的机制虽然解决了这个问题但它在分布式跨域移动端等场景下存在明显缺陷依赖和服务器内存难以扩展不适合跨域移动端等场景无法支持无状态架构如为了解决这些问题应运而生客户端存储每次请求携带服务器无需存储用户状态只需验证的合法性可以被加密签名具备一定安全性核心设计思想无状态服务器不保存的状态只负责验证自包含如本身包含用户信息权限有效期等元数据可扩展性适用于单体微服务移动端第三方授权等场景标准化的生成和验证有标准协议如二的常见类型是的一种具体实现遵循标准结构清晰由三部分组成头部载荷签名示例不透明服务器生成一个随机字符串作为本身不包含任何信息服务器需要通过数据库或缓存如来验证的有效性更适合需要细粒度控制生命周期的场景是一个授权协议是其核心组成部分常见类型包括常用于第三方登录如微信登录登录三常用场景场景说明前后端分离系统前端使用认证后每次请求携带到后端验证身份移动端登录可以存储在本地如实现免登录体验微服务架构各个服务通过统一认证中心颁发实现跨服务的身份共享单点登录用户在一处登录后多个系统共享实现一次登录多处访问第三方授权登录如微信登录使用实现授权访问接口安全认证用于保护防止未授权访问四的生命周期管理阶段描述颁发用户登录成功后服务器生成并返回给客户端使用客户端在每次请求时将放在请求头中如验证服务器验证的签名有效期是否被吊销等刷新过期后使用换取新的吊销用户登出被盗等情况服务器需要立即吊销的吊销是个难点因为是无状态的解决办法包括使用黑名单存储已吊销缩短有效期配合使用五的优势优势说明无状态服务器不保存用户状态适合分布式系统跨域支持好通过传输天然支持跨域请求可扩展性强适用于第三方系统等多种场景安全性可控可以使用签名加密等机制增强安全性支持移动端不依赖适合移动端存储和使用六的不足之处不足说明一旦签发不能立即吊销除非配合黑名单机制否则只能等自动过期可能被盗用如果被中间人截获可能造成会话劫持占用带宽尤其是如果载荷过大会增加请求体积验证复杂需要处理签名验证过期检查刷新逻辑等前端需要手动管理包括存储携带刷新清除等比稍显复杂七与的对比对比项存储位置客户端如客户端服务端状态性无状态有状态传输方式请求头自动发送安全性可签名加密依赖属性分布式支持好天然无状态差需共享移动端支持好差依赖生命周期控制靠过期时间需刷新机制靠设置可主动销毁八的发展趋势随着微服务前后端分离移动端的发展已成为主流认证方式是现代认证授权体系的标配是基于的身份认证协议广泛用于组合使用实现吊销刷新黑名单管理是领域常见的安全架构等第三方认证平台提供完整的管理方案九总结项目内容设计思想无状态自包含可扩展标准化常见类型应用场景前后端分离移动端微服务安全认证生命周期管理颁发使用验证刷新吊销优点无状态跨域支持好适合分布式适合移动端缺点吊销难可能被盗用前端管理复杂未来趋势是主流向标准化平台化发展如果你的应用是传统的单体应用是一个简单易用的选择但如果你的应用是微服务前后端分离移动端或需要支持第三方授权是更现代更灵活更可扩展的选择也是存储在吗可以存储在多个位置具体取决于应用的需求安全考虑以及架构设计虽然存储在中是一种常见做法但也有其他几种方式来存储和传输以下是几种常见的存储方式及其特点存储在中优点自动发送浏览器会在每次请求时自动将发送到服务器无需手动处理安全性可以通过设置和标志来增强安全性防止攻击缺点风险如果未正确配置可能会遭受跨站请求伪造攻击使用属性可以帮助缓解这种风险大小限制的大小有限制通常为可能不适合非常大的设置和的示例存储在或中优点灵活性高可以在客户端中轻松读取和写入适合单页应用缺点安全性较低容易受到攻击的影响因为恶意脚本可以直接访问不会自动随请求发送需要手动附加到每个请求的头部如头部在中存储到从获取并添加到请求头存储在内存中优点提高安全性由于只存在于内存中关闭页面后就不再可用降低了被窃取的风险缺点用户体验较差用户刷新页面或关闭再打开浏览器后需要重新登录除非结合持久化存储如或作为在请求头中传递虽然这不是一种存储方式但是当被存储在某个地方之后它通常是通过请求头中的字段以的形式发送给服务器的选择合适的存储策略对于应用如果主要关注的是安全性并且可以接受一定程度上的用户体验损失比如要求用户定期重新登录那么将存储在中是一个不错的选择对于单页应用如果应用是基于框架构建的如并且需要频繁地与进行交互则可能会倾向于将存储在或中同时采取额外的安全措施来防范攻击对于移动应用通常直接将存储在应用的本地存储中并在每次网络请求时手动附加每种方法都有其优缺点选择最适合你的应用程序需求的方法至关重要同时无论采用哪种方式都应该考虑实施额外的安全措施例如启用使用短期有效的和来更新过期的等跨域跨域问题概述在开发中跨域资源共享是一个常见的需求但同时也是一个复杂且容易引发安全问题的领域当涉及到的跨域时尤其需要注意安全性与合规性默认情况下出于安全考虑浏览器实施了同源策略这意味着只能被设置它们的源协议域名端口访问然而在某些情况下你可能需要允许或限制跨域访问同源策略与根据同源策略如果一个页面尝试访问另一个不同源的资源包括读取这种请求会被浏览器阻止但是通过适当的配置可以在一定程度上实现跨域共享实现跨域的主要方式设置属性当你想让多个子域名共享同一个时可以通过设置属性来指定一个父级域名例如如果你想让和共享可以这样设置注意值不能是顶级域名如或也不能包含地址使用和对于完全不同的域之间的通信比如从发送到你需要结合跨源资源共享机制来处理跨域请求中的服务器端必须正确配置头部以允许特定来源的请求并明确指出是否允许凭据包括认证信息等这通常涉及设置和客户端当发起请求时需要确保设置了参数以便携带属性为了防止攻击现代浏览器引入了属性它可以控制在跨站请求中的行为有三种可能的值只会在第一方上下文中发送即用户直接导航到目标站点时这提供了最强的安全性但可能会导致一些不便比如点击外部链接后丢失登录状态默认值允许在某些跨站请求中发送例如请求但在请求或其他可能导致副作用的操作中不会发送如果指定了则必须同时指定标志这意味着只能在连接上传输注意事项安全性允许跨域访问可能会增加安全风险特别是如果没有正确地配置和标志确保仅在必要时启用跨域并始终遵循最佳实践性能过多的跨域请求和不必要的传输可能会影响性能优化你的应用架构以减少不必要的网络开销兼容性不是所有浏览器都支持最新的属性值因此测试你的应用在不同环境下的表现非常重要总结虽然浏览器默认限制了的跨域访问以保护用户隐私和安全但通过合理配置利用和正确设置等属性你可以实现必要的跨域功能不过在这样做之前请仔细评估潜在的安全风险并采取适当的措施来减轻这些风险跨域问题在开发中是一个常见的挑战尤其是在构建分布式系统微服务架构或使用第三方时以下是开发过程中可能出现的一些跨域相关问题及其实例基本的跨域请求失败场景描述前端应用部署在一个域名下如而后端部署在另一个域名下如当尝试从前端发起请求访问后端时默认情况下浏览器会阻止这种跨域请求解决方案在后端服务器上配置头信息允许来自前端域名的请求如果需要支持多个源或者所有源可以动态设置但要注意安全风险尤其是对所有源开放的情况包含凭证的跨域请求场景描述当你需要在跨域请求中携带或认证信息时普通的设置无法满足需求例如用户登录状态是通过维护的但在跨域请求中这些不会被自动发送解决方案在前端发起请求时设置在后端服务器响应中添加必要的头并确保设置了注意当设置了时不能设置为通配符而必须指定具体的源预检请求失败场景描述对于非简单请求如带有自定义头信息或使用了等方法浏览器会首先发送一个请求称为预检请求来询问服务器是否允许实际请求如果服务器没有正确处理这个预检请求实际请求将不会被执行解决方案在服务器端正确响应请求并返回适当的头信息包括允许的方法和头信息的属性导致的问题场景描述现代浏览器引入了属性来防止攻击默认值可能是或这意味着即使设置了允许跨域请求但如果的属性不允许跨站请求则相关的不会被发送解决方案如果确实需要在跨站请求中发送确保它们被标记为注意标志意味着这些只能在连接上传输配置不当导致的安全漏洞场景描述过于宽松的配置可能会暴露应用程序给潜在的安全威胁比如或攻击例如错误地将设置为而不考虑凭证的情况下可能允许任何网站访问你的资源解决方案尽量避免使用特别是在需要发送凭据的情况下动态生成值仅允许特定的可信来源开发环境与生产环境差异引起的问题场景描述在本地开发环境中前端和后端通常运行在同一台机器上因此不存在跨域问题但是一旦部署到生产环境由于前端和后端分别部署在不同的域名或子域名下跨域问题就会显现出来解决方案在开发阶段可以通过代理服务器如或的功能来解决跨域问题使开发环境下的请求看起来像是同源的对于生产环境务必按照上述建议正确配置详细介绍一什么是是一种开放标准用于在网络应用环境间安全地将信息作为对象传输此信息可以被验证和信任因为它经过了数字签名通常用于身份验证和信息交换二结构组成由三部分组成它们之间用点分隔包含令牌的类型即以及所使用的签名算法如或包含声明声明是关于实体通常是用户和其他数据的声明注册声明如发行人过期时间主题受众等公有声明自定义声明比如用户的角色等私有声明在同意或标准化之外的双方之间共享的信息用于验证消息在此过程中未被更改并且对于使用私钥签名的令牌还可以验证其发送者是否为它声称的人三工作流程用户登录成功后服务器会生成一个并返回给客户端客户端在后续请求中携带这个通常放在头中的字段服务器接收到请求时解析验证其有效性检查签名过期时间等然后根据其中的信息决定如何响应请求四优缺点优点无状态性不需要在服务器端保存任何会话数据易于扩展安全性通过签名防止篡改支持加密确保隐私跨域支持好非常适合前后端分离的应用场景可扩展性强适用于多种平台移动端等和服务架构单体应用微服务缺点无法直接撤销一旦签发除非到期或者在黑名单中否则无法立即失效大小限制虽然没有硬性规定但较大的载荷会影响性能存储问题需要考虑如何安全地存储如以防止攻击五常见面试题与的区别是什么依赖于服务器存储状态而是无状态的所有信息都在内更适合传统单体应用更适合分布式系统如何保证的安全性使用来加密通信防止中间人攻击设置合理的过期时间避免长期有效的被滥用不要在中存储敏感信息使用强密钥进行签名并定期更换密钥如何处理过期问题通过设置声明指定过期时间结合机制在过期后获取新的的签名算法有哪些对称算法如非对称算法如更适用于发行方和接收方不同的情况如何处理跨域问题在前端可以通过设置正确的策略解决跨域问题将放置于中传递避免了带来的跨域限制六总结提供了一种轻量级的身份验证解决方案特别适合分布式系统和服务尽管存在一些局限性比如无法直接撤销和大小限制等问题但是通过合理的设计和实现这些挑战是可以克服的理解的工作原理及其适用场景有助于开发人员选择合适的身份验证方案提升系统的安全性和用户体验',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-08-01 15:36:26',
+  postMainColor: '#4a0707ff',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/Hexo/" style="font-size: 1.05rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 1.05rem;">Http<sup>1</sup></a><a href="/tags/JPA/" style="font-size: 1.05rem;">JPA<sup>1</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>3</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>1</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>1</sup></a><a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" style="font-size: 1.05rem;">中间件<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 1.05rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 1.05rem;">推荐<sup>1</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 1.05rem;">权限校验<sup>3</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.05rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>1</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">28</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">8</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" itemprop="url">权限校验</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>权限校验</span></a></span></div></div><h1 class="post-title" itemprop="name headline">权限校验_CST</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2025-07-25T08:24:07.362Z" title="Created 2025-07-25 16:24:07">2025-07-25</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2025-08-01T07:36:26.199Z" title="Updated 2025-08-01 15:36:26">2025-08-01</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://img.picgo.net/2025/08/01/Frame-28-1024x838ca25f53ef910b53f.png"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/"><header><a class="post-meta-categories" href="/categories/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" itemprop="url">权限校验</a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" tabindex="-1" itemprop="url">权限校验</a><h1 id="CrawlerTitle" itemprop="name headline">权限校验_CST</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2025-07-25T08:24:07.362Z" title="Created 2025-07-25 16:24:07">2025-07-25</time><time itemprop="dateCreated datePublished" datetime="2025-08-01T07:36:26.199Z" title="Updated 2025-08-01 15:36:26">2025-08-01</time></header><h1 id="CST"><a href="#CST" class="headerlink" title="CST"></a>CST</h1><h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><h3 id="Cookie-概述"><a href="#Cookie-概述" class="headerlink" title="Cookie 概述"></a>Cookie 概述</h3><p>Cookie 是一种由服务器发送并在用户的浏览器中存储的小型数据片段。它们主要用于在客户端和服务器之间传递状态信息，以支持会话管理和个性化设置等功能。Cookie 的设计初衷是为了弥补 HTTP 协议无状态的特性，使得网站能够记住用户的行为或偏好。</p>
+<h3 id="设计思想"><a href="#设计思想" class="headerlink" title="设计思想"></a>设计思想</h3><ol>
+<li><p><strong>持久化状态</strong>：HTTP 是无状态协议，这意味着每次请求都是独立的，服务器无法识别之前是否已经与该用户进行过交互。通过使用 Cookie，服务器可以为每个用户分配一个唯一的标识符，并在后续请求中接收这个标识符来维持会话状态。</p>
+</li>
+<li><p><strong>客户端存储</strong>：Cookie 存储在用户的浏览器中，因此可以在不同页面加载时保持一致的状态，而无需每次都从服务器获取相关信息。</p>
+</li>
+<li><p><strong>安全性考虑</strong>：为了防止恶意网站读取其他站点设置的 Cookie，浏览器实施了同源策略（Same-Origin Policy），即只有来自相同域名的网页才能访问该域名下的 Cookie。</p>
+</li>
+</ol>
+<h3 id="常用场景"><a href="#常用场景" class="headerlink" title="常用场景"></a>常用场景</h3><ol>
+<li><p><strong>会话管理</strong>：最常见的是用于登录验证，当用户成功登录后，服务器会生成一个包含用户身份信息的 Cookie 发送给客户端。之后的每次请求都会自动附带这个 Cookie，使得服务器能够识别用户并提供相应的服务。</p>
+</li>
+<li><p><strong>个性化设置</strong>：例如记住用户的语言偏好、主题选择等，让用户下次访问时不需要重新配置这些选项。</p>
+</li>
+<li><p><strong>购物车功能</strong>：电子商务网站常用 Cookie 来临时保存用户的购物车内容，即使在用户未登录的情况下也能保留已添加的商品列表。</p>
+</li>
+<li><p><strong>跟踪用户行为</strong>：用于分析用户如何浏览网站，帮助改进用户体验或投放定向广告。</p>
+</li>
+</ol>
+<h3 id="不足之处"><a href="#不足之处" class="headerlink" title="不足之处"></a>不足之处</h3><ol>
+<li><p><strong>大小限制</strong>：单个 Cookie 的最大尺寸通常被限制为 4KB 左右，这限制了它可以存储的信息量。</p>
+</li>
+<li><p><strong>性能影响</strong>：每当请求涉及带有 Cookie 的域名时，所有的 Cookie 都会被自动发送给服务器，增加了网络传输的数据量，可能导致性能下降，尤其是在移动网络环境下。</p>
+</li>
+<li><p><strong>隐私问题</strong>：由于 Cookie 可以用来跟踪用户的在线活动，因此引发了关于用户隐私保护的担忧。现代浏览器提供了多种方式让用户控制 Cookie 的接受和拒绝，以及清除现有的 Cookie。</p>
+</li>
+<li><p><strong>跨域限制</strong>：虽然同源策略提高了安全性，但也意味着无法直接在不同子域或完全不同的域名间共享 Cookie，除非特别设置 <code>domain</code> 属性。</p>
+</li>
+<li><p><strong>安全性风险</strong>：如果 Cookie 被不当处理，可能会遭受 XSS（跨站脚本攻击）或 CSRF（跨站请求伪造）攻击。因此，重要的是要正确地设置 <code>HttpOnly</code> 和 <code>Secure</code> 标志来增强安全性。</p>
+</li>
+</ol>
+<h3 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h3><ul>
+<li><p><strong>HttpOnly 标志</strong>：如果设置了此标志，则 JavaScript 无法访问该 Cookie，有助于防止 XSS 攻击。</p>
+</li>
+<li><p><strong>Secure 标志</strong>：指示浏览器仅通过 HTTPS 连接发送 Cookie，增加了一层加密保护，减少中间人攻击的风险。</p>
+</li>
+<li><p><strong>SameSite 属性</strong>：这是一个较新的属性，旨在减轻 CSRF 攻击的影响。它有三个可能值：<code>Strict</code>、<code>Lax</code> 和 <code>None</code>，分别对应不同程度的跨站请求限制。</p>
+</li>
+<li><p><strong>Session Cookie vs Persistent Cookie</strong>：前者没有设定过期时间，在浏览器关闭时即失效；后者则指定了具体的过期时间，可在多次浏览器会话间保持有效。</p>
+</li>
+</ul>
+<p>总的来说，尽管存在一些局限性和潜在的安全隐患，但由于其简单易用性，Cookie 仍然是 Web 开发中不可或缺的一部分。随着技术的发展，出现了如 Token 认证等替代方案，但 Cookie 在许多场景下仍然具有不可替代的作用。</p>
+<h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><p>Session（会话）是 Web 开发中用于维护用户状态的一种机制，是 HTTP 协议无状态特性的补充。Session 的核心思想是<strong>在服务器端为每个用户创建一个独立的存储空间，用来保存该用户的临时状态信息</strong>，从而实现跨请求的用户识别与状态保持。</p>
+<hr>
+<h2 id="一、设计思想"><a href="#一、设计思想" class="headerlink" title="一、设计思想"></a>一、设计思想</h2><h3 id="1-弥补-HTTP-的无状态性"><a href="#1-弥补-HTTP-的无状态性" class="headerlink" title="1. 弥补 HTTP 的无状态性"></a>1. <strong>弥补 HTTP 的无状态性</strong></h3><p>HTTP 协议本身是无状态的，每次请求之间互不关联。Session 的出现就是为了解决这个问题，使得服务器能够识别连续的请求来自同一个用户。</p>
+<h3 id="2-服务端存储-客户端标识"><a href="#2-服务端存储-客户端标识" class="headerlink" title="2. 服务端存储 + 客户端标识"></a>2. <strong>服务端存储 + 客户端标识</strong></h3><ul>
+<li><strong>Session ID</strong>：服务器为每个用户生成一个唯一的 Session ID（通常是一个随机字符串）。</li>
+<li><strong>Cookie 传递 Session ID</strong>：这个 Session ID 一般通过 Cookie 发送给客户端，客户端在后续请求中携带这个 ID，服务器通过 ID 查找对应的 Session 数据。</li>
+<li><strong>服务端存储数据</strong>：实际的用户状态信息（如登录信息、购物车等）存储在服务器端的 Session 中，而不是暴露给客户端。</li>
+</ul>
+<h3 id="3-生命周期控制"><a href="#3-生命周期控制" class="headerlink" title="3. 生命周期控制"></a>3. <strong>生命周期控制</strong></h3><p>Session 有明确的生命周期：</p>
+<ul>
+<li><strong>开始</strong>：用户第一次访问服务器时，服务器创建 Session。</li>
+<li><strong>结束</strong>：用户主动注销、Session 超时（如 30 分钟无操作）或服务器重启。</li>
+</ul>
+<hr>
+<h2 id="二、常用场景"><a href="#二、常用场景" class="headerlink" title="二、常用场景"></a>二、常用场景</h2><h3 id="1-用户登录状态保持"><a href="#1-用户登录状态保持" class="headerlink" title="1. 用户登录状态保持"></a>1. <strong>用户登录状态保持</strong></h3><ul>
+<li>用户登录后，服务器将用户身份信息（如用户 ID、角色等）保存在 Session 中。</li>
+<li>后续请求通过 Session ID 获取用户信息，实现免登录状态。</li>
+</ul>
+<h3 id="2-购物车管理"><a href="#2-购物车管理" class="headerlink" title="2. 购物车管理"></a>2. <strong>购物车管理</strong></h3><ul>
+<li>将用户添加的商品信息保存在 Session 中，直到用户下单或清空购物车。</li>
+</ul>
+<h3 id="3-临时数据存储"><a href="#3-临时数据存储" class="headerlink" title="3. 临时数据存储"></a>3. <strong>临时数据存储</strong></h3><ul>
+<li>表单分步提交、验证码验证、一次性 Token 等场景中，使用 Session 存储中间状态。</li>
+</ul>
+<h3 id="4-访问控制"><a href="#4-访问控制" class="headerlink" title="4. 访问控制"></a>4. <strong>访问控制</strong></h3><ul>
+<li>通过 Session 判断用户是否有权限访问某些资源，如后台管理页面。</li>
+</ul>
+<hr>
+<h2 id="三、Session-的结构和实现机制"><a href="#三、Session-的结构和实现机制" class="headerlink" title="三、Session 的结构和实现机制"></a>三、Session 的结构和实现机制</h2><h3 id="1-Session-的结构"><a href="#1-Session-的结构" class="headerlink" title="1. Session 的结构"></a>1. <strong>Session 的结构</strong></h3><p>一个 Session 通常是一个 Map（键值对），例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session.setAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>键：<code>&quot;user&quot;</code>（字符串）</li>
+<li>值：<code>user</code>（对象）</li>
+</ul>
+<h3 id="2-Session-的实现方式"><a href="#2-Session-的实现方式" class="headerlink" title="2. Session 的实现方式"></a>2. <strong>Session 的实现方式</strong></h3><h4 id="Java-Web（Servlet）中的-Session："><a href="#Java-Web（Servlet）中的-Session：" class="headerlink" title="Java Web（Servlet）中的 Session："></a>Java Web（Servlet）中的 Session：</h4><ul>
+<li>使用 <code>HttpSession</code> 接口。</li>
+<li>通过 <code>request.getSession()</code> 获取当前用户的 Session。</li>
+<li>Session ID 通常通过 Cookie 传输（默认 Cookie 名为 <code>JSESSIONID</code>）。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HttpSession</span> <span class="variable">session</span> <span class="operator">=</span> request.getSession();</span><br><span class="line">session.setAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br></pre></td></tr></table></figure>
+
+<h4 id="Spring-中的-Session："><a href="#Spring-中的-Session：" class="headerlink" title="Spring 中的 Session："></a>Spring 中的 Session：</h4><ul>
+<li>Spring 提供了 <code>HttpSession</code> 抽象，也支持使用 Spring Session 实现分布式 Session。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session.setAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br></pre></td></tr></table></figure>
+
+<h4 id="分布式环境中的-Session："><a href="#分布式环境中的-Session：" class="headerlink" title="分布式环境中的 Session："></a>分布式环境中的 Session：</h4><ul>
+<li><strong>Session 复制</strong>：多个节点之间同步 Session 数据（不推荐，性能差）。</li>
+<li><strong>Session 共享</strong>：使用 Redis、数据库等集中式存储 Session。</li>
+<li><strong>Spring Session + Redis</strong> 是主流方案。</li>
+</ul>
+<hr>
+<h2 id="四、Session-的不足之处"><a href="#四、Session-的不足之处" class="headerlink" title="四、Session 的不足之处"></a>四、Session 的不足之处</h2><h3 id="1-服务器资源消耗大"><a href="#1-服务器资源消耗大" class="headerlink" title="1. 服务器资源消耗大"></a>1. <strong>服务器资源消耗大</strong></h3><ul>
+<li>每个用户的 Session 数据都保存在内存中，随着用户量增加，服务器压力增大。</li>
+<li>需要合理设置 Session 过期时间，避免内存溢出。</li>
+</ul>
+<h3 id="2-不适合分布式架构"><a href="#2-不适合分布式架构" class="headerlink" title="2. 不适合分布式架构"></a>2. <strong>不适合分布式架构</strong></h3><ul>
+<li>默认 Session 是本地存储的，多个服务器节点之间无法共享。</li>
+<li>需要额外机制（如 Redis、数据库）实现 Session 共享。</li>
+</ul>
+<h3 id="3-依赖-Cookie"><a href="#3-依赖-Cookie" class="headerlink" title="3. 依赖 Cookie"></a>3. <strong>依赖 Cookie</strong></h3><ul>
+<li>Session ID 通常通过 Cookie 传递，如果用户禁用 Cookie，Session 将失效。</li>
+<li>可以通过 URL 重写来传递 Session ID，但不够优雅。</li>
+</ul>
+<h3 id="4-安全性问题"><a href="#4-安全性问题" class="headerlink" title="4. 安全性问题"></a>4. <strong>安全性问题</strong></h3><ul>
+<li>Session ID 被窃取会导致会话劫持（Session Hijacking）。</li>
+<li>需要启用 HTTPS、设置 <code>HttpOnly</code>、<code>Secure</code> 等措施增强安全性。</li>
+</ul>
+<hr>
+<h2 id="五、Session-与-Token-的对比"><a href="#五、Session-与-Token-的对比" class="headerlink" title="五、Session 与 Token 的对比"></a>五、Session 与 Token 的对比</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Session</th>
+<th>Token（如 JWT）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>存储位置</strong></td>
+<td>服务器端</td>
+<td>客户端（如 localStorage）</td>
+</tr>
+<tr>
+<td><strong>传输方式</strong></td>
+<td>Cookie（Session ID）</td>
+<td>Header（如 Authorization: Bearer xxx）</td>
+</tr>
+<tr>
+<td><strong>状态性</strong></td>
+<td>有状态</td>
+<td>无状态</td>
+</tr>
+<tr>
+<td><strong>扩展性</strong></td>
+<td>不适合分布式系统（需共享 Session）</td>
+<td>适合分布式系统</td>
+</tr>
+<tr>
+<td><strong>安全性</strong></td>
+<td>依赖 Session ID 的安全性</td>
+<td>依赖签名和加密机制</td>
+</tr>
+<tr>
+<td><strong>生命周期控制</strong></td>
+<td>明确，可主动销毁</td>
+<td>通常依赖过期时间</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="六、Session-的发展趋势"><a href="#六、Session-的发展趋势" class="headerlink" title="六、Session 的发展趋势"></a>六、Session 的发展趋势</h2><p>随着微服务、前后端分离架构的普及，Session 的使用正在逐渐减少，取而代之的是：</p>
+<ul>
+<li><strong>JWT（JSON Web Token）</strong>：自包含、无状态，适合分布式系统。</li>
+<li><strong>OAuth 2.0 + JWT</strong>：现代认证授权体系主流方案。</li>
+<li><strong>Spring Session + Redis</strong>：传统 Session 在分布式环境下的现代化解决方案。</li>
+</ul>
+<hr>
+<h2 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>设计思想</strong></td>
+<td>服务端存储用户状态，通过 Session ID 识别用户</td>
+</tr>
+<tr>
+<td><strong>常用场景</strong></td>
+<td>登录状态保持、购物车、临时数据、访问控制</td>
+</tr>
+<tr>
+<td><strong>实现方式</strong></td>
+<td>HttpSession（Servlet）、Spring Session、Redis 等</td>
+</tr>
+<tr>
+<td><strong>不足之处</strong></td>
+<td>消耗服务器资源、不天然支持分布式、依赖 Cookie、存在安全风险</td>
+</tr>
+<tr>
+<td><strong>未来趋势</strong></td>
+<td>向 Token（如 JWT）迁移，或结合 Redis 实现分布式 Session</td>
+</tr>
+</tbody></table>
+<hr>
+<p>如果你的应用是传统的单体应用，Session 是一个简单而有效的状态管理方式；如果你的应用是分布式、微服务架构，建议考虑使用 <strong>Token + Redis</strong> 或 <strong>Spring Session + Redis</strong> 的方式来实现更灵活、可扩展的会话管理。</p>
+<h2 id="Token"><a href="#Token" class="headerlink" title="Token"></a>Token</h2><p>Token（令牌）是一种广泛应用于现代 Web 和移动应用中的<strong>身份认证与授权机制</strong>。它本质上是一个字符串，用于在客户端和服务器之间传递身份信息和权限信息，以实现无状态的认证和授权流程。</p>
+<hr>
+<h2 id="一、设计思想与出现背景"><a href="#一、设计思想与出现背景" class="headerlink" title="一、设计思想与出现背景"></a>一、设计思想与出现背景</h2><h3 id="1-为什么会出现-Token？"><a href="#1-为什么会出现-Token？" class="headerlink" title="1. 为什么会出现 Token？"></a>1. <strong>为什么会出现 Token？</strong></h3><p>HTTP 协议是无状态的，服务器无法知道“这次请求是谁发来的”。传统的 Session 机制虽然解决了这个问题，但它在<strong>分布式、跨域、移动端</strong>等场景下存在明显缺陷：</p>
+<ul>
+<li><strong>Session 依赖 Cookie 和服务器内存</strong>，难以扩展。</li>
+<li><strong>Session 不适合跨域、移动端（App）等场景</strong>。</li>
+<li><strong>Session 无法支持无状态架构（如 RESTful API）</strong>。</li>
+</ul>
+<p>为了解决这些问题，Token 应运而生：</p>
+<ul>
+<li><strong>客户端存储 Token，每次请求携带 Token</strong>。</li>
+<li><strong>服务器无需存储用户状态，只需验证 Token 的合法性</strong>。</li>
+<li><strong>Token 可以被加密、签名，具备一定安全性</strong>。</li>
+</ul>
+<h3 id="2-核心设计思想"><a href="#2-核心设计思想" class="headerlink" title="2. 核心设计思想"></a>2. <strong>核心设计思想</strong></h3><ul>
+<li><strong>无状态</strong>：服务器不保存 Token 的状态，只负责验证。</li>
+<li><strong>自包含</strong>（如 JWT）：Token 本身包含用户信息、权限、有效期等元数据。</li>
+<li><strong>可扩展性</strong>：适用于单体、微服务、移动端、第三方授权等场景。</li>
+<li><strong>标准化</strong>：Token 的生成和验证有标准协议（如 JWT、OAuth 2.0）。</li>
+</ul>
+<hr>
+<h2 id="二、Token-的常见类型"><a href="#二、Token-的常见类型" class="headerlink" title="二、Token 的常见类型"></a>二、Token 的常见类型</h2><h3 id="1-JWT（JSON-Web-Token）"><a href="#1-JWT（JSON-Web-Token）" class="headerlink" title="1. JWT（JSON Web Token）"></a>1. <strong>JWT（JSON Web Token）</strong></h3><ul>
+<li>是 Token 的一种具体实现，遵循 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc7519">RFC 7519</a> 标准。</li>
+<li>结构清晰，由三部分组成：<strong>Header（头部）、Payload（载荷）、Signature（签名）</strong>。</li>
+<li>示例：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.</span><br><span class="line">eyJuYW1lIjoiSm9obiIsImlkIjoiMTIzIiwiaWF0IjoxNTE2MjM5MDIyfQ.</span><br><span class="line">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="2-Opaque-Token（不透明-Token）"><a href="#2-Opaque-Token（不透明-Token）" class="headerlink" title="2. Opaque Token（不透明 Token）"></a>2. <strong>Opaque Token（不透明 Token）</strong></h3><ul>
+<li>服务器生成一个随机字符串作为 Token，本身不包含任何信息。</li>
+<li>服务器需要通过数据库或缓存（如 Redis）来验证 Token 的有效性。</li>
+<li>更适合需要<strong>细粒度控制 Token 生命周期</strong>的场景。</li>
+</ul>
+<h3 id="3-OAuth-2-0-Token"><a href="#3-OAuth-2-0-Token" class="headerlink" title="3. OAuth 2.0 Token"></a>3. <strong>OAuth 2.0 Token</strong></h3><ul>
+<li>OAuth 2.0 是一个授权协议，Token 是其核心组成部分。</li>
+<li>常见 Token 类型包括：<strong>Access Token、Refresh Token、ID Token</strong>。</li>
+<li>常用于第三方登录（如微信登录、QQ 登录）。</li>
+</ul>
+<hr>
+<h2 id="三、常用场景"><a href="#三、常用场景" class="headerlink" title="三、常用场景"></a>三、常用场景</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>前后端分离系统</strong></td>
+<td>前端（Vue&#x2F;React）使用 Token 认证后，每次请求携带 Token 到后端验证身份。</td>
+</tr>
+<tr>
+<td><strong>移动端 App 登录</strong></td>
+<td>Token 可以存储在 App 本地（如 SharedPreferences &#x2F; UserDefaults），实现免登录体验。</td>
+</tr>
+<tr>
+<td><strong>微服务架构</strong></td>
+<td>各个服务通过统一认证中心颁发 Token，实现跨服务的身份共享。</td>
+</tr>
+<tr>
+<td><strong>单点登录（SSO）</strong></td>
+<td>用户在一处登录后，多个系统共享 Token，实现一次登录，多处访问。</td>
+</tr>
+<tr>
+<td><strong>第三方授权登录</strong></td>
+<td>如微信、QQ、Google 登录，使用 OAuth 2.0 Token 实现授权访问。</td>
+</tr>
+<tr>
+<td><strong>API 接口安全认证</strong></td>
+<td>用于保护 RESTful API，防止未授权访问。</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、Token-的生命周期管理"><a href="#四、Token-的生命周期管理" class="headerlink" title="四、Token 的生命周期管理"></a>四、Token 的生命周期管理</h2><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>颁发（Issue）</strong></td>
+<td>用户登录成功后，服务器生成 Token 并返回给客户端。</td>
+</tr>
+<tr>
+<td><strong>使用（Usage）</strong></td>
+<td>客户端在每次请求时将 Token 放在请求头中（如 <code>Authorization: Bearer &lt;token&gt;</code>）。</td>
+</tr>
+<tr>
+<td><strong>验证（Validation）</strong></td>
+<td>服务器验证 Token 的签名、有效期、是否被吊销等。</td>
+</tr>
+<tr>
+<td><strong>刷新（Refresh）</strong></td>
+<td>Token 过期后，使用 Refresh Token 换取新的 Access Token。</td>
+</tr>
+<tr>
+<td><strong>吊销（Revoke）</strong></td>
+<td>用户登出、Token 被盗等情况，服务器需要立即吊销 Token。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⚠️ <strong>Token 的吊销是个难点</strong>，因为 Token 是无状态的。解决办法包括：</p>
+</blockquote>
+<ul>
+<li>使用黑名单（Redis 存储已吊销 Token）</li>
+<li>缩短 Token 有效期</li>
+<li>配合 Refresh Token 使用</li>
+</ul>
+<hr>
+<h2 id="五、Token-的优势"><a href="#五、Token-的优势" class="headerlink" title="五、Token 的优势"></a>五、Token 的优势</h2><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>无状态</strong></td>
+<td>服务器不保存用户状态，适合分布式系统。</td>
+</tr>
+<tr>
+<td><strong>跨域支持好</strong></td>
+<td>Token 通过 Header 传输，天然支持跨域请求。</td>
+</tr>
+<tr>
+<td><strong>可扩展性强</strong></td>
+<td>适用于 Web、App、第三方系统等多种场景。</td>
+</tr>
+<tr>
+<td><strong>安全性可控</strong></td>
+<td>可以使用签名、加密、HTTPS 等机制增强安全性。</td>
+</tr>
+<tr>
+<td><strong>支持移动端</strong></td>
+<td>不依赖 Cookie，适合移动端 App 存储和使用。</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="六、Token-的不足之处"><a href="#六、Token-的不足之处" class="headerlink" title="六、Token 的不足之处"></a>六、Token 的不足之处</h2><table>
+<thead>
+<tr>
+<th>不足</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Token 一旦签发，不能立即吊销</strong></td>
+<td>除非配合黑名单机制，否则只能等 Token 自动过期。</td>
+</tr>
+<tr>
+<td><strong>Token 可能被盗用</strong></td>
+<td>如果 Token 被中间人截获，可能造成会话劫持。</td>
+</tr>
+<tr>
+<td><strong>Token 占用带宽</strong></td>
+<td>尤其是 JWT，如果载荷过大，会增加请求体积。</td>
+</tr>
+<tr>
+<td><strong>Token 验证复杂</strong></td>
+<td>需要处理签名验证、过期检查、刷新逻辑等。</td>
+</tr>
+<tr>
+<td><strong>前端需要手动管理 Token</strong></td>
+<td>包括存储、携带、刷新、清除等，比 Cookie 稍显复杂。</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="七、Token-与-Cookie-Session-的对比"><a href="#七、Token-与-Cookie-Session-的对比" class="headerlink" title="七、Token 与 Cookie&#x2F;Session 的对比"></a>七、Token 与 Cookie&#x2F;Session 的对比</h2><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>Token</th>
+<th>Cookie&#x2F;Session</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储位置</td>
+<td>客户端（如 localStorage、App）</td>
+<td>客户端（Cookie）+ 服务端（Session）</td>
+</tr>
+<tr>
+<td>状态性</td>
+<td>无状态</td>
+<td>有状态</td>
+</tr>
+<tr>
+<td>传输方式</td>
+<td>请求头（Authorization）</td>
+<td>Cookie 自动发送</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>可签名、加密、HTTPS</td>
+<td>依赖 Cookie 属性（Secure、HttpOnly）</td>
+</tr>
+<tr>
+<td>分布式支持</td>
+<td>好（天然无状态）</td>
+<td>差（需 Session 共享）</td>
+</tr>
+<tr>
+<td>移动端支持</td>
+<td>好</td>
+<td>差（依赖 Cookie）</td>
+</tr>
+<tr>
+<td>生命周期控制</td>
+<td>靠过期时间，需刷新机制</td>
+<td>靠 Session 设置，可主动销毁</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="八、Token-的发展趋势"><a href="#八、Token-的发展趋势" class="headerlink" title="八、Token 的发展趋势"></a>八、Token 的发展趋势</h2><p>随着微服务、前后端分离、移动端的发展，Token 已成为主流认证方式：</p>
+<ul>
+<li><strong>JWT + OAuth 2.0</strong> 是现代认证授权体系的标配。</li>
+<li><strong>OpenID Connect</strong> 是基于 OAuth 2.0 的身份认证协议，广泛用于 SSO。</li>
+<li><strong>JWT + Redis</strong> 组合使用，实现 Token 吊销、刷新、黑名单管理。</li>
+<li><strong>Spring Security + OAuth2 + JWT</strong> 是 Java 领域常见的安全架构。</li>
+<li><strong>Auth0、Okta、Keycloak</strong> 等第三方认证平台提供完整的 Token 管理方案。</li>
+</ul>
+<hr>
+<h2 id="九、总结"><a href="#九、总结" class="headerlink" title="九、总结"></a>九、总结</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>设计思想</strong></td>
+<td>无状态、自包含、可扩展、标准化</td>
+</tr>
+<tr>
+<td><strong>常见类型</strong></td>
+<td>JWT、Opaque Token、OAuth 2.0 Token</td>
+</tr>
+<tr>
+<td><strong>应用场景</strong></td>
+<td>前后端分离、移动端、微服务、SSO、API 安全认证</td>
+</tr>
+<tr>
+<td><strong>生命周期管理</strong></td>
+<td>颁发、使用、验证、刷新、吊销</td>
+</tr>
+<tr>
+<td><strong>优点</strong></td>
+<td>无状态、跨域支持好、适合分布式、适合移动端</td>
+</tr>
+<tr>
+<td><strong>缺点</strong></td>
+<td>吊销难、可能被盗用、前端管理复杂</td>
+</tr>
+<tr>
+<td><strong>未来趋势</strong></td>
+<td>JWT + OAuth 2.0 + Redis 是主流，向标准化、平台化发展</td>
+</tr>
+</tbody></table>
+<hr>
+<p>如果你的应用是传统的单体应用，Session 是一个简单易用的选择；但如果你的应用是微服务、前后端分离、移动端或需要支持第三方授权，<strong>Token 是更现代、更灵活、更可扩展的选择</strong>。</p>
+<h2 id="Token也是存储在Cookie吗"><a href="#Token也是存储在Cookie吗" class="headerlink" title="Token也是存储在Cookie吗"></a>Token也是存储在Cookie吗</h2><p>Token 可以存储在多个位置，具体取决于应用的需求、安全考虑以及架构设计。虽然存储在 Cookie 中是一种常见做法，但也有其他几种方式来存储和传输 Token。以下是几种常见的 Token 存储方式及其特点：</p>
+<h3 id="1-存储在-Cookie-中"><a href="#1-存储在-Cookie-中" class="headerlink" title="1. 存储在 Cookie 中"></a>1. <strong>存储在 Cookie 中</strong></h3><ul>
+<li><p><strong>优点</strong>：</p>
+<ul>
+<li>自动发送：浏览器会在每次请求时自动将 Cookie 发送到服务器，无需手动处理。</li>
+<li>安全性：可以通过设置 <code>HttpOnly</code> 和 <code>Secure</code> 标志来增强安全性，防止 XSS 攻击。</li>
+</ul>
+</li>
+<li><p><strong>缺点</strong>：</p>
+<ul>
+<li>CSRF 风险：如果未正确配置，可能会遭受跨站请求伪造（CSRF）攻击。使用 <code>SameSite</code> 属性可以帮助缓解这种风险。</li>
+<li>大小限制：Cookie 的大小有限制（通常为4KB），可能不适合非常大的 Tokens。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置 HttpOnly 和 Secure 的示例</span></span><br><span class="line"><span class="title class_">Set</span>-<span class="title class_">Cookie</span>: token=your_token_value; <span class="title class_">HttpOnly</span>; <span class="title class_">Secure</span>; <span class="title class_">SameSite</span>=<span class="title class_">Lax</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-存储在-localStorage-或-sessionStorage-中"><a href="#2-存储在-localStorage-或-sessionStorage-中" class="headerlink" title="2. 存储在 localStorage 或 sessionStorage 中"></a>2. <strong>存储在 localStorage 或 sessionStorage 中</strong></h3><ul>
+<li><p><strong>优点</strong>：</p>
+<ul>
+<li>灵活性高：可以在客户端 JavaScript 中轻松读取和写入 Token，适合单页应用（SPA）。</li>
+</ul>
+</li>
+<li><p><strong>缺点</strong>：</p>
+<ul>
+<li>安全性较低：容易受到 XSS 攻击的影响，因为恶意脚本可以直接访问 localStorage&#x2F;sessionStorage。</li>
+<li>不会自动随请求发送：需要手动附加到每个请求的头部（如 <code>Authorization</code> 头部）。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在 JavaScript 中存储 Token 到 localStorage</span></span><br><span class="line"><span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&#x27;token&#x27;</span>, <span class="string">&#x27;your_token_value&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从 localStorage 获取 Token 并添加到请求头</span></span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;/api/data&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;Authorization&#x27;</span>: <span class="string">&#x27;Bearer &#x27;</span> + <span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(<span class="string">&#x27;token&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-存储在内存中"><a href="#3-存储在内存中" class="headerlink" title="3. 存储在内存中"></a>3. <strong>存储在内存中</strong></h3><ul>
+<li><p><strong>优点</strong>：</p>
+<ul>
+<li>提高安全性：由于 Token 只存在于内存中，关闭页面后 Token 就不再可用，降低了被窃取的风险。</li>
+</ul>
+</li>
+<li><p><strong>缺点</strong>：</p>
+<ul>
+<li>用户体验较差：用户刷新页面或关闭再打开浏览器后需要重新登录，除非结合持久化存储（如 Cookie 或 localStorage）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-作为-Bearer-Token-在-HTTP-请求头中传递"><a href="#4-作为-Bearer-Token-在-HTTP-请求头中传递" class="headerlink" title="4. 作为 Bearer Token 在 HTTP 请求头中传递"></a>4. <strong>作为 Bearer Token 在 HTTP 请求头中传递</strong></h3><p>虽然这不是一种“存储”方式，但是当 Token 被存储在某个地方之后，它通常是通过 HTTP 请求头中的 <code>Authorization</code> 字段以 Bearer Token 的形式发送给服务器的。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer your_token_value</span><br></pre></td></tr></table></figure>
+
+<h3 id="选择合适的存储策略"><a href="#选择合适的存储策略" class="headerlink" title="选择合适的存储策略"></a>选择合适的存储策略</h3><ul>
+<li><strong>对于 Web 应用</strong>：如果主要关注的是安全性，并且可以接受一定程度上的用户体验损失（比如要求用户定期重新登录），那么将 Token 存储在 HttpOnly Cookie 中是一个不错的选择。</li>
+<li><strong>对于单页应用（SPA）</strong>：如果应用是基于框架构建的（如 React, Vue.js），并且需要频繁地与 API 进行交互，则可能会倾向于将 Token 存储在 localStorage 或 sessionStorage 中，同时采取额外的安全措施来防范 XSS 攻击。</li>
+<li><strong>对于移动应用</strong>：通常直接将 Token 存储在应用的本地存储中，并在每次网络请求时手动附加 Token。</li>
+</ul>
+<p>每种方法都有其优缺点，选择最适合你的应用程序需求的方法至关重要。同时，无论采用哪种方式，都应该考虑实施额外的安全措施，例如启用 HTTPS、使用短期有效的 Tokens 和 Refresh Tokens 来更新过期的 Tokens 等。</p>
+<h2 id="Cookie跨域"><a href="#Cookie跨域" class="headerlink" title="Cookie跨域"></a>Cookie跨域</h2><h3 id="Cookie-跨域问题概述"><a href="#Cookie-跨域问题概述" class="headerlink" title="Cookie 跨域问题概述"></a>Cookie 跨域问题概述</h3><p>在 Web 开发中，跨域资源共享（CORS）是一个常见的需求，但同时也是一个复杂且容易引发安全问题的领域。当涉及到 Cookie 的跨域时，尤其需要注意安全性与合规性。默认情况下，出于安全考虑，浏览器实施了同源策略（Same-Origin Policy），这意味着 Cookie 只能被设置它们的源（协议+域名+端口）访问。然而，在某些情况下，你可能需要允许或限制跨域访问 Cookie。</p>
+<h3 id="同源策略与-Cookie"><a href="#同源策略与-Cookie" class="headerlink" title="同源策略与 Cookie"></a>同源策略与 Cookie</h3><p>根据同源策略，如果一个页面尝试访问另一个不同源的资源（包括读取 Cookie），这种请求会被浏览器阻止。但是，通过适当的配置，可以在一定程度上实现跨域共享 Cookie。</p>
+<h3 id="实现-Cookie-跨域的主要方式"><a href="#实现-Cookie-跨域的主要方式" class="headerlink" title="实现 Cookie 跨域的主要方式"></a>实现 Cookie 跨域的主要方式</h3><h4 id="1-设置-Domain-属性"><a href="#1-设置-Domain-属性" class="headerlink" title="1. 设置 Domain 属性"></a>1. <strong>设置 <code>Domain</code> 属性</strong></h4><p>当你想让多个子域名共享同一个 Cookie 时，可以通过设置 <code>Domain</code> 属性来指定一个父级域名。例如，如果你想让 <code>a.example.com</code> 和 <code>b.example.com</code> 共享 Cookie，可以这样设置：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Set-Cookie</span><span class="punctuation">: </span>name=value; Domain=example.com; Path=/;</span><br></pre></td></tr></table></figure>
+
+<p>注意：<code>Domain</code> 值不能是顶级域名（如 <code>.com</code> 或 <code>.org</code>），也不能包含 IP 地址。</p>
+<h4 id="2-使用-CORS-和-withCredentials"><a href="#2-使用-CORS-和-withCredentials" class="headerlink" title="2. 使用 CORS 和 withCredentials"></a>2. <strong>使用 CORS 和 <code>withCredentials</code></strong></h4><p>对于完全不同的域之间的通信（比如从 <code>siteA.com</code> 发送到 <code>api.siteB.com</code>），你需要结合 CORS（跨源资源共享）机制来处理跨域请求中的 Cookie。</p>
+<ul>
+<li><p><strong>服务器端</strong>：必须正确配置 CORS 头部以允许特定来源的请求，并明确指出是否允许凭据（包括 Cookies、HTTP 认证信息等）。这通常涉及设置 <code>Access-Control-Allow-Origin</code> 和 <code>Access-Control-Allow-Credentials</code>。</p>
+  <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Origin</span><span class="punctuation">: </span>https://siteA.com</span><br><span class="line"><span class="attribute">Access-Control-Allow-Credentials</span><span class="punctuation">: </span>true</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>客户端</strong>：当发起 AJAX 请求时，需要确保设置了 <code>withCredentials=true</code> 参数，以便携带 Cookie。</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;https://api.siteB.com/data&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">credentials</span>: <span class="string">&#x27;include&#x27;</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="3-SameSite-属性"><a href="#3-SameSite-属性" class="headerlink" title="3. SameSite 属性"></a>3. <strong><code>SameSite</code> 属性</strong></h4><p>为了防止 CSRF 攻击，现代浏览器引入了 <code>SameSite</code> 属性，它可以控制 Cookie 在跨站请求中的行为。有三种可能的值：</p>
+<ul>
+<li><p><strong>Strict</strong>: Cookie 只会在第一方上下文中发送（即用户直接导航到目标站点时）。这提供了最强的安全性，但可能会导致一些不便，比如点击外部链接后丢失登录状态。</p>
+</li>
+<li><p><strong>Lax</strong>: 默认值。允许在某些跨站请求中发送 Cookie（例如 GET 请求），但在 POST 请求或其他可能导致副作用的操作中不会发送。</p>
+</li>
+<li><p><strong>None</strong>: 如果指定了 <code>SameSite=None</code>，则必须同时指定 <code>Secure</code> 标志，这意味着 Cookie 只能在 HTTPS 连接上传输。</p>
+  <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Set-Cookie</span><span class="punctuation">: </span>sessionId=abc123; SameSite=None; Secure</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li><strong>安全性</strong>：允许跨域访问 Cookie 可能会增加安全风险，特别是如果没有正确地配置 <code>SameSite</code> 和 <code>Secure</code> 标志。确保仅在必要时启用跨域 Cookie，并始终遵循最佳实践。</li>
+<li><strong>性能</strong>：过多的跨域请求和不必要的 Cookie 传输可能会影响性能。优化你的应用架构以减少不必要的网络开销。</li>
+<li><strong>兼容性</strong>：不是所有浏览器都支持最新的 <code>SameSite</code> 属性值，因此测试你的应用在不同环境下的表现非常重要。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>虽然浏览器默认限制了 Cookie 的跨域访问以保护用户隐私和安全，但通过合理配置 <code>Domain</code>、利用 CORS 和正确设置 <code>SameSite</code> 等属性，你可以实现必要的跨域 Cookie 功能。不过，在这样做之前，请仔细评估潜在的安全风险，并采取适当的措施来减轻这些风险。</p>
+<p>跨域问题（Cross-Origin Resource Sharing, CORS）在 Web 开发中是一个常见的挑战，尤其是在构建分布式系统、微服务架构或使用第三方API时。以下是开发过程中可能出现的一些跨域相关问题及其实例：</p>
+<h3 id="1-基本的跨域请求失败"><a href="#1-基本的跨域请求失败" class="headerlink" title="1. 基本的跨域请求失败"></a>1. <strong>基本的跨域请求失败</strong></h3><p><strong>场景描述</strong>：前端应用部署在一个域名下（如 <code>frontend.com</code>），而后端API部署在另一个域名下（如 <code>api.backend.com</code>）。当尝试从前端发起 AJAX 请求访问后端API时，默认情况下浏览器会阻止这种跨域请求。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li><p>在后端服务器上配置 CORS 头信息，允许来自前端域名的请求。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Origin</span><span class="punctuation">: </span>https://frontend.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果需要支持多个源或者所有源，可以动态设置 <code>Access-Control-Allow-Origin</code>，但要注意安全风险，尤其是对所有源开放的情况。</p>
+</li>
+</ul>
+<h3 id="2-包含凭证的跨域请求"><a href="#2-包含凭证的跨域请求" class="headerlink" title="2. 包含凭证的跨域请求"></a>2. <strong>包含凭证的跨域请求</strong></h3><p><strong>场景描述</strong>：当你需要在跨域请求中携带 Cookies 或 HTTP 认证信息时，普通的 CORS 设置无法满足需求。例如，用户登录状态是通过 Cookie 维护的，但在跨域请求中这些 Cookie 不会被自动发送。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li><p>在前端发起请求时设置 <code>withCredentials=true</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;https://api.backend.com/data&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="string">&#x27;GET&#x27;</span>,</span><br><span class="line">    <span class="attr">credentials</span>: <span class="string">&#x27;include&#x27;</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在后端服务器响应中添加必要的 CORS 头，并确保设置了 <code>Access-Control-Allow-Credentials: true</code>。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Origin</span><span class="punctuation">: </span>https://frontend.com</span><br><span class="line"><span class="attribute">Access-Control-Allow-Credentials</span><span class="punctuation">: </span>true</span><br></pre></td></tr></table></figure>
+
+<p>注意：当设置了 <code>Access-Control-Allow-Credentials: true</code> 时，<code>Access-Control-Allow-Origin</code> 不能设置为通配符 <code>*</code>，而必须指定具体的源。</p>
+</li>
+</ul>
+<h3 id="3-预检请求（Preflight-Request）失败"><a href="#3-预检请求（Preflight-Request）失败" class="headerlink" title="3. 预检请求（Preflight Request）失败"></a>3. <strong>预检请求（Preflight Request）失败</strong></h3><p><strong>场景描述</strong>：对于非简单请求（如带有自定义头信息或使用了 PUT、DELETE 等方法），浏览器会首先发送一个 OPTIONS 请求（称为预检请求）来询问服务器是否允许实际请求。如果服务器没有正确处理这个预检请求，实际请求将不会被执行。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li><p>在服务器端正确响应 OPTIONS 请求，并返回适当的 CORS 头信息，包括允许的方法和头信息。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Methods</span><span class="punctuation">: </span>GET, POST, PUT, DELETE</span><br><span class="line"><span class="attribute">Access-Control-Allow-Headers</span><span class="punctuation">: </span>Content-Type, Authorization</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="4-Cookie-的-SameSite-属性导致的问题"><a href="#4-Cookie-的-SameSite-属性导致的问题" class="headerlink" title="4. Cookie 的 SameSite 属性导致的问题"></a>4. <strong>Cookie 的 SameSite 属性导致的问题</strong></h3><p><strong>场景描述</strong>：现代浏览器引入了 <code>SameSite</code> 属性来防止 CSRF 攻击，默认值可能是 <code>Lax</code> 或 <code>Strict</code>。这意味着即使设置了 CORS 允许跨域请求，但如果 Cookie 的 <code>SameSite</code> 属性不允许跨站请求，则相关的 Cookie 不会被发送。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li><p>如果确实需要在跨站请求中发送 Cookie，确保它们被标记为 <code>SameSite=None; Secure</code>。注意，<code>Secure</code> 标志意味着这些 Cookie 只能在 HTTPS 连接上传输。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Set-Cookie</span><span class="punctuation">: </span>sessionId=abc123; SameSite=None; Secure</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="5-CORS-配置不当导致的安全漏洞"><a href="#5-CORS-配置不当导致的安全漏洞" class="headerlink" title="5. CORS 配置不当导致的安全漏洞"></a>5. <strong>CORS 配置不当导致的安全漏洞</strong></h3><p><strong>场景描述</strong>：过于宽松的 CORS 配置可能会暴露应用程序给潜在的安全威胁，比如 XSS 或 CSRF 攻击。例如，错误地将 <code>Access-Control-Allow-Origin</code> 设置为 <code>*</code> 而不考虑凭证的情况下，可能允许任何网站访问你的资源。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>尽量避免使用 <code>Access-Control-Allow-Origin: *</code>，特别是在需要发送凭据的情况下。</li>
+<li>动态生成 <code>Access-Control-Allow-Origin</code> 值，仅允许特定的可信来源。</li>
+</ul>
+<h3 id="6-开发环境与生产环境差异引起的问题"><a href="#6-开发环境与生产环境差异引起的问题" class="headerlink" title="6. 开发环境与生产环境差异引起的问题"></a>6. <strong>开发环境与生产环境差异引起的问题</strong></h3><p><strong>场景描述</strong>：在本地开发环境中，前端和后端通常运行在同一台机器上，因此不存在跨域问题。但是，一旦部署到生产环境，由于前端和后端分别部署在不同的域名或子域名下，跨域问题就会显现出来。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>在开发阶段，可以通过代理服务器（如 Nginx 或 webpack dev server 的 proxy 功能）来解决跨域问题，使开发环境下的请求看起来像是同源的。</li>
+<li>对于生产环境，务必按照上述建议正确配置 CORS。</li>
+</ul>
+<hr>
+<h2 id="JWT（JSON-Web-Token）详细介绍"><a href="#JWT（JSON-Web-Token）详细介绍" class="headerlink" title="JWT（JSON Web Token）详细介绍"></a>JWT（JSON Web Token）详细介绍</h2><h4 id="一、什么是JWT？"><a href="#一、什么是JWT？" class="headerlink" title="一、什么是JWT？"></a>一、什么是JWT？</h4><p><strong>JWT</strong>（JSON Web Token）是一种开放标准（<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc7519">RFC 7519</a>），用于在网络应用环境间安全地将信息作为JSON对象传输。此信息可以被验证和信任，因为它经过了数字签名。JWT通常用于身份验证和信息交换。</p>
+<h4 id="二、结构组成"><a href="#二、结构组成" class="headerlink" title="二、结构组成"></a>二、结构组成</h4><p>JWT由三部分组成，它们之间用点（<code>.</code>）分隔：</p>
+<ol>
+<li><p><strong>Header</strong>：包含令牌的类型（即JWT）以及所使用的签名算法（如HMAC SHA256或RSA）。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;typ&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JWT&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Payload</strong>：包含声明（claims）。声明是关于实体（通常是用户）和其他数据的声明。</p>
+<ul>
+<li>注册声明：如<code>iss</code>（发行人）、<code>exp</code>（过期时间）、<code>sub</code>（主题）、<code>aud</code>（受众）等。</li>
+<li>公有声明：自定义声明，比如用户的ID、角色等。</li>
+<li>私有声明：在同意或标准化之外的双方之间共享的信息。</li>
+</ul>
+</li>
+<li><p><strong>Signature</strong>：用于验证消息在此过程中未被更改，并且对于使用私钥签名的令牌，还可以验证其发送者是否为它声称的人。</p>
+</li>
+</ol>
+<h4 id="三、工作流程"><a href="#三、工作流程" class="headerlink" title="三、工作流程"></a>三、工作流程</h4><ul>
+<li>用户登录成功后，服务器会生成一个JWT并返回给客户端。</li>
+<li>客户端在后续请求中携带这个JWT（通常放在HTTP头中的Authorization字段）。</li>
+<li>服务器接收到请求时，解析JWT，验证其有效性（检查签名、过期时间等），然后根据其中的信息决定如何响应请求。</li>
+</ul>
+<h4 id="四、优缺点"><a href="#四、优缺点" class="headerlink" title="四、优缺点"></a>四、优缺点</h4><h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><ol>
+<li><strong>无状态性</strong>：不需要在服务器端保存任何会话数据，易于扩展。</li>
+<li><strong>安全性</strong>：通过签名防止篡改，支持加密确保隐私。</li>
+<li><strong>跨域支持好</strong>：非常适合前后端分离的应用场景。</li>
+<li><strong>可扩展性强</strong>：适用于多种平台（Web、移动端等）和服务架构（单体应用、微服务）。</li>
+</ol>
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><ol>
+<li><strong>无法直接撤销</strong>：一旦签发，除非到期或者在黑名单中，否则无法立即失效。</li>
+<li><strong>大小限制</strong>：虽然没有硬性规定，但较大的载荷会影响性能。</li>
+<li><strong>存储问题</strong>：需要考虑如何安全地存储Token（如LocalStorage vs Cookies）以防止XSS攻击。</li>
+</ol>
+<h4 id="五、常见面试题"><a href="#五、常见面试题" class="headerlink" title="五、常见面试题"></a>五、常见面试题</h4><ol>
+<li><p><strong>JWT与Session的区别是什么？</strong></p>
+<ul>
+<li>Session依赖于服务器存储状态，而JWT是无状态的，所有信息都在Token内。</li>
+<li>Session更适合传统单体应用，JWT更适合分布式系统。</li>
+</ul>
+</li>
+<li><p><strong>如何保证JWT的安全性？</strong></p>
+<ul>
+<li>使用HTTPS来加密通信，防止中间人攻击。</li>
+<li>设置合理的过期时间，避免长期有效的Token被滥用。</li>
+<li>不要在JWT中存储敏感信息。</li>
+<li>使用强密钥进行签名，并定期更换密钥。</li>
+</ul>
+</li>
+<li><p><strong>JWT如何处理过期问题？</strong></p>
+<ul>
+<li>通过设置<code>exp</code>声明指定过期时间。</li>
+<li>结合Refresh Token机制，在AccessToken过期后获取新的AccessToken。</li>
+</ul>
+</li>
+<li><p><strong>JWT的签名算法有哪些？</strong></p>
+<ul>
+<li>对称算法：如HS256（HMAC with SHA-256）。</li>
+<li>非对称算法：如RS256（RSA with SHA-256），更适用于发行方和接收方不同的情况。</li>
+</ul>
+</li>
+<li><p><strong>JWT如何处理跨域问题？</strong></p>
+<ul>
+<li>在前端可以通过设置正确的CORS策略解决跨域问题。</li>
+<li>将JWT放置于HTTP Header中传递，避免了Cookie带来的跨域限制。</li>
+</ul>
+</li>
+</ol>
+<h4 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h4><p>JWT提供了一种轻量级的身份验证解决方案，特别适合分布式系统和API服务。尽管存在一些局限性，比如无法直接撤销Token和大小限制等问题，但是通过合理的设计和实现，这些挑战是可以克服的。理解JWT的工作原理及其适用场景，有助于开发人员选择合适的身份验证方案，提升系统的安全性和用户体验。</p>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/')">权限校验_CST</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=权限校验_CST&amp;url=http://example.com/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/&amp;pic=https://img.picgo.net/2025/08/01/Frame-28-1024x838ca25f53ef910b53f.png" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>权限校验<span class="tagsPageCount">3</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://apifox.com/apiskills/content/images/size/w1000/2023/12/image-93.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/07/24/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_Shiro/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/07/28/551994ea3dcf7d3b61c743.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">权限校验_Shiro</div></div></a></div><div class="next-post pull-right"><a href="/2025/07/29/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_SpringSecurity/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/08/01/k5c6isf4ci6ippivd60vb0ab2f6eec10f7b3.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">权限校验_SpringSecurity</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/07/29/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_SpringSecurity/" title="权限校验_SpringSecurity"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/08/01/k5c6isf4ci6ippivd60vb0ab2f6eec10f7b3.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-07-29</div><div class="title">权限校验_SpringSecurity</div></div></a></div><div><a href="/2025/07/24/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_Shiro/" title="权限校验_Shiro"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/07/28/551994ea3dcf7d3b61c743.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-07-24</div><div class="title">权限校验_Shiro</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CST"><span class="toc-number">1.</span> <span class="toc-text">CST</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cookie"><span class="toc-number">1.1.</span> <span class="toc-text">Cookie</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Cookie-%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.1.</span> <span class="toc-text">Cookie 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.2.</span> <span class="toc-text">设计思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.1.3.</span> <span class="toc-text">常用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E8%B6%B3%E4%B9%8B%E5%A4%84"><span class="toc-number">1.1.4.</span> <span class="toc-text">不足之处</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%E8%AF%B4%E6%98%8E"><span class="toc-number">1.1.5.</span> <span class="toc-text">补充说明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Session"><span class="toc-number">1.2.</span> <span class="toc-text">Session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="toc-number">1.3.</span> <span class="toc-text">一、设计思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BC%A5%E8%A1%A5-HTTP-%E7%9A%84%E6%97%A0%E7%8A%B6%E6%80%81%E6%80%A7"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 弥补 HTTP 的无状态性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AD%98%E5%82%A8-%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%A0%87%E8%AF%86"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 服务端存储 + 客户端标识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%8E%A7%E5%88%B6"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. 生命周期控制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.4.</span> <span class="toc-text">二、常用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E7%8A%B6%E6%80%81%E4%BF%9D%E6%8C%81"><span class="toc-number">1.4.1.</span> <span class="toc-text">1. 用户登录状态保持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%B4%AD%E7%89%A9%E8%BD%A6%E7%AE%A1%E7%90%86"><span class="toc-number">1.4.2.</span> <span class="toc-text">2. 购物车管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%B4%E6%97%B6%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">3. 临时数据存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">1.4.4.</span> <span class="toc-text">4. 访问控制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Session-%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6"><span class="toc-number">1.5.</span> <span class="toc-text">三、Session 的结构和实现机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Session-%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.1.</span> <span class="toc-text">1. Session 的结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Session-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="toc-number">1.5.2.</span> <span class="toc-text">2. Session 的实现方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-Web%EF%BC%88Servlet%EF%BC%89%E4%B8%AD%E7%9A%84-Session%EF%BC%9A"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">Java Web（Servlet）中的 Session：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring-%E4%B8%AD%E7%9A%84-Session%EF%BC%9A"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">Spring 中的 Session：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%8E%AF%E5%A2%83%E4%B8%AD%E7%9A%84-Session%EF%BC%9A"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">分布式环境中的 Session：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Session-%E7%9A%84%E4%B8%8D%E8%B6%B3%E4%B9%8B%E5%A4%84"><span class="toc-number">1.6.</span> <span class="toc-text">四、Session 的不足之处</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B5%84%E6%BA%90%E6%B6%88%E8%80%97%E5%A4%A7"><span class="toc-number">1.6.1.</span> <span class="toc-text">1. 服务器资源消耗大</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%8D%E9%80%82%E5%90%88%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.6.2.</span> <span class="toc-text">2. 不适合分布式架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BE%9D%E8%B5%96-Cookie"><span class="toc-number">1.6.3.</span> <span class="toc-text">3. 依赖 Cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AE%89%E5%85%A8%E6%80%A7%E9%97%AE%E9%A2%98"><span class="toc-number">1.6.4.</span> <span class="toc-text">4. 安全性问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81Session-%E4%B8%8E-Token-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">1.7.</span> <span class="toc-text">五、Session 与 Token 的对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Session-%E7%9A%84%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF"><span class="toc-number">1.8.</span> <span class="toc-text">六、Session 的发展趋势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text">七、总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Token"><span class="toc-number">1.10.</span> <span class="toc-text">Token</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3%E4%B8%8E%E5%87%BA%E7%8E%B0%E8%83%8C%E6%99%AF"><span class="toc-number">1.11.</span> <span class="toc-text">一、设计思想与出现背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%87%BA%E7%8E%B0-Token%EF%BC%9F"><span class="toc-number">1.11.1.</span> <span class="toc-text">1. 为什么会出现 Token？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B8%E5%BF%83%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="toc-number">1.11.2.</span> <span class="toc-text">2. 核心设计思想</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Token-%E7%9A%84%E5%B8%B8%E8%A7%81%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.12.</span> <span class="toc-text">二、Token 的常见类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-JWT%EF%BC%88JSON-Web-Token%EF%BC%89"><span class="toc-number">1.12.1.</span> <span class="toc-text">1. JWT（JSON Web Token）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Opaque-Token%EF%BC%88%E4%B8%8D%E9%80%8F%E6%98%8E-Token%EF%BC%89"><span class="toc-number">1.12.2.</span> <span class="toc-text">2. Opaque Token（不透明 Token）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-OAuth-2-0-Token"><span class="toc-number">1.12.3.</span> <span class="toc-text">3. OAuth 2.0 Token</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%B8%B8%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.13.</span> <span class="toc-text">三、常用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Token-%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="toc-number">1.14.</span> <span class="toc-text">四、Token 的生命周期管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81Token-%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.15.</span> <span class="toc-text">五、Token 的优势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Token-%E7%9A%84%E4%B8%8D%E8%B6%B3%E4%B9%8B%E5%A4%84"><span class="toc-number">1.16.</span> <span class="toc-text">六、Token 的不足之处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81Token-%E4%B8%8E-Cookie-Session-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">1.17.</span> <span class="toc-text">七、Token 与 Cookie&#x2F;Session 的对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81Token-%E7%9A%84%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF"><span class="toc-number">1.18.</span> <span class="toc-text">八、Token 的发展趋势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">1.19.</span> <span class="toc-text">九、总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Token%E4%B9%9F%E6%98%AF%E5%AD%98%E5%82%A8%E5%9C%A8Cookie%E5%90%97"><span class="toc-number">1.20.</span> <span class="toc-text">Token也是存储在Cookie吗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%98%E5%82%A8%E5%9C%A8-Cookie-%E4%B8%AD"><span class="toc-number">1.20.1.</span> <span class="toc-text">1. 存储在 Cookie 中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AD%98%E5%82%A8%E5%9C%A8-localStorage-%E6%88%96-sessionStorage-%E4%B8%AD"><span class="toc-number">1.20.2.</span> <span class="toc-text">2. 存储在 localStorage 或 sessionStorage 中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AD%98%E5%82%A8%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD"><span class="toc-number">1.20.3.</span> <span class="toc-text">3. 存储在内存中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BD%9C%E4%B8%BA-Bearer-Token-%E5%9C%A8-HTTP-%E8%AF%B7%E6%B1%82%E5%A4%B4%E4%B8%AD%E4%BC%A0%E9%80%92"><span class="toc-number">1.20.4.</span> <span class="toc-text">4. 作为 Bearer Token 在 HTTP 请求头中传递</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E5%AD%98%E5%82%A8%E7%AD%96%E7%95%A5"><span class="toc-number">1.20.5.</span> <span class="toc-text">选择合适的存储策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cookie%E8%B7%A8%E5%9F%9F"><span class="toc-number">1.21.</span> <span class="toc-text">Cookie跨域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Cookie-%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E6%A6%82%E8%BF%B0"><span class="toc-number">1.21.1.</span> <span class="toc-text">Cookie 跨域问题概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E4%B8%8E-Cookie"><span class="toc-number">1.21.2.</span> <span class="toc-text">同源策略与 Cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-Cookie-%E8%B7%A8%E5%9F%9F%E7%9A%84%E4%B8%BB%E8%A6%81%E6%96%B9%E5%BC%8F"><span class="toc-number">1.21.3.</span> <span class="toc-text">实现 Cookie 跨域的主要方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AE%BE%E7%BD%AE-Domain-%E5%B1%9E%E6%80%A7"><span class="toc-number">1.21.3.1.</span> <span class="toc-text">1. 设置 Domain 属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BD%BF%E7%94%A8-CORS-%E5%92%8C-withCredentials"><span class="toc-number">1.21.3.2.</span> <span class="toc-text">2. 使用 CORS 和 withCredentials</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-SameSite-%E5%B1%9E%E6%80%A7"><span class="toc-number">1.21.3.3.</span> <span class="toc-text">3. SameSite 属性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.21.4.</span> <span class="toc-text">注意事项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.21.5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%AC%E7%9A%84%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E5%A4%B1%E8%B4%A5"><span class="toc-number">1.21.6.</span> <span class="toc-text">1. 基本的跨域请求失败</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8C%85%E5%90%AB%E5%87%AD%E8%AF%81%E7%9A%84%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82"><span class="toc-number">1.21.7.</span> <span class="toc-text">2. 包含凭证的跨域请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%A2%84%E6%A3%80%E8%AF%B7%E6%B1%82%EF%BC%88Preflight-Request%EF%BC%89%E5%A4%B1%E8%B4%A5"><span class="toc-number">1.21.8.</span> <span class="toc-text">3. 预检请求（Preflight Request）失败</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Cookie-%E7%9A%84-SameSite-%E5%B1%9E%E6%80%A7%E5%AF%BC%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.21.9.</span> <span class="toc-text">4. Cookie 的 SameSite 属性导致的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-CORS-%E9%85%8D%E7%BD%AE%E4%B8%8D%E5%BD%93%E5%AF%BC%E8%87%B4%E7%9A%84%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.21.10.</span> <span class="toc-text">5. CORS 配置不当导致的安全漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E4%B8%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E5%B7%AE%E5%BC%82%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.21.11.</span> <span class="toc-text">6. 开发环境与生产环境差异引起的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JWT%EF%BC%88JSON-Web-Token%EF%BC%89%E8%AF%A6%E7%BB%86%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.22.</span> <span class="toc-text">JWT（JSON Web Token）详细介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFJWT%EF%BC%9F"><span class="toc-number">1.22.0.1.</span> <span class="toc-text">一、什么是JWT？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%BB%93%E6%9E%84%E7%BB%84%E6%88%90"><span class="toc-number">1.22.0.2.</span> <span class="toc-text">二、结构组成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.22.0.3.</span> <span class="toc-text">三、工作流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.22.0.4.</span> <span class="toc-text">四、优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.22.0.4.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.22.0.4.2.</span> <span class="toc-text">缺点</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">1.22.0.5.</span> <span class="toc-text">五、常见面试题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">1.22.0.6.</span> <span class="toc-text">六、总结</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/08/01/%E5%B8%B8%E7%94%A8Json%E8%A7%A3%E6%9E%90%E5%99%A8/" title="常用Json解析器"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://apifox.com/apiskills/content/images/size/w1000/2023/12/image-93.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="常用Json解析器"/></a><div class="content"><a class="title" href="/2025/08/01/%E5%B8%B8%E7%94%A8Json%E8%A7%A3%E6%9E%90%E5%99%A8/" title="常用Json解析器">常用Json解析器</a><time datetime="2025-08-01T06:01:50.978Z" title="Created 2025-08-01 14:01:50">2025-08-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/01/%E4%BC%98%E9%9B%85%E5%A4%84%E7%90%86Entity%E8%BD%AC%E6%8D%A2/" title="优雅处理Entity转换"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://pic.616pic.com/ys_bnew_img/00/25/56/FgPV3rWoMg.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="优雅处理Entity转换"/></a><div class="content"><a class="title" href="/2025/08/01/%E4%BC%98%E9%9B%85%E5%A4%84%E7%90%86Entity%E8%BD%AC%E6%8D%A2/" title="优雅处理Entity转换">优雅处理Entity转换</a><time datetime="2025-08-01T01:36:47.808Z" title="Created 2025-08-01 09:36:47">2025-08-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/07/31/SpringDataJpa/" title="SpringDataJpa"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/07/31/OIP-C-1c4afe270c9ab00e7.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SpringDataJpa"/></a><div class="content"><a class="title" href="/2025/07/31/SpringDataJpa/" title="SpringDataJpa">SpringDataJpa</a><time datetime="2025-07-31T08:03:07.464Z" title="Created 2025-07-31 16:03:07">2025-07-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/07/29/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%87%E6%BB%A4%E5%99%A8+AOP/" title="优雅处理 HTTP 请求"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/07/28/92d72a800c774c71ace0837f371d2c4716c648473f7f5f0d.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="优雅处理 HTTP 请求"/></a><div class="content"><a class="title" href="/2025/07/29/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%87%E6%BB%A4%E5%99%A8+AOP/" title="优雅处理 HTTP 请求">优雅处理 HTTP 请求</a><time datetime="2025-07-29T09:55:15.648Z" title="Created 2025-07-29 17:55:15">2025-07-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/07/29/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_SpringSecurity/" title="权限校验_SpringSecurity"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/08/01/k5c6isf4ci6ippivd60vb0ab2f6eec10f7b3.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="权限校验_SpringSecurity"/></a><div class="content"><a class="title" href="/2025/07/29/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_SpringSecurity/" title="权限校验_SpringSecurity">权限校验_SpringSecurity</a><time datetime="2025-07-29T08:06:08.181Z" title="Created 2025-07-29 16:06:08">2025-07-29</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">38</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">22</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">16</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/Hexo/" style="font-size: 0.88rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 0.88rem;">Http<sup>1</sup></a><a href="/tags/JPA/" style="font-size: 0.88rem;">JPA<sup>1</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>3</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>1</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>1</sup></a><a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" style="font-size: 0.88rem;">中间件<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 0.88rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 0.88rem;">推荐<sup>1</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 0.88rem;">权限校验<sup>3</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 0.88rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>1</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
