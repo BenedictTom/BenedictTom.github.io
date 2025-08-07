@@ -1,0 +1,771 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>CI/CD | Joie's Blog</title><meta name="keywords" content="CI/CD,运维"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="CI/CD"><meta name="application-name" content="CI/CD"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="CI/CD"><meta property="og:url" content="http://example.com/2025/08/04/CI_CD/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="CI&amp;#x2F;CDCI&amp;#x2F;CD代表持续集成（Continuous Integration）、持续交付（Continuous Delivery）和持续部署（Continuous Deployment）。这些实践是现代软件开发中提高效率、减少错误和加快产品上市时间的关键方法。  持续集成（Co"><meta property="og:locale" content="en"><meta property="og:image" content="https://origin.picgo.net/2025/08/06/6f09addd20454c0f9372635276c5dd472c07d39c6992c2ac.png"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://origin.picgo.net/2025/08/06/6f09addd20454c0f9372635276c5dd472c07d39c6992c2ac.png"><meta name="description" content="CI&amp;#x2F;CDCI&amp;#x2F;CD代表持续集成（Continuous Integration）、持续交付（Continuous Delivery）和持续部署（Continuous Deployment）。这些实践是现代软件开发中提高效率、减少错误和加快产品上市时间的关键方法。  持续集成（Co"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2025/08/04/CI_CD/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'CI/CD',
+  postAI: '',
+  pageFillDescription: 'CIx2FCD, GitLabCiCd, GitLab CIx2FCD, 关键概念, 使用步骤, 进阶功能, 常用命令, 示例, Jenkins, 核心功能, 核心概念, 优势, 典型工作流程, 与其他工具的对比, 快速入门, 适用场景, 常用item及场景, publish ssh, Publish Over SSH 插件介绍, 主要功能, 使用步骤, Jenkins Agent 与 Publish Over SSH 的区别, 1. 目的与功能, 2. 操作层面, 3. 使用场景示例, 一个示例, 一些坑, docker部署的Jenkins无法使用docker命令, docekr推送到私有仓库是httpsdocker.login必须有证书代表持续集成持续交付和持续部署这些实践是现代软件开发中提高效率减少错误和加快产品上市时间的关键方法持续集成这是一种软件开发实践其中团队成员频繁地将他们的工作代码合并到共享的主线中每次集成都通过自动化构建包括编译发布自动化测试来验证以便尽早发现集成错误这种方法有助于减少集成问题并让团队能够更快地发展项目持续交付这是在持续集成的基础上更进一步确保软件可以快速可靠地被发布到生产环境除了自动化测试外还可能包含部署到预生产环境的自动化过程以确保应用程序随时可以部署到生产环境中持续交付的目标是让发布过程变得简单且低风险持续部署这是一个更激进的做法意味着每次更改在通过了所有测试后都会自动部署到生产环境持续部署要求有非常强的自动化测试覆盖率以保证质量并降低上线的风险实施流程通常需要使用特定的工具链来支持如等用于构建和测试等用于容器化和服务编排以及各种监控和日志记录工具来跟踪应用的性能和健康状况通过采用团队可以更快地响应客户需求同时保持高质量标准是提供的一套用于实现持续集成持续交付和持续部署的工具通过使用开发者可以在代码提交或合并请求时自动执行一系列任务如构建项目运行测试部署应用等从而确保代码的质量和项目的稳定性关键概念流水线一个流水线是由多个阶段组成的序列每个阶段可以包含一个或多个任务在中一个典型的流水线包括构建测试和部署阶段任务定义了要执行的操作比如编译代码运行测试等在上执行运行器执行的独立进程可以是共享的特定组的或者特定项目的阶段代表流水线中的不同部分例如和阶段所有属于同一阶段的任务并行执行而下一阶段的任务只有在前一阶段的所有任务成功完成后才会开始文件这是的配置文件位于项目根目录下它定义了流水线如何工作包括以及它们的执行规则使用步骤创建文件首先在你的项目根目录下创建一个名为的文件这个文件将告诉如何执行流程下面是一个简单的例子配置你需要有至少一个来执行这些任务你可以在界面中注册一个选择适合自己项目的类型共享组或项目专用提交到仓库一旦配置好并设置了提交此文件到你的仓库此时将自动检测到这个文件并根据其内容启动相应的流水线监控与调试通过中的部分你可以查看流水线的状态包括各个的输出日志这对于调试失败的非常有用优化与扩展随着项目的增长你可能需要调整流水线的结构或添加更多复杂的逻辑例如条件执行环境变量依赖管理等进阶功能环境与部署策略支持为不同的环境定义部署策略比如开发测试和生产环境这有助于管理复杂的应用程序生命周期安全扫描提供了多种内置的安全扫描工具如静态应用程序安全测试动态应用程序安全测试可以帮助你在早期发现潜在的安全问题性能与负载测试除了基本的单元和集成测试之外你还可以集成性能和负载测试工具来保证软件质量常用命令下面是一个表格列出了中一些常用的命令和说明请注意在的上下文中命令通常指的是在文件中定义的脚本部分或配置指令而不是直接运行于终端的命令行指令命令配置项描述定义流水线中的不同阶段例如同一阶段的任务并行执行按顺序进行下一个阶段任务名称用于标识不同的任务每个任务可以包含多个步骤由字段定义实际要执行的命令列表这些命令会在上执行用来完成构建测试或部署等操作在每个任务之前执行的一组命令它可用于准备环境比如安装依赖在所有任务完成后执行的一组命令无论任务成功与否适合用于清理工作控制哪些分支或标签触发任务指定包括的规则而则指定排除的规则已逐渐被取代更灵活的任务触发条件设置可以根据分支标签变量等多种条件组合来控制任务是否应该运行定义哪些文件应该作为构建产物保存并可用于后续任务或其他流程如下载到本地指定需要缓存的文件或目录以加速后续的运行常用于保存依赖包避免每次都重新下载为任务分配标签以便选择合适的来执行任务有助于区分不同类型的如特定语言或操作系统要求的定义环境变量可以在整个中使用也可用于控制任务的行为允许你在容器中运行额外的服务如数据库供你的测试或应用使用示例自定义镜像名称容器名称地址项目名可根据实际调整镜像名称用户名密码项目打包构建镜像部署项目缓存依赖将项目根目录的复制到确认文件是否存在构建镜像获取当前日期和时间格式为时间推送镜像删除旧容器是一个开源的持续集成和持续交付工具用于自动化软件开发过程中的构建测试和部署它基于开发支持跨平台运行并提供了强大的插件生态系统可以灵活地扩展功能核心功能持续集成自动触发代码构建和测试确保每次代码提交后快速发现错误支持与等版本控制系统集成持续交付部署自动化部署到测试预发布或生产环境支持云平台等任务调度与流水线通过定义复杂的构建流程语法支持多分支流水线适应等开发模式丰富的插件生态超过个插件覆盖代码质量分析通知安全扫描等分布式构建通过节点实现多机器并行构建加速任务执行核心概念任务定义一个自动化任务如构建测试将多个任务串联成流水线支持复杂流程节点执行任务的机器架构插件扩展功能如支持优势开源免费社区活跃文档丰富高度可扩展通过插件适应各种技术栈等可视化界面提供构建日志测试报告和趋势分析跨平台支持典型工作流程开发者提交代码到仓库检测到变更触发构建执行编译单元测试代码扫描生成构建产物如镜像部署到测试环境或生产环境需配置流程与其他工具的对比工具特点插件丰富灵活适合复杂场景但需手动维护与深度集成配置简单适合云原生项目原生集成易用性强适合开源项目云托管服务快速启动适合中小团队快速入门安装下载包或使用初始化访问按向导完成配置创建在界面定义或直接编写适用场景需要频繁集成和测试的团队多环境部署微服务架构或容器化项目常用及场景以下是中常用的项目类型及其适用场景的表格概述类型描述适用场景自由风格软件项目提供高度灵活的配置选项允许用户组合不同的构建步骤源码管理方法和构建触发器需要自定义构建过程涉及多种技术栈或工具链对于刚开始使用且需要灵活性的项目项目专为项目设计特别适合使用作为构建工具的项目自动解析文件并执行相应的生命周期阶段基于的项目自动化依赖管理和构建过程利用的插件生态系统使用脚本定义的持续集成持续交付流程支持复杂的逻辑需要定义复杂或多阶段的流程希望将配置纳入版本控制支持多分支流水线等高级特性多分支流水线自动发现代码仓库中的所有分支并分别为每个分支创建一个开发过程中频繁创建新分支不同分支有不同的构建测试或部署要求自动化分支级别的流程自动扫描组织下的所有仓库并根据预定义的规则为每个仓库创建对应的任务管理大型组织下多个项目的快速设置整个组织的自动化流程维护一致的标准文件夹用于组织和管理其他任务的容器可以包含其他任何类型的任务管理大量任务时提高组织性分类和隔离不同团队或项目的任务应用统一的安全策略或权限控制插件介绍是中的一个插件它允许你通过协议将文件或目录从服务器传输到远程服务器并在远程服务器上执行命令这对于部署应用同步文件以及管理远程服务器非常有用主要功能文件传输支持通过将构建产物如文件文件配置文件等上传到远程服务器远程命令执行可以在文件传输完成后在远程服务器上执行任意的命令这可以用于启动服务重启应用等操作多个远程服务器支持可以配置多个远程服务器并根据需要选择向哪个服务器发布内容安全性使用密钥认证机制来确保安全连接避免明文密码在网络中传输的风险使用步骤安装插件在的页面中找到然后在标签页搜索并安装插件配置安装完插件后进入向下滚动至部分添加新的配置包括名称主机名地址用户名及认证信息可以是密码或者私钥路径测试连接以确保配置正确在中使用创建或编辑你的在构建后的操作中添加选项在这里可以选择之前配置好的并指定要发送的文件或目录使用相对路径相对于工作区根目录还可以设置目标路径以及要在远程服务器上执行的命令示例配置示例发送到远程服务器的目录下并重启服务注意上面的例子是一个概念性的描述实际配置时应按照界面提供的表单填写相关信息触发构建每当被触发时例如代码提交触发如果配置了步骤则会自动将指定的文件传输到远程服务器并执行相应的命令通过这种方式你可以自动化地完成从构建到部署的整个过程提高开发效率减少人为错误是实现持续交付和持续部署的重要工具之一与的区别虽然和都涉及到远程服务器的操作但它们的目的和使用场景有着本质的区别下面从几个关键点来区分这两者目的与功能目的扩展主节点的能力实现分布式构建功能通过在不同的机器上运行以前称为可以将构建任务分散到多个节点上执行这有助于提高构建速度隔离环境以及利用不同操作系统或硬件资源适用场景当你需要跨平台构建如同时支持和负载均衡或者隔离构建环境时非常有用目的用于部署应用或文件传输到远程服务器功能主要用来通过协议将构建产物如文件上传到远程服务器并且可以在远程服务器上执行命令例如重启服务它专注于部署流程而非构建过程本身适用场景当你的构建完成后需要将生成的文件部署到生产或其他环境中时使用操作层面在配置时你需要指定该如何连接回主节点比如通过等方式并定义其标签以便于在中选择合适的节点执行任务本质上是作为的一个工作节点存在它可以执行任何被分配的任务包括但不限于编译代码运行测试等更侧重于推送操作即将本地通常是主节点或某个特定的工作空间的文件推送到远程服务器并可能在远程服务器上执行一些命令它通常是在构建完成后作为发布或部署的一部分被调用使用场景示例示例这段脚本指定了使用带有标签的来执行构建步骤示例此脚本展示了如何在构建成功后使用插件将构建产物部署到远程服务器并重启相关服务总结来说是为了实现分布式的构建环境让构建任务能够在多个不同的环境中高效地执行而则是为了简化部署流程帮助你轻松地将构建结果发布到目标服务器上并可选地执行必要的后续命令两者在流程中扮演的角色不同但都是不可或缺的部分一个示例工作目录配置镜像镜像仓库部署配置代码目录内容使用用户避免权限问题验证配置无自定义使用默认配置当前仓库配置开始构建构建镜像打标签停止并移除旧容器如果存在启动新容器等待服务启动健康检查清理工作区前修复权限部署成功访问地址构建失败失败阶段详情日志一些坑部署的无法使用命令解决方案在内部安装同时挂在推送到私有仓库是必须有证书',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-08-06 17:46:17',
+  postMainColor: '#707DE2',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Hexo/" style="font-size: 1.05rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 1.05rem;">Http<sup>1</sup></a><a href="/tags/JPA/" style="font-size: 1.05rem;">JPA<sup>1</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>6</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>1</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>4</sup></a><a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" style="font-size: 1.05rem;">中间件<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 1.05rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 1.05rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 1.05rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.05rem;">数据结构<sup>4</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 1.05rem;">权限校验<sup>3</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.05rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>1</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>1</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">11</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">28</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">8</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/" itemprop="url">云原生</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/CI-CD/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>CI/CD</span></a><a class="article-meta__tags" href="/tags/%E8%BF%90%E7%BB%B4/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>运维</span></a></span></div></div><h1 class="post-title" itemprop="name headline">CI/CD</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2025-08-04T08:24:03.928Z" title="Created 2025-08-04 16:24:03">2025-08-04</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2025-08-06T09:46:17.981Z" title="Updated 2025-08-06 17:46:17">2025-08-06</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://origin.picgo.net/2025/08/06/6f09addd20454c0f9372635276c5dd472c07d39c6992c2ac.png"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2025/08/04/CI_CD/"><header><a class="post-meta-categories" href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/" itemprop="url">云原生</a><a href="/tags/CI-CD/" tabindex="-1" itemprop="url">CI/CD</a><a href="/tags/%E8%BF%90%E7%BB%B4/" tabindex="-1" itemprop="url">运维</a><h1 id="CrawlerTitle" itemprop="name headline">CI/CD</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2025-08-04T08:24:03.928Z" title="Created 2025-08-04 16:24:03">2025-08-04</time><time itemprop="dateCreated datePublished" datetime="2025-08-06T09:46:17.981Z" title="Updated 2025-08-06 17:46:17">2025-08-06</time></header><h2 id="CI-CD"><a href="#CI-CD" class="headerlink" title="CI&#x2F;CD"></a>CI&#x2F;CD</h2><p>CI&#x2F;CD代表持续集成（Continuous Integration）、持续交付（Continuous Delivery）和持续部署（Continuous Deployment）。这些实践是现代软件开发中提高效率、减少错误和加快产品上市时间的关键方法。</p>
+<ol>
+<li><p><strong>持续集成（Continuous Integration, CI）</strong>：这是一种软件开发实践，其中团队成员频繁地将他们的工作代码合并到共享的主线中。每次集成都通过自动化构建（包括编译、发布、自动化测试）来验证，以便尽早发现集成错误。这种方法有助于减少集成问题，并让团队能够更快地发展项目。</p>
+</li>
+<li><p><strong>持续交付（Continuous Delivery, CD）</strong>：这是在持续集成的基础上更进一步，确保软件可以快速、可靠地被发布到生产环境。除了自动化测试外，还可能包含部署到预生产环境的自动化过程，以确保应用程序随时可以部署到生产环境中。持续交付的目标是让发布过程变得简单且低风险。</p>
+</li>
+<li><p><strong>持续部署（Continuous Deployment, CD）</strong>：这是一个更激进的做法，意味着每次更改在通过了所有测试后都会自动部署到生产环境。持续部署要求有非常强的自动化测试覆盖率，以保证质量并降低上线的风险。</p>
+</li>
+</ol>
+<p>实施CI&#x2F;CD流程通常需要使用特定的工具链来支持，如Jenkins、GitLab CI、CircleCI、Travis CI等用于构建和测试；Docker、Kubernetes等用于容器化和服务编排；以及各种监控和日志记录工具来跟踪应用的性能和健康状况。通过采用CI&#x2F;CD，团队可以更快地响应客户需求，同时保持高质量标准。</p>
+<h2 id="GitLabCiCd"><a href="#GitLabCiCd" class="headerlink" title="GitLabCiCd"></a>GitLabCiCd</h2><h3 id="GitLab-CI-CD"><a href="#GitLab-CI-CD" class="headerlink" title="GitLab CI&#x2F;CD"></a>GitLab CI&#x2F;CD</h3><p>GitLab CI&#x2F;CD 是 GitLab 提供的一套用于实现持续集成、持续交付和持续部署的工具。通过使用 GitLab CI&#x2F;CD，开发者可以在代码提交或合并请求时自动执行一系列任务，如构建项目、运行测试、部署应用等，从而确保代码的质量和项目的稳定性。</p>
+<h4 id="关键概念"><a href="#关键概念" class="headerlink" title="关键概念"></a>关键概念</h4><ul>
+<li><p><strong>Pipeline（流水线）</strong>：一个流水线是由多个阶段组成的序列，每个阶段可以包含一个或多个任务（Job）。在GitLab中，一个典型的流水线包括构建、测试和部署阶段。</p>
+</li>
+<li><p><strong>Job（任务）</strong>：定义了要执行的操作，比如编译代码、运行测试等。Jobs 在 Runner 上执行。</p>
+</li>
+<li><p><strong>Runner（运行器）</strong>：执行 Jobs 的独立进程。Runner 可以是共享的、特定组的或者特定项目的。</p>
+</li>
+<li><p><strong>Stages（阶段）</strong>：代表流水线中的不同部分，例如 build、test 和 deploy 阶段。所有属于同一阶段的任务并行执行，而下一阶段的任务只有在前一阶段的所有任务成功完成后才会开始。</p>
+</li>
+<li><p><strong>.gitlab-ci.yml 文件</strong>：这是 GitLab CI&#x2F;CD 的配置文件，位于项目根目录下。它定义了流水线如何工作，包括 stages、jobs 以及它们的执行规则。</p>
+</li>
+</ul>
+<h4 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h4><ol>
+<li><p><strong>创建 <code>.gitlab-ci.yml</code> 文件</strong>：首先，在你的项目根目录下创建一个名为 <code>.gitlab-ci.yml</code> 的文件。这个文件将告诉 GitLab 如何执行 CI&#x2F;CD 流程。下面是一个简单的例子：</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build_job:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Building the project...&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test_job:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Running tests...&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy_job:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Deploying application...&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>配置 Runner</strong>：你需要有至少一个 Runner 来执行这些任务。你可以在 GitLab 界面中注册一个 Runner，选择适合自己项目的 Runner 类型（共享、组或项目专用）。</p>
+</li>
+<li><p><strong>提交 <code>.gitlab-ci.yml</code> 到仓库</strong>：一旦配置好 <code>.gitlab-ci.yml</code> 并设置了 Runner，提交此文件到你的 GitLab 仓库。此时，GitLab 将自动检测到这个文件，并根据其内容启动相应的流水线。</p>
+</li>
+<li><p><strong>监控与调试</strong>：通过 GitLab UI 中的 CI&#x2F;CD 部分，你可以查看流水线的状态，包括各个 Job 的输出日志。这对于调试失败的 Job 非常有用。</p>
+</li>
+<li><p><strong>优化与扩展</strong>：随着项目的增长，你可能需要调整流水线的结构或添加更多复杂的逻辑，例如条件执行、环境变量、依赖管理等。</p>
+</li>
+</ol>
+<h4 id="进阶功能"><a href="#进阶功能" class="headerlink" title="进阶功能"></a>进阶功能</h4><ul>
+<li><p><strong>环境与部署策略</strong>：GitLab CI&#x2F;CD 支持为不同的环境定义部署策略，比如开发、测试和生产环境。这有助于管理复杂的应用程序生命周期。</p>
+</li>
+<li><p><strong>安全扫描</strong>：GitLab 提供了多种内置的安全扫描工具，如 SAST（静态应用程序安全测试）、DAST（动态应用程序安全测试），可以帮助你在早期发现潜在的安全问题。</p>
+</li>
+<li><p><strong>性能与负载测试</strong>：除了基本的单元和集成测试之外，你还可以集成性能和负载测试工具来保证软件质量。</p>
+</li>
+</ul>
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><p>下面是一个表格，列出了GitLab CI&#x2F;CD中一些常用的命令和说明。请注意，在GitLab CI&#x2F;CD的上下文中，“命令”通常指的是在<code>.gitlab-ci.yml</code>文件中定义的脚本部分或配置指令，而不是直接运行于终端的命令行指令。</p>
+<table>
+<thead>
+<tr>
+<th>命令&#x2F;配置项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>stages</code></td>
+<td>定义流水线中的不同阶段，例如<code>build</code>, <code>test</code>, <code>deploy</code>。同一阶段的任务并行执行，按顺序进行下一个阶段。</td>
+</tr>
+<tr>
+<td><code>job_name</code></td>
+<td>任务名称，用于标识不同的任务。每个任务可以包含多个步骤，由<code>script</code>字段定义。</td>
+</tr>
+<tr>
+<td><code>script</code></td>
+<td>实际要执行的命令列表。这些命令会在Runner上执行，用来完成构建、测试或部署等操作。</td>
+</tr>
+<tr>
+<td><code>before_script</code></td>
+<td>在每个任务之前执行的一组命令。它可用于准备环境，比如安装依赖。</td>
+</tr>
+<tr>
+<td><code>after_script</code></td>
+<td>在所有任务完成后执行的一组命令，无论任务成功与否。适合用于清理工作。</td>
+</tr>
+<tr>
+<td><code>only/except</code></td>
+<td>控制哪些分支或标签触发任务。<code>only</code>指定包括的规则，而<code>except</code>则指定排除的规则。已逐渐被<code>rules</code>取代。</td>
+</tr>
+<tr>
+<td><code>rules</code></td>
+<td>更灵活的任务触发条件设置，可以根据分支、标签、变量等多种条件组合来控制任务是否应该运行。</td>
+</tr>
+<tr>
+<td><code>artifacts</code></td>
+<td>定义哪些文件应该作为构建产物保存，并可用于后续任务或其他流程（如下载到本地）。</td>
+</tr>
+<tr>
+<td><code>cache</code></td>
+<td>指定需要缓存的文件或目录，以加速后续的Pipeline运行。常用于保存依赖包，避免每次都重新下载。</td>
+</tr>
+<tr>
+<td><code>tags</code></td>
+<td>为任务分配标签，以便选择合适的Runner来执行任务。有助于区分不同类型的Runner，如特定语言或操作系统要求的Runner。</td>
+</tr>
+<tr>
+<td><code>variables</code></td>
+<td>定义环境变量，可以在整个Pipeline中使用，也可用于控制任务的行为。</td>
+</tr>
+<tr>
+<td><code>services</code></td>
+<td>允许你在Docker容器中运行额外的服务，如数据库，供你的测试或应用使用。</td>
+</tr>
+</tbody></table>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">DOCKER_IMAGE:</span> <span class="string">&quot;zx-backend&quot;</span> <span class="comment"># 自定义镜像名称</span></span><br><span class="line">  <span class="attr">CONTAINER_NAME:</span> <span class="string">&quot;zx-backend&quot;</span> <span class="comment"># 容器名称</span></span><br><span class="line">  <span class="attr">HARBOR_HOST:</span> <span class="string">&quot;192.168.1.46:8080&quot;</span> <span class="comment"># Harbor 地址</span></span><br><span class="line">  <span class="attr">HARBOR_URL:</span> <span class="string">&quot;http://192.168.1.46:8080&quot;</span></span><br><span class="line">  <span class="attr">HARBOR_PROJECT:</span> <span class="string">&quot;library&quot;</span> <span class="comment"># Harbor 项目名，可根据实际调整</span></span><br><span class="line">  <span class="attr">IMAGE_NAME:</span> <span class="string">&quot;$&#123;HARBOR_HOST&#125;/$&#123;HARBOR_PROJECT&#125;/$&#123;DOCKER_IMAGE&#125;&quot;</span> <span class="comment"># 镜像名称</span></span><br><span class="line">  <span class="attr">HARBOR_USERNAME:</span> <span class="string">&quot;admin&quot;</span> <span class="comment"># Harbor 用户名</span></span><br><span class="line">  <span class="attr">HARBOR_PASSWORD:</span> <span class="string">&quot;XzzN@2024&quot;</span> <span class="comment"># Harbor 密码</span></span><br><span class="line">  <span class="attr">MAVEN_IMAGE:</span> <span class="string">&quot;maven:3.8.6-jdk-8&quot;</span></span><br><span class="line">  <span class="attr">PORT:</span> <span class="string">&quot;28085&quot;</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">package</span> <span class="comment"># 项目打包</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span> <span class="comment"># 构建镜像</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span> <span class="comment"># 部署项目</span></span><br><span class="line"></span><br><span class="line"><span class="attr">package:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">package</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">$MAVEN_IMAGE</span></span><br><span class="line">  <span class="attr">services:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker:dind</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span></span><br><span class="line">  <span class="comment"># 缓存maven依赖</span></span><br><span class="line">  <span class="attr">cache:</span></span><br><span class="line">    <span class="attr">key:</span> <span class="string">global-cache</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">~/.m2/repository</span></span><br><span class="line">    <span class="attr">policy:</span> <span class="string">pull-push</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.m2</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">cp</span> <span class="string">settings.xml</span> <span class="string">~/.m2/settings.xml</span> <span class="comment"># 将项目根目录的 settings.xml 复制到 ~/.m2/settings.xml</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mvn</span> <span class="string">clean</span> <span class="string">package</span> <span class="string">-DskipTests</span> <span class="string">-Dmaven.repo.local=~/.m2/repository</span></span><br><span class="line">  <span class="attr">after_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ls</span> <span class="string">-la</span> <span class="string">target</span></span><br><span class="line">  <span class="attr">artifacts:</span></span><br><span class="line">    <span class="attr">expire_in:</span> <span class="number">1</span> <span class="string">week</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">target/*.jar</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">develop</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker:latest</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">shell</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">login</span> <span class="string">-u</span> <span class="string">&quot;$HARBOR_USERNAME&quot;</span> <span class="string">-p</span> <span class="string">&quot;$HARBOR_PASSWORD&quot;</span> <span class="string">&quot;$HARBOR_HOST&quot;</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ls</span> <span class="string">-la</span> <span class="string">target/</span>  <span class="comment"># 确认 .jar 文件是否存在</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">$IMAGE_NAME:$CI_COMMIT_SHA</span> <span class="string">.</span> <span class="comment"># 构建镜像</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">CURRENT_DATE_TIME=$(date</span> <span class="string">+%Y-%m-%d-%H%M%S)</span> <span class="comment"># 获取当前日期和时间，格式为 YYYY-MM-DD-HHMMSS</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">tag</span> <span class="string">$IMAGE_NAME:$CI_COMMIT_SHA</span> <span class="string">$IMAGE_NAME:$CURRENT_DATE_TIME</span> <span class="comment"># tag时间</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">$IMAGE_NAME:$CI_COMMIT_SHA</span> <span class="comment"># 推送镜像</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">develop</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">shell</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="comment"># 删除旧容器</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">if</span> [ <span class="string">&quot;$(docker ps -aq -f name=$&#123;CONTAINER_NAME&#125;)&quot;</span> ]<span class="string">;</span> <span class="string">then</span> <span class="string">docker</span> <span class="string">stop</span> <span class="string">$&#123;CONTAINER_NAME&#125;</span> <span class="string">&amp;&amp;</span> <span class="string">docker</span> <span class="string">rm</span> <span class="string">$&#123;CONTAINER_NAME&#125;;</span> <span class="string">fi</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">pull</span> <span class="string">$IMAGE_NAME:$CI_COMMIT_SHA</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">run</span> <span class="string">-d</span> <span class="string">--name</span> <span class="string">$CONTAINER_NAME</span> <span class="string">-p</span> <span class="string">$PORT:8890</span> <span class="string">$IMAGE_NAME:$CI_COMMIT_SHA</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">develop</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h2><p>Jenkins 是一个开源的 <strong>持续集成（CI）和持续交付（CD）</strong> 工具，用于自动化软件开发过程中的构建、测试和部署。它基于 Java 开发，支持跨平台运行，并提供了强大的插件生态系统，可以灵活地扩展功能。</p>
+<hr>
+<h3 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a><strong>核心功能</strong></h3><ol>
+<li><p><strong>持续集成（CI）</strong>  </p>
+<ul>
+<li>自动触发代码构建和测试，确保每次代码提交后快速发现错误。</li>
+<li>支持与 Git、SVN 等版本控制系统集成。</li>
+</ul>
+</li>
+<li><p><strong>持续交付&#x2F;部署（CD）</strong>  </p>
+<ul>
+<li>自动化部署到测试、预发布或生产环境。</li>
+<li>支持 Docker、Kubernetes、云平台（AWS、Azure 等）。</li>
+</ul>
+</li>
+<li><p><strong>任务调度与流水线</strong>  </p>
+<ul>
+<li>通过 <strong>Pipeline（Jenkinsfile）</strong> 定义复杂的构建流程（Groovy 语法）。</li>
+<li>支持多分支流水线，适应 Git Flow 等开发模式。</li>
+</ul>
+</li>
+<li><p><strong>丰富的插件生态</strong>  </p>
+<ul>
+<li>超过 1,500 个插件，覆盖代码质量分析（SonarQube）、通知（Slack&#x2F;Email）、安全扫描等。</li>
+</ul>
+</li>
+<li><p><strong>分布式构建</strong>  </p>
+<ul>
+<li>通过 Agent（节点）实现多机器并行构建，加速任务执行。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a><strong>核心概念</strong></h3><ul>
+<li><strong>Job（任务）</strong>：定义一个自动化任务（如构建、测试）。</li>
+<li><strong>Pipeline</strong>：将多个任务串联成流水线，支持复杂流程。</li>
+<li><strong>Agent（节点）</strong>：执行任务的机器（Master&#x2F;Slave 架构）。</li>
+<li><strong>插件（Plugins）</strong>：扩展 Jenkins 功能（如 Git、Docker、Kubernetes 支持）。</li>
+</ul>
+<hr>
+<h3 id="优势"><a href="#优势" class="headerlink" title="优势"></a><strong>优势</strong></h3><ul>
+<li><strong>开源免费</strong>：社区活跃，文档丰富。</li>
+<li><strong>高度可扩展</strong>：通过插件适应各种技术栈（Java、Python、Go 等）。</li>
+<li><strong>可视化界面</strong>：提供构建日志、测试报告和趋势分析。</li>
+<li><strong>跨平台</strong>：支持 Windows、Linux、macOS。</li>
+</ul>
+<hr>
+<h3 id="典型工作流程"><a href="#典型工作流程" class="headerlink" title="典型工作流程"></a><strong>典型工作流程</strong></h3><ol>
+<li>开发者提交代码到 Git 仓库。</li>
+<li>Jenkins 检测到变更，触发构建。</li>
+<li>执行编译、单元测试、代码扫描。</li>
+<li>生成构建产物（如 JAR&#x2F;Docker 镜像）。</li>
+<li>部署到测试环境或生产环境（需配置 CD 流程）。</li>
+</ol>
+<hr>
+<h3 id="与其他工具的对比"><a href="#与其他工具的对比" class="headerlink" title="与其他工具的对比"></a><strong>与其他工具的对比</strong></h3><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jenkins</strong></td>
+<td>插件丰富、灵活，适合复杂场景，但需手动维护。</td>
+</tr>
+<tr>
+<td><strong>GitLab CI</strong></td>
+<td>与 GitLab 深度集成，配置简单（YAML），适合云原生项目。</td>
+</tr>
+<tr>
+<td><strong>GitHub Actions</strong></td>
+<td>原生集成 GitHub，易用性强，适合开源项目。</td>
+</tr>
+<tr>
+<td><strong>CircleCI</strong></td>
+<td>云托管服务，快速启动，适合中小团队。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a><strong>快速入门</strong></h3><ol>
+<li><strong>安装</strong>  <ul>
+<li>下载 <a target="_blank" rel="noopener" href="https://www.jenkins.io/download/">Jenkins WAR 包</a> 或使用 Docker：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 8080:8080 jenkins/jenkins:lts</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><strong>初始化</strong>  <ul>
+<li>访问 <code>http://localhost:8080</code>，按向导完成配置。</li>
+</ul>
+</li>
+<li><strong>创建 Pipeline</strong>  <ul>
+<li>在 Jenkins 界面定义或直接编写 <code>Jenkinsfile</code>。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a><strong>适用场景</strong></h3><ul>
+<li>需要频繁集成和测试的团队。</li>
+<li>多环境部署（Dev&#x2F;Test&#x2F;Production）。</li>
+<li>微服务架构或容器化项目。</li>
+</ul>
+<hr>
+<h2 id="常用item及场景"><a href="#常用item及场景" class="headerlink" title="常用item及场景"></a>常用item及场景</h2><p>以下是Jenkins中常用的项目类型（Item）及其适用场景的表格概述：</p>
+<table>
+<thead>
+<tr>
+<th>Jenkins Item 类型</th>
+<th>描述</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>自由风格软件项目 (Freestyle project)</strong></td>
+<td>提供高度灵活的配置选项，允许用户组合不同的构建步骤、源码管理方法和构建触发器。</td>
+<td>- 需要自定义构建过程。<br>- 涉及多种技术栈或工具链。<br>- 对于刚开始使用Jenkins且需要灵活性的项目。</td>
+</tr>
+<tr>
+<td><strong>Maven项目 (Maven Project)</strong></td>
+<td>专为Java项目设计，特别适合使用Maven作为构建工具的项目。自动解析POM文件并执行相应的生命周期阶段。</td>
+<td>- 基于Maven的Java项目。<br>- 自动化依赖管理和构建过程。<br>- 利用Maven的插件生态系统。</td>
+</tr>
+<tr>
+<td><strong>Pipeline</strong></td>
+<td>使用Groovy脚本定义的持续集成&#x2F;持续交付流程，支持复杂的CI&#x2F;CD逻辑。</td>
+<td>- 需要定义复杂或多阶段的CI&#x2F;CD流程。<br>- 希望将CI&#x2F;CD配置纳入版本控制。<br>- 支持多分支流水线等高级特性。</td>
+</tr>
+<tr>
+<td><strong>多分支流水线 (Multibranch Pipeline)</strong></td>
+<td>自动发现代码仓库中的所有分支，并分别为每个分支创建一个Pipeline。</td>
+<td>- 开发过程中频繁创建新分支。<br>- 不同分支有不同的构建、测试或部署要求。<br>- 自动化分支级别的CI&#x2F;CD流程。</td>
+</tr>
+<tr>
+<td><strong>GitHub Organization</strong></td>
+<td>自动扫描GitHub组织下的所有仓库，并根据预定义的规则为每个仓库创建对应的Jenkins任务。</td>
+<td>- 管理大型GitHub组织下多个项目的CI&#x2F;CD。<br>- 快速设置整个组织的自动化流程。<br>- 维护一致的CI&#x2F;CD标准。</td>
+</tr>
+<tr>
+<td><strong>文件夹 (Folder)</strong></td>
+<td>用于组织和管理其他Jenkins任务的容器。可以包含其他任何类型的Jenkins任务。</td>
+<td>- 管理大量Jenkins任务时提高组织性。<br>- 分类和隔离不同团队或项目的任务。<br>- 应用统一的安全策略或权限控制。</td>
+</tr>
+</tbody></table>
+<h2 id="publish-ssh"><a href="#publish-ssh" class="headerlink" title="publish ssh"></a>publish ssh</h2><h3 id="Publish-Over-SSH-插件介绍"><a href="#Publish-Over-SSH-插件介绍" class="headerlink" title="Publish Over SSH 插件介绍"></a>Publish Over SSH 插件介绍</h3><p><strong>Publish Over SSH</strong> 是 Jenkins 中的一个插件，它允许你通过 SSH 协议将文件或目录从 Jenkins 服务器传输到远程服务器，并在远程服务器上执行命令。这对于部署应用、同步文件以及管理远程服务器非常有用。</p>
+<h4 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h4><ul>
+<li><strong>文件传输</strong>：支持通过 SCP（Secure Copy Protocol）将构建产物（如 JAR 文件、WAR 文件、配置文件等）上传到远程服务器。</li>
+<li><strong>远程命令执行</strong>：可以在文件传输完成后，在远程服务器上执行任意的 shell 命令。这可以用于启动服务、重启应用等操作。</li>
+<li><strong>多个远程服务器支持</strong>：可以配置多个远程服务器，并根据需要选择向哪个服务器发布内容。</li>
+<li><strong>安全性</strong>：使用 SSH 密钥认证机制来确保安全连接，避免明文密码在网络中传输的风险。</li>
+</ul>
+<h4 id="使用步骤-1"><a href="#使用步骤-1" class="headerlink" title="使用步骤"></a>使用步骤</h4><ol>
+<li><p><strong>安装插件</strong>：</p>
+<ul>
+<li>在 Jenkins 的“Manage Jenkins”页面中找到“Manage Plugins”，然后在“Available”标签页搜索并安装“Publish Over SSH”插件。</li>
+</ul>
+</li>
+<li><p><strong>配置 SSH Server</strong>：</p>
+<ul>
+<li>安装完插件后，进入“Manage Jenkins” -&gt; “Configure System”，向下滚动至“Publish over SSH”部分。</li>
+<li>添加新的 SSH server 配置，包括名称、主机名&#x2F;IP地址、用户名及认证信息（可以是密码或者私钥路径）。测试连接以确保配置正确。</li>
+</ul>
+</li>
+<li><p><strong>在 Job 中使用 Publish Over SSH</strong>：</p>
+<ul>
+<li>创建或编辑你的 Jenkins Job，在构建后的操作中添加“Send build artifacts over SSH”选项。</li>
+<li>在这里可以选择之前配置好的 SSH server，并指定要发送的文件或目录（使用相对路径相对于工作区根目录），还可以设置目标路径以及要在远程服务器上执行的命令。</li>
+</ul>
+</li>
+<li><p><strong>示例配置</strong>：</p>
+</li>
+</ol>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例: 发送 target/myapp.jar 到远程服务器的 /opt/myapp 目录下，并重启服务</span></span><br><span class="line"><span class="attr">Transfers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">Remote directory:</span> <span class="string">/opt/myapp</span></span><br><span class="line">    <span class="attr">Source files:</span> <span class="string">target/myapp.jar</span></span><br><span class="line">    <span class="attr">Exec command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">      sudo systemctl stop myapp.service</span></span><br><span class="line"><span class="string">      cp myapp.jar /opt/myapp/</span></span><br><span class="line"><span class="string">      sudo systemctl start myapp.service</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：上面的例子是一个概念性的描述，实际配置时应按照Jenkins界面提供的表单填写相关信息。</p>
+<ol start="5">
+<li><strong>触发构建</strong>：<ul>
+<li>每当 Jenkins Job 被触发时（例如代码提交触发），如果配置了 Publish Over SSH 步骤，则会自动将指定的文件传输到远程服务器，并执行相应的命令。</li>
+</ul>
+</li>
+</ol>
+<p>通过这种方式，你可以自动化地完成从构建到部署的整个过程，提高开发效率，减少人为错误。Publish Over SSH 是实现持续交付（Continuous Delivery）和持续部署（Continuous Deployment）的重要工具之一。</p>
+<h2 id="Jenkins-Agent-与-Publish-Over-SSH-的区别"><a href="#Jenkins-Agent-与-Publish-Over-SSH-的区别" class="headerlink" title="Jenkins Agent 与 Publish Over SSH 的区别"></a>Jenkins Agent 与 Publish Over SSH 的区别</h2><p>虽然 Jenkins Agent 和 Publish Over SSH 都涉及到远程服务器的操作，但它们的目的和使用场景有着本质的区别。下面从几个关键点来区分这两者：</p>
+<h4 id="1-目的与功能"><a href="#1-目的与功能" class="headerlink" title="1. 目的与功能"></a>1. <strong>目的与功能</strong></h4><ul>
+<li><p><strong>Jenkins Agent</strong>：</p>
+<ul>
+<li><strong>目的</strong>：扩展 Jenkins 主节点的能力，实现分布式构建。</li>
+<li><strong>功能</strong>：通过在不同的机器上运行 Jenkins Agent（以前称为 Slave），可以将构建任务分散到多个节点上执行。这有助于提高构建速度、隔离环境以及利用不同操作系统或硬件资源。</li>
+<li><strong>适用场景</strong>：当你需要跨平台构建（如同时支持Windows和Linux）、负载均衡或者隔离构建环境时非常有用。</li>
+</ul>
+</li>
+<li><p><strong>Publish Over SSH</strong>：</p>
+<ul>
+<li><strong>目的</strong>：用于部署应用或文件传输到远程服务器。</li>
+<li><strong>功能</strong>：主要用来通过SSH协议将构建产物（如JAR&#x2F;WAR文件）上传到远程服务器，并且可以在远程服务器上执行命令（例如重启服务）。它专注于部署流程而非构建过程本身。</li>
+<li><strong>适用场景</strong>：当你的构建完成后需要将生成的文件部署到生产或其他环境中时使用。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-操作层面"><a href="#2-操作层面" class="headerlink" title="2. 操作层面"></a>2. <strong>操作层面</strong></h4><ul>
+<li><p><strong>Jenkins Agent</strong>：</p>
+<ul>
+<li>在配置Agent时，你需要指定该Agent如何连接回Jenkins主节点（比如通过JNLP、SSH等方式），并定义其标签（Label），以便于在Pipeline中选择合适的节点执行任务。</li>
+<li>Jenkins Agent本质上是作为Jenkins的一个工作节点存在，它可以执行任何被分配的任务，包括但不限于编译代码、运行测试等。</li>
+</ul>
+</li>
+<li><p><strong>Publish Over SSH</strong>：</p>
+<ul>
+<li>更侧重于“推送”操作，即将本地（通常是Jenkins主节点或某个特定Agent的工作空间）的文件推送到远程服务器，并可能在远程服务器上执行一些命令。</li>
+<li>它通常是在构建完成后作为“发布”或“部署”的一部分被调用。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-使用场景示例"><a href="#3-使用场景示例" class="headerlink" title="3. 使用场景示例"></a>3. <strong>使用场景示例</strong></h4><ul>
+<li><p><strong>Jenkins Agent</strong> 示例：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent &#123; label <span class="string">&#x27;linux&#x27;</span> &#125;</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&#x27;Build&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">&#x27;mvn clean package&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段脚本指定了使用带有<code>linux</code>标签的Agent来执行构建步骤。</p>
+</li>
+<li><p><strong>Publish Over SSH</strong> 示例：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&#x27;Deploy&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sshPublisher(</span><br><span class="line">                    <span class="symbol">publishers:</span> [</span><br><span class="line">                        sshPublisherDesc(</span><br><span class="line">                            <span class="symbol">configName:</span> <span class="string">&#x27;ProductionServer&#x27;</span>,</span><br><span class="line">                            <span class="symbol">transfers:</span> [</span><br><span class="line">                                sshTransfer(</span><br><span class="line">                                    <span class="symbol">sourceFiles:</span> <span class="string">&#x27;target/myapp.jar&#x27;</span>,</span><br><span class="line">                                    <span class="symbol">removePrefix:</span> <span class="string">&#x27;target&#x27;</span>,</span><br><span class="line">                                    <span class="symbol">remoteDirectory:</span> <span class="string">&#x27;/opt/myapp/&#x27;</span></span><br><span class="line">                                )</span><br><span class="line">                            ],</span><br><span class="line">                            <span class="symbol">execCommand:</span> <span class="string">&#x27;sudo systemctl restart myapp.service&#x27;</span></span><br><span class="line">                        )</span><br><span class="line">                    ]</span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此脚本展示了如何在构建成功后，使用Publish Over SSH插件将构建产物部署到远程服务器，并重启相关服务。</p>
+</li>
+</ul>
+<p>总结来说，<strong>Jenkins Agent</strong> 是为了实现分布式的构建环境，让构建任务能够在多个不同的环境中高效地执行；而 <strong>Publish Over SSH</strong> 则是为了简化部署流程，帮助你轻松地将构建结果发布到目标服务器上，并可选地执行必要的后续命令。两者在CI&#x2F;CD流程中扮演的角色不同，但都是不可或缺的部分。</p>
+<h2 id="一个示例"><a href="#一个示例" class="headerlink" title="一个示例"></a>一个示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    triggers &#123;</span><br><span class="line">        gitlab(</span><br><span class="line">            triggerOnPush: <span class="literal">true</span>,</span><br><span class="line">            triggerOnMergeRequest: <span class="literal">false</span>,</span><br><span class="line">            branchFilterType: <span class="string">&#x27;NameBasedFilter&#x27;</span>,</span><br><span class="line">            branchFilterName: <span class="string">&#x27;project/hg&#x27;</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    environment &#123;</span><br><span class="line">        <span class="comment">// 工作目录</span></span><br><span class="line">        WORKSPACE_BASE = <span class="string">&quot;/var/jenkins_home/workspace/zx-knowledge-hg&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Git 配置</span></span><br><span class="line">        GIT_REPO = <span class="string">&quot;http://123.57.244.236:1080/production/zx/knowledge-base/danbaizhi-api-develop.git&quot;</span></span><br><span class="line">        GIT_BRANCH = <span class="string">&quot;project/hg&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Maven 镜像</span></span><br><span class="line">        MAVEN_IMAGE = <span class="string">&quot;maven:3.9.11-eclipse-temurin-17-alpine&quot;</span></span><br><span class="line">        JAR_PATH = <span class="string">&quot;target/*.jar&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Harbor 镜像仓库</span></span><br><span class="line">        HARBOR_HOST = <span class="string">&quot;123.57.244.236:8079&quot;</span></span><br><span class="line">        HARBOR_URL = <span class="string">&quot;http://123.57.244.236:8079&quot;</span></span><br><span class="line">        HARBOR_PROJECT = <span class="string">&quot;library&quot;</span></span><br><span class="line">        DOCKER_IMAGE_NAME = <span class="string">&quot;zx-backend-hg&quot;</span></span><br><span class="line">        IMAGE_REPO = <span class="string">&quot;$&#123;HARBOR_HOST&#125;/$&#123;HARBOR_PROJECT&#125;/$&#123;DOCKER_IMAGE_NAME&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 部署配置</span></span><br><span class="line">        CONTAINER_NAME = <span class="string">&quot;zx-backend-hg&quot;</span></span><br><span class="line">        APP_PORT = <span class="string">&quot;55285&quot;</span></span><br><span class="line">        NETWORK = <span class="string">&quot;zx_dev&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        HARBOR_CREDENTIAL_ID = <span class="string">&#x27;546a45a5-5eae-4d11-ba80-3d5407b1ad85&#x27;</span></span><br><span class="line">        SSH_CREDENTIAL_ID = <span class="string">&#x27;6030f215-cdf3-4bb5-ad6d-21141f339997&#x27;</span></span><br><span class="line">        DEPLOY_SERVER = <span class="string">&#x27;caohongwei@110.157.241.3&#x27;</span></span><br><span class="line">        DEPLOY_SERVER_PORT = <span class="string">&#x27;18243&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&#x27;Checkout Code&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                dir(env.WORKSPACE_BASE) &#123;</span><br><span class="line">                    git(</span><br><span class="line">                        url: env.GIT_REPO,</span><br><span class="line">                        branch: env.GIT_BRANCH,</span><br><span class="line">                        credentialsId: <span class="string">&#x27;79d7c253-c260-4c85-b7e9-b47bee9e0cc3&#x27;</span>,</span><br><span class="line">                        poll: <span class="literal">false</span></span><br><span class="line">                    )</span><br><span class="line">                    sh <span class="string">&#x27;&#x27;</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">                        echo &quot;===== 代码目录内容 =====&quot;</span></span><br><span class="line"><span class="string">                        pwd</span></span><br><span class="line"><span class="string">                        ls -la</span></span><br><span class="line"><span class="string">                    &#x27;</span><span class="string">&#x27;&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&#x27;Maven Build&#x27;</span>) &#123;</span><br><span class="line">            agent &#123;</span><br><span class="line">                docker &#123;</span><br><span class="line">                    image env.MAVEN_IMAGE</span><br><span class="line">                    <span class="comment">// 使用 root 用户避免权限问题</span></span><br><span class="line">                    args <span class="string">&#x27;-u root -v $HOME/.m2:/root/.m2 --network=host&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                dir(env.WORKSPACE_BASE) &#123;</span><br><span class="line">                    sh <span class="string">&#x27;&#x27;</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">                        echo &quot;===== 验证 Maven 配置 =====&quot;</span></span><br><span class="line"><span class="string">                        cat settings.xml || echo &quot;无自定义settings.xml&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                        mkdir -p /root/.m2</span></span><br><span class="line"><span class="string">                        cp -f settings.xml /root/.m2/ || echo &quot;使用默认配置&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                        echo &quot;===== 当前 Maven 仓库配置 =====&quot;</span></span><br><span class="line"><span class="string">                        mvn help:effective-settings | grep -A 10 &quot;&lt;mirrors&gt;&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                        echo &quot;===== 开始构建 =====&quot;</span></span><br><span class="line"><span class="string">                        mvn clean package -DskipTests -s /root/.m2/settings.xml</span></span><br><span class="line"><span class="string">                    &#x27;</span><span class="string">&#x27;&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">  stage(<span class="string">&#x27;Build Docker Image&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                script &#123;</span><br><span class="line">                    <span class="type">def</span> <span class="variable">timestamp</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>().format(<span class="string">&#x27;yyyy-MM-dd-HHmmss&#x27;</span>)</span><br><span class="line">                    <span class="type">def</span> <span class="variable">imageTag</span> <span class="operator">=</span> <span class="string">&quot;$&#123;env.DOCKER_IMAGE_NAME&#125;:$&#123;timestamp&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">                    dir(env.WORKSPACE_BASE) &#123;</span><br><span class="line">                        echo <span class="string">&quot;构建 Docker 镜像：$&#123;imageTag&#125;&quot;</span></span><br><span class="line">                        sh <span class="string">&quot;docker build -f Dockerfile -t $&#123;imageTag&#125; --build-arg JAR_PATH=$&#123;env.JAR_PATH&#125; .&quot;</span></span><br><span class="line"></span><br><span class="line">                        <span class="comment">// 打标签 latest</span></span><br><span class="line">                        sh <span class="string">&quot;docker tag $&#123;imageTag&#125; $&#123;env.DOCKER_IMAGE_NAME&#125;:latest&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&#x27;Run Docker Container&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                script &#123;</span><br><span class="line">                    echo <span class="string">&quot;停止并移除旧容器（如果存在）&quot;</span></span><br><span class="line">                    sh <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                        if docker ps -a --format &#x27;&#123;&#123;.Names&#125;&#125;&#x27; | grep -w $&#123;env.DOCKER_IMAGE_NAME&#125;; then</span></span><br><span class="line"><span class="string">                            docker stop $&#123;env.DOCKER_IMAGE_NAME&#125; || true</span></span><br><span class="line"><span class="string">                            docker rm $&#123;env.DOCKER_IMAGE_NAME&#125; || true</span></span><br><span class="line"><span class="string">                        fi</span></span><br><span class="line"><span class="string">                    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">                    echo <span class="string">&quot;启动新容器&quot;</span></span><br><span class="line">                    sh <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                        docker run -d \\</span></span><br><span class="line"><span class="string">                            --name $&#123;env.DOCKER_IMAGE_NAME&#125; \\</span></span><br><span class="line"><span class="string">                            -p $&#123;env.APP_PORT&#125;:8890 \\</span></span><br><span class="line"><span class="string">                            -p 5005:5005 \\</span></span><br><span class="line"><span class="string">                            --restart unless-stopped \\</span></span><br><span class="line"><span class="string">                            --memory=&quot;16g&quot; \\</span></span><br><span class="line"><span class="string">                            $&#123;env.DOCKER_IMAGE_NAME&#125;:latest</span></span><br><span class="line"><span class="string">                    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">                    echo <span class="string">&quot;等待服务启动...&quot;</span></span><br><span class="line">                    sh <span class="string">&quot;sleep 30&quot;</span></span><br><span class="line"></span><br><span class="line">                    echo <span class="string">&quot;健康检查&quot;</span></span><br><span class="line">                    sh <span class="string">&quot;curl -I http://localhost:$&#123;env.APP_PORT&#125;/health&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    post &#123;</span><br><span class="line">        always &#123;</span><br><span class="line">            script &#123;</span><br><span class="line">                echo <span class="string">&quot;清理工作区前修复权限&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">            cleanWs()</span><br><span class="line">        &#125;</span><br><span class="line">        success &#123;</span><br><span class="line">            echo <span class="string">&quot;✅ 部署成功！访问地址：http://$&#123;env.DEPLOY_SERVER.split(&#x27;@&#x27;)[1]&#125;:$&#123;env.APP_PORT&#125;&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        failure &#123;</span><br><span class="line">            emailext(</span><br><span class="line">                subject: <span class="string">&quot;❌ 构建失败: $&#123;env.JOB_NAME&#125; #$&#123;BUILD_NUMBER&#125;&quot;</span>,</span><br><span class="line">                body: <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                    失败阶段: $&#123;currentBuild.result&#125;</span></span><br><span class="line"><span class="string">                    详情: $&#123;BUILD_URL&#125;</span></span><br><span class="line"><span class="string">                    日志: $&#123;BUILD_URL&#125;console</span></span><br><span class="line"><span class="string">                &quot;&quot;&quot;</span>,</span><br><span class="line">                to: <span class="string">&#x27;devops@example.com&#x27;</span></span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><h3 id="docker部署的Jenkins无法使用docker命令"><a href="#docker部署的Jenkins无法使用docker命令" class="headerlink" title="docker部署的Jenkins无法使用docker命令"></a>docker部署的Jenkins无法使用docker命令</h3><p>解决方案-在docker内部安装docker-cli,同时挂在docker-sock</p>
+<h3 id="docekr推送到私有仓库是https，docker-login必须有证书"><a href="#docekr推送到私有仓库是https，docker-login必须有证书" class="headerlink" title="docekr推送到私有仓库是https，docker.login必须有证书"></a>docekr推送到私有仓库是https，docker.login必须有证书</h3></article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2025/08/04/CI_CD/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2025/08/04/CI_CD/')">CI/CD</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2025/08/04/CI_CD/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=CI/CD&amp;url=http://example.com/2025/08/04/CI_CD/&amp;pic=https://origin.picgo.net/2025/08/06/6f09addd20454c0f9372635276c5dd472c07d39c6992c2ac.png" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/CI-CD/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>CI/CD<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/%E8%BF%90%E7%BB%B4/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>运维<span class="tagsPageCount">2</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://origin.picgo.net/2025/08/07/1eb94f064cf74b04865bdaf1b3c8e9be6939674b9205c975.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/04/K8S%E5%AD%A6%E4%B9%A0-1/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/04/1464965-20191014121056510-1360079349c5670982b9c8f769.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">K8S学习-1</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/06/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_8_06/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">面试记录_2025_8_06</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/08/04/K8S%E5%AD%A6%E4%B9%A0-1/" title="K8S学习-1"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/04/1464965-20191014121056510-1360079349c5670982b9c8f769.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-08-04</div><div class="title">K8S学习-1</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CI-CD"><span class="toc-number">1.</span> <span class="toc-text">CI&#x2F;CD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GitLabCiCd"><span class="toc-number">2.</span> <span class="toc-text">GitLabCiCd</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GitLab-CI-CD"><span class="toc-number">2.1.</span> <span class="toc-text">GitLab CI&#x2F;CD</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%A6%82%E5%BF%B5"><span class="toc-number">2.1.1.</span> <span class="toc-text">关键概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">2.1.2.</span> <span class="toc-text">使用步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E5%8A%9F%E8%83%BD"><span class="toc-number">2.1.3.</span> <span class="toc-text">进阶功能</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">2.2.</span> <span class="toc-text">常用命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins"><span class="toc-number">4.</span> <span class="toc-text">Jenkins</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="toc-number">4.1.</span> <span class="toc-text">核心功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">4.2.</span> <span class="toc-text">核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8A%BF"><span class="toc-number">4.3.</span> <span class="toc-text">优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">4.4.</span> <span class="toc-text">典型工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E5%85%B6%E4%BB%96%E5%B7%A5%E5%85%B7%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">4.5.</span> <span class="toc-text">与其他工具的对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">4.6.</span> <span class="toc-text">快速入门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">4.7.</span> <span class="toc-text">适用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8item%E5%8F%8A%E5%9C%BA%E6%99%AF"><span class="toc-number">5.</span> <span class="toc-text">常用item及场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#publish-ssh"><span class="toc-number">6.</span> <span class="toc-text">publish ssh</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Publish-Over-SSH-%E6%8F%92%E4%BB%B6%E4%BB%8B%E7%BB%8D"><span class="toc-number">6.1.</span> <span class="toc-text">Publish Over SSH 插件介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD"><span class="toc-number">6.1.1.</span> <span class="toc-text">主要功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4-1"><span class="toc-number">6.1.2.</span> <span class="toc-text">使用步骤</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins-Agent-%E4%B8%8E-Publish-Over-SSH-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">7.</span> <span class="toc-text">Jenkins Agent 与 Publish Over SSH 的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%9B%AE%E7%9A%84%E4%B8%8E%E5%8A%9F%E8%83%BD"><span class="toc-number">7.0.1.</span> <span class="toc-text">1. 目的与功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%93%8D%E4%BD%9C%E5%B1%82%E9%9D%A2"><span class="toc-number">7.0.2.</span> <span class="toc-text">2. 操作层面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E7%A4%BA%E4%BE%8B"><span class="toc-number">7.0.3.</span> <span class="toc-text">3. 使用场景示例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%A4%BA%E4%BE%8B"><span class="toc-number">8.</span> <span class="toc-text">一个示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%9D%91"><span class="toc-number">9.</span> <span class="toc-text">一些坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#docker%E9%83%A8%E7%BD%B2%E7%9A%84Jenkins%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8docker%E5%91%BD%E4%BB%A4"><span class="toc-number">9.1.</span> <span class="toc-text">docker部署的Jenkins无法使用docker命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#docekr%E6%8E%A8%E9%80%81%E5%88%B0%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E6%98%AFhttps%EF%BC%8Cdocker-login%E5%BF%85%E9%A1%BB%E6%9C%89%E8%AF%81%E4%B9%A6"><span class="toc-number">9.2.</span> <span class="toc-text">docekr推送到私有仓库是https，docker.login必须有证书</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/08/07/Redis_Hash/" title="Redis_Hash"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/1eb94f064cf74b04865bdaf1b3c8e9be6939674b9205c975.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis_Hash"/></a><div class="content"><a class="title" href="/2025/08/07/Redis_Hash/" title="Redis_Hash">Redis_Hash</a><time datetime="2025-08-07T10:06:45.396Z" title="Created 2025-08-07 18:06:45">2025-08-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/07/Redis_Set/" title="Redis_Set"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/1eb94f064cf74b04865bdaf1b3c8e9be6939674b9205c975.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis_Set"/></a><div class="content"><a class="title" href="/2025/08/07/Redis_Set/" title="Redis_Set">Redis_Set</a><time datetime="2025-08-07T09:47:10.777Z" title="Created 2025-08-07 17:47:10">2025-08-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/07/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_8_07/" title="面试记录_2025_8_07"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试记录_2025_8_07"/></a><div class="content"><a class="title" href="/2025/08/07/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_8_07/" title="面试记录_2025_8_07">面试记录_2025_8_07</a><time datetime="2025-08-07T04:47:29.054Z" title="Created 2025-08-07 12:47:29">2025-08-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/06/Redis_Zset/" title="Redis_Zset"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/1eb94f064cf74b04865bdaf1b3c8e9be6939674b9205c975.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis_Zset"/></a><div class="content"><a class="title" href="/2025/08/06/Redis_Zset/" title="Redis_Zset">Redis_Zset</a><time datetime="2025-08-06T14:46:34.453Z" title="Created 2025-08-06 22:46:34">2025-08-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/06/Redis_BitMap/" title="Redis_BitMap"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/1eb94f064cf74b04865bdaf1b3c8e9be6939674b9205c975.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis_BitMap"/></a><div class="content"><a class="title" href="/2025/08/06/Redis_BitMap/" title="Redis_BitMap">Redis_BitMap</a><time datetime="2025-08-06T13:55:39.209Z" title="Created 2025-08-06 21:55:39">2025-08-06</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">47</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">27</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">18</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Hexo/" style="font-size: 0.88rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 0.88rem;">Http<sup>1</sup></a><a href="/tags/JPA/" style="font-size: 0.88rem;">JPA<sup>1</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>6</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>1</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>4</sup></a><a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" style="font-size: 0.88rem;">中间件<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 0.88rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 0.88rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 0.88rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.88rem;">数据结构<sup>4</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 0.88rem;">权限校验<sup>3</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 0.88rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>1</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>1</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
