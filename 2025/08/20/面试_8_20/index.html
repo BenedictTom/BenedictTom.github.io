@@ -1,0 +1,1032 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>面试_8_20 | Joie's Blog</title><meta name="keywords" content="面试"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="面试_8_20"><meta name="application-name" content="面试_8_20"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="面试_8_20"><meta property="og:url" content="http://example.com/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="什么是反射，有什么安全隐患 概念：运行时检查&amp;#x2F;操作类、方法、字段、构造器，支持动态创建对象、调用方法、读写字段。 优缺点：灵活但有性能损耗（方法句柄&amp;#x2F;缓存可缓解）。 安全风险：突破封装（私有成员可见）、setAccessible 绕过检查、配合反序列化形成 RCE、破坏模块边界&amp;amp;"><meta property="og:locale" content="en"><meta property="og:image" content="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png"><meta name="description" content="什么是反射，有什么安全隐患 概念：运行时检查&amp;#x2F;操作类、方法、字段、构造器，支持动态创建对象、调用方法、读写字段。 优缺点：灵活但有性能损耗（方法句柄&amp;#x2F;缓存可缓解）。 安全风险：突破封装（私有成员可见）、setAccessible 绕过检查、配合反序列化形成 RCE、破坏模块边界&amp;amp;"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: '面试_8_20',
+  postAI: '',
+  pageFillDescription: '什么是反射有什么安全隐患, 反射有哪些应用场景, 什么是序列化与反序列化, 序列化和反序列化是深拷贝还是浅拷贝, 线程池最大等待时间是什么, 线程池怎么区分核心线程和非核心线程, synchronized 和 Lock 有什么区别, synchronized 加在普通方法和静态方法区别？, Lock 怎么实现公平和非公平的, @Transactional 注解什么时候失效, 如何在类内调用另一个事务方法仍生效, 动态代理有哪几种, @Resource 和 @Autowired 区别（name vs type）, 如何使用 @Autowired 按名称注入, 如何解决循环依赖, 懒加载是什么, 事务隔离级别分别解决了什么问题, RR 级别如何解决幻读, MySQL 中有哪几种锁, 🔑 一句话总结：, 🧩 一、先搞清概念：它们的关系就像水果和苹果、香蕉, 📚 二、三种锁分别是什么？（配合例子）, 1️⃣ 记录锁（Record Lock）, 2️⃣ 间隙锁（Gap Lock）, 3️⃣ Next-Key Lock（临键锁）, 🧭 三、关系图解, 🧩 四、为什么需要组合？单独用不行吗？, 🚫 五、什么时候只用记录锁？（不加间隙）, ✅ 场景1：等值查询 + 唯一索引 + 记录存在, ❌ 如果记录不存在还是会加间隙锁！, ✅ 六、总结：一张表说清关系, 💡 最后一句话总结：, HTTP 与 HTTPSHTTPS 如何保证安全, 三次握手过程, 握手期间可以传参数吗, 二面, 接口中可以定义哪些方法, 说一下包装类型包装类型的缓存是什么, 存储小数需要高精度用什么类型, 深拷贝和浅拷贝, 从 Caffeine 获取对象是深拷贝还是浅拷贝, 线程的状态, sleep 和 wait 区别, 线程通信方式, 线程池参数流程, MySQL 索引类型, MyBatis 中  和 $ 区别, 自定义拦截器如何实现, 线程池中提交的任务能取消吗, spring为什么设置为默认单例, springboot 默认的动态代理是哪种为什么, ❌ 常见误解：, ✅ 正确答案：, 证据来源：Spring Boot 源码, 🎯 所以 Spring Boot 的真实行为是：, 🤔 为什么 Spring Boot 要这么做？, 1. 避免代理类型混乱, 2. 统一行为减少坑, 3. 面向类编程更常见, 4. CGLIB 性能已足够好, ✅ 举个例子验证, 🔁 对比：传统 Spring Framework, ✅ 总结, 💡 最佳实践建议, 循环依赖问题如何解决为什么必须三级一级二级为什么不行, 🎯 问题背景：什么是循环依赖？, ✅ Spring 的解决方案：三级缓存（3-level cache）, 三个缓存定义（DefaultSingletonBeanRegistry 中）：, 🧱 为什么需要三级？不能只用一级或二级吗？, ❌ 方案 1：只用一级缓存（singletonObjects）—— 不行！, ❌ 方案 2：用一级 + 二级缓存（提前暴露原始对象）—— 在大多数情况下可以但无法支持 AOP 代理！, 🚨 核心问题：AOP 代理对象 vs 原始对象, ✅ 正确方案：引入三级缓存（ObjectFactory）, 三级缓存的核心思想：, 流程详解：, 🌟 三级缓存的关键优势, 🔁 为什么需要二级缓存？不能只用三级吗？, 🧩 三级缓存的替换过程, ✅ 总结：为什么必须是三级缓存？, 📚 一句话总结什么是反射有什么安全隐患概念运行时检查操作类方法字段构造器支持动态创建对象调用方法读写字段优缺点灵活但有性能损耗方法句柄缓存可缓解安全风险突破封装私有成员可见绕过检查配合反序列化形成破坏模块边界类加载隔离规避最小权限原则白名单黑名单校验禁用不必要的利用限制开放在网关层做反序列化类型白名单反射有哪些应用场景与注解扫描与动态代理映射序列化反序列化框架插件发现测试访问私有通用工具库什么是序列化与反序列化序列化对象字节文本网络传输缓存持久化常见反序列化字节文本对象重建对象图风险不安全反序列化导致链执行应做类型白名单禁用默认信任序列化和反序列化是深拷贝还是浅拷贝一般等价于深拷贝重新构建对象图例外字段不参与外部资源单例线程池等非纯数据对象不被复制自定义可能返回共享实例线程池最大等待时间是什么线程池本身无任务最大等待时间参数常见超时等待结果的最长时间队列提交任务的等待时间需使用有界阻塞队列并显式超时关闭后等待线程池结束的时间空闲线程存活时间不是任务等待时间线程池怎么区分核心线程和非核心线程为核心线程为非核心线程非核心线程空闲超过会回收时核心也会超时回收提交流程先占满核心入队队列满且新建非核心仍超出触发拒绝策略和有什么区别语法与释放关键字自动释放如需手动能力支持可中断获取可超时公平锁多个条件队列无上述扩展可见性与重入两者均保证互斥与可见性均可重入性能场景更灵活适合复杂并发与高竞争简洁优化好加在普通方法和静态方法区别普通方法锁对象是实例不同实例互不影响静态方法锁对象是类同一类所有实例互斥怎么实现公平和非公平的公平取锁非公平新线程可插队实现基础的队列管理获取顺序与唤醒注解什么时候失效非方法同类内自调用未经过代理静态方法无法代理捕获异常未抛出或抛出受检异常默认仅回滚未被管理错误的代理方式异步线程执行数据源事务管理器不匹配如何在类内调用另一个事务方法仍生效通过代理而非需从获取自身代理调用将目标方法拆到另一个由容器注入后调用动态代理有哪几种动态代理基于接口基于子类字节码生成有接口优先否则用和区别按类型装配可配指定名称默认优先按名称字段名显式找不到再按类型如何使用按名称注入在依赖点使用或在候选上使用调整默认选择仍是按类型后选优如何解决循环依赖单例字段注入通过三级缓存提前暴露代理可解构造器循环默认无法解决需拆分依赖改引入原型作用域无法自动解决考虑改为单例或显式装配懒加载是什么延迟到真正使用时才创建加载资源降低启动内存成本关联需注意会话边界避免事务隔离级别分别解决了什么问题读未提交可能脏读读已提交避免脏读仍有不可重复读幻读可重复读避免脏读不可重复读幻读取决于读类型与锁串行化避免三类异常吞吐最低级别如何解决幻读快照读普通版本控制避免幻读当前读记录锁间隙锁封锁范围阻止插入幻行中有哪几种锁粒度表锁行锁记录锁间隙锁锁意向锁与行锁共存提升加锁效率用于解决表锁行锁通信问题元数据锁保护表结构变更锁自增值分配语义共享排他悲观乐观逻辑层这个问题问得非常精准已经触及到锁机制的核心了我们来用大白话图解思维把行锁记录锁间隙锁锁之间的关系彻底讲清楚一句话总结行锁是一个大类它包括了记录锁和间隙锁而实际使用的是它们的组合一先搞清概念它们的关系就像水果和苹果香蕉大类广义具体类型狭义行锁记录锁间隙锁记录间隙所以行锁是统称表示锁某一行或某个范围记录锁间隙锁是具体实现方式的行锁其实是记录锁间隙锁二三种锁分别是什么配合例子我们还是用电影院座位的例子座位号记录锁锁的是已经存在的某一条记录精准修改号座位小王会给这条记录加记录锁锁别人不能改不能删但可以在或之间插入新座位比如或类比你锁住了号座位这把椅子别人不能坐但可以在空地建新椅子间隙锁锁的是两个记录之间的空隙不锁记录本身查询到之间的空位范围查询会加一个间隙锁意思是不允许插入在范围内的新记录所以都会被阻塞类比你在号和号之间拉了一条警戒线写着不准在这之间加新椅子注意间隙锁不锁已存在的记录比如但通常会和记录锁一起用临键锁是记录锁间隙锁的组合锁一个左开右闭的区间默认使用的就是这种锁比如上面的查询实际上会加多个比如锁意思是不允许插入号也不允许改号锁意思是不允许插入号类比你不仅锁住了号椅子还锁住了到之间的空地形成一个完整的保护圈三关系图解座位间隙锁锁之间的空隙记录锁锁这条记录锁包含间隙记录四为什么需要组合单独用不行吗单独用问题解决方案只用记录锁别人可以插入新记录幻读不行只用间隙锁别人不能插但能改已有记录不完整记录锁间隙锁既能防插入又能防修改完美防止幻读所以默认用来实现可重复读隔离级别下的幻读防护五什么时候只用记录锁不加间隙在以下情况只会加记录锁不会加间隙锁场景等值查询唯一索引记录存在是主键或唯一索引且存在只需要锁这一条记录不需要锁间隙因为不可能插入另一个唯一性保证这时就是纯记录锁如果记录不存在还是会加间隙锁不存在但会锁住这个间隙防止别人插入六总结一张表说清关系名称锁什么是否阻塞插入是否阻塞修改使用场景记录锁已存在的某一行不阻塞插入阻塞修改删除精确查询唯一索引间隙锁记录之间的空隙阻塞插入不阻塞修改但通常配合记录锁范围查询防幻读记录左侧间隙阻塞插入阻塞修改默认模式防幻读行锁统称上面三者的总称视情况而定视情况而定所有操作最后一句话总结行锁是总称的行锁机制其实是它由记录锁和间隙锁组成既能锁住已存在的数据又能锁住可能插入新数据的空隙从而彻底防止幻读如果你想了解如何导致死锁或者如何通过索引优化减少锁范围我也可以继续深入与如何保证安全机密性对称加密完整性身份认证证书链与密钥交换现代以提供前向保密三次握手过程客户端服务器客户端确认双方发送接收能力与初始序列号握手期间可以传参数吗可以选项窗口扩大时间戳等握手支持的密码套件版本等一般不携带应用层数据可携带少量二面接口中可以定义哪些方法抽象方法默认方法静态方法私有方法以及常量字段说一下包装类型包装类型的缓存是什么缓存为两个常量上限可通过调整存储小数需要高精度用什么类型优先用构造明确舍入模式与精度深拷贝和浅拷贝浅拷贝复制引用深拷贝复制整个对象图实现序列化重建拷贝构造工厂手写复制重写并深度处理可变字段从获取对象是深拷贝还是浅拷贝默认返回同一引用浅拷贝语义如需隔离存放不可变对象或在后复制线程的状态就绪运行和区别所属在在锁不释放锁释放锁并进入等待队列唤醒到时中断需或超时约束必须在同步块方法内调用线程通信方式原子类线程池参数流程参数流程新线程否则入队队列满且新建非核心仍超出触发拒绝索引类型树聚簇二级哈希全文空间概念前缀索引联合索引覆盖索引最左前缀原则中和区别预编译占位自动转义防注入推荐用于值字符串拼接用于动态对象名表列排序必须白名单校验自定义拦截器如何实现实现注册到配置路径与顺序也可用切面实现横切关注点日志鉴权埋点线程池中提交的任务能取消吗能保存调用未执行从队列移除执行中发送中断信号任务需正确响应中断为什么设置为默认单例大多数业务无状态单例复用降低创建与成本占用更少内存便于统一管理生命周期与横切能力事务事件缓存等依赖注入对象缓存友好启动与运行期性能更好且仅单例可通过三级缓存解决循环依赖线程安全通过无状态不可变设计保障有状态场景可用或作用域默认的动态代理是哪种为什么非常棒的问题我们来澄清一个常见的误解常见误解默认是有接口用代理没接口用这个说法是错误的正确答案默认情况下即无论有没有接口都优先使用代理证据来源源码在中会导入一系列自动配置其中的默认配置是注意这里来源看到关键点了没有强制使用代理所以的真实行为是条件使用的代理方式有接口如代理生成子类没接口普通类代理生成子类统一使用不再优先使用动态代理为什么要这么做避免代理类型混乱传统有的是代理有的是代理类型不一致容易导致尤其是在注入实现类时统一行为减少坑开发者不需要关心有没有接口所有等都能生效即使方法不在接口中面向类编程更常见很多项目并不严格遵循必须定义接口的规范直接在类上加注解更直观性能已足够好现代对的支持很好启动时间和调用性能差异不大宁愿牺牲一点性能换取一致性和开发体验举个例子验证发送邮件给在中即使不在接口中只要你注入的是类型可以注入且事务生效因为默认生成的是代理子类该子类继承可以调用所有方法被正确拦截对比传统环境默认代理策略或无参数有接口无接口统一使用总结默认开启了所以你的理解正确性说明有接口走没接口走这是传统的默认行为默认都走正确无论有没有接口都用代理最佳实践建议在项目中可以放心地在实现类中写方法并加注入实现类类型如都会生效但仍推荐尽量面向接口编程利于测试解耦避免类和方法否则无法代理如果你一定要用代理一句话总结为了开发体验和一致性放弃了优先代理的传统策略改为一律彻底解决了方法不在接口中导致不生效的经典坑循环依赖问题如何解决为什么必须三级一级二级为什么不行问题背景什么是循环依赖依赖又依赖形成循环依赖要在创建的过程中注入但在创建的过程中又要注入怎么办的解决方案三级缓存使用三级缓存机制来解决单例的循环依赖问题三个缓存定义中缓存类型作用一级缓存存放完全初始化好的已创建已填充属性已初始化二级缓存存放早期暴露的原始对象未填充属性未初始化三级缓存存放对象工厂用于创建早期引用为什么需要三级不能只用一级或二级吗我们一步步推导方案只用一级缓存不行一级缓存只存完全创建好的但在循环依赖中还没创建完正在创建中就要被使用如果只等完全创建好再放一级缓存那就一直拿不到死锁结论一级缓存只能存成品无法解决半成品被提前引用的问题方案用一级二级缓存提前暴露原始对象在大多数情况下可以但无法支持代理假设我们这样做创建实例化提前暴露原始对象到二级缓存填充属性创建提前暴露从二级缓存拿到原始对象初始化完成放入一级缓存注入初始化完成放入一级缓存看起来没问题但问题来了如果需要被代理比如加了怎么办核心问题代理对象原始对象假设加了应该返回一个代理对象而不是原始对象但在上面的流程中我们提前把原始对象放入了二级缓存拿到的是的原始对象不是代理对象即使后面创建完了生成了代理对象里持有的还是旧的原始对象结果依赖的没有事务功能失效正确方案引入三级缓存的聪明之处在于提前暴露的不是对象而是一个工厂三级缓存的核心思想三级缓存工厂的作用可以生成早期引用这个引用可以是原始对象也可以是代理对象流程详解创建实例化将放入三级缓存这个工厂的作用返回的早期引用如果需要代理就返回代理对象否则返回原始对象填充属性创建触发发现正在创建中从三级缓存拿到调用执行会检查是否需要代理如果需要生成代理对象并返回如果不需要返回原始对象所以拿到的是正确的早期引用可能是代理对象把这个早期引用放入二级缓存并从三级缓存删除创建完成放入一级缓存回到完成初始化正常生成最终对象可能是代理放入一级缓存替换掉二级缓存中的早期对象三级缓存的关键优势优势说明支持代理通过可以在暴露早期引用时动态决定是否返回代理对象延迟代理创建不在实例化后立即创建代理而是等到被其他依赖时才创建懒加载保证引用一致性后续所有对该的早期引用都通过同一个工厂生成避免多次创建代理为什么需要二级缓存不能只用三级吗可以但效率低三级缓存中的每次调用都可能重新创建对象比如代理为了避免重复创建将生成的早期引用缓存到二级缓存下次再获取时直接从二级缓存取不用再走工厂二级缓存的作用缓存的执行结果避免重复创建早期对象三级缓存的替换过程创建中三级缓存调用工厂二级缓存创建完成一级缓存一旦完全创建好就从一二三级缓存中清理中间状态最终只有一级缓存中有完整的总结为什么必须是三级缓存方案能否解决循环依赖能否支持代理结论只用一级缓存不行一级二级放原始对象拿不到代理不行一级二级三级动态生成代理必须这样核心原因为了在解决循环依赖的同时保证代理的正确性只有通过三级缓存才能在暴露早期引用时动态决定返回原始对象还是代理对象一句话总结用三级缓存不是为了解决循环依赖而是为了在解决循环依赖的同时还能正确生成代理对象如果没有二级缓存就够了但因为有必须用三级缓存来延迟决定返回什么引用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-08-21 17:20:24',
+  postMainColor: '#c87f12ff',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AMQP/" style="font-size: 1.05rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 1.05rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 1.05rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 1.05rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>6</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>5</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 1.05rem;">Spring<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>3</sup></a><a href="/tags/Spring-Data/" style="font-size: 1.05rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 1.05rem;">Swagger<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 1.05rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 1.05rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 1.05rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.05rem;">数据结构<sup>4</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 1.05rem;">权限校验<sup>3</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.05rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>2</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 1.05rem;">面试<sup>3</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">38</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">28</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">8</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95%E8%80%85/" itemprop="url">面试者</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E9%9D%A2%E8%AF%95/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>面试</span></a></span></div></div><h1 class="post-title" itemprop="name headline">面试_8_20</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2025-08-20T08:58:28.187Z" title="Created 2025-08-20 16:58:28">2025-08-20</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2025-08-21T09:20:24.211Z" title="Updated 2025-08-21 17:20:24">2025-08-21</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/"><header><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95%E8%80%85/" itemprop="url">面试者</a><a href="/tags/%E9%9D%A2%E8%AF%95/" tabindex="-1" itemprop="url">面试</a><h1 id="CrawlerTitle" itemprop="name headline">面试_8_20</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2025-08-20T08:58:28.187Z" title="Created 2025-08-20 16:58:28">2025-08-20</time><time itemprop="dateCreated datePublished" datetime="2025-08-21T09:20:24.211Z" title="Updated 2025-08-21 17:20:24">2025-08-21</time></header><h3 id="什么是反射，有什么安全隐患"><a href="#什么是反射，有什么安全隐患" class="headerlink" title="什么是反射，有什么安全隐患"></a>什么是反射，有什么安全隐患</h3><ul>
+<li>概念：运行时检查&#x2F;操作类、方法、字段、构造器，支持动态创建对象、调用方法、读写字段。</li>
+<li>优缺点：灵活但有性能损耗（方法句柄&#x2F;缓存可缓解）。</li>
+<li>安全风险：突破封装（私有成员可见）、setAccessible 绕过检查、配合反序列化形成 RCE、破坏模块边界&#x2F;类加载隔离。</li>
+<li>规避：最小权限原则、白名单&#x2F;黑名单校验、禁用不必要的 setAccessible、利用 JPMS 限制开放、在网关层做反序列化类型白名单。</li>
+</ul>
+<h3 id="反射有哪些应用场景"><a href="#反射有哪些应用场景" class="headerlink" title="反射有哪些应用场景"></a>反射有哪些应用场景</h3><ul>
+<li>IoC&#x2F;DI 与注解扫描、AOP 与动态代理、ORM 映射、序列化&#x2F;反序列化框架、SPI 插件发现、测试访问私有、通用工具库。</li>
+</ul>
+<h3 id="什么是序列化与反序列化"><a href="#什么是序列化与反序列化" class="headerlink" title="什么是序列化与反序列化"></a>什么是序列化与反序列化</h3><ul>
+<li>序列化：对象→字节&#x2F;文本（网络传输、缓存、持久化）。常见：JDK、JSON、Protobuf、Kryo、Hessian。</li>
+<li>反序列化：字节&#x2F;文本→对象（重建对象图）。</li>
+<li>风险：不安全反序列化导致 gadget 链执行；应做类型白名单、禁用默认信任。</li>
+</ul>
+<h3 id="序列化和反序列化是深拷贝还是浅拷贝"><a href="#序列化和反序列化是深拷贝还是浅拷贝" class="headerlink" title="序列化和反序列化是深拷贝还是浅拷贝"></a>序列化和反序列化是深拷贝还是浅拷贝</h3><ul>
+<li>一般等价于“深拷贝”（重新构建对象图）。</li>
+<li>例外：static&#x2F;transient 字段不参与；外部资源、单例、线程池等非纯数据对象不被复制；自定义 readResolve 可能返回共享实例。</li>
+</ul>
+<h3 id="线程池最大等待时间是什么"><a href="#线程池最大等待时间是什么" class="headerlink" title="线程池最大等待时间是什么"></a>线程池最大等待时间是什么</h3><ul>
+<li>线程池本身无“任务最大等待时间”参数。</li>
+<li>常见超时：<ul>
+<li>Future.get(timeout)：等待结果的最长时间。</li>
+<li>队列 offer(task, timeout)：提交任务的等待时间（需使用有界&#x2F;阻塞队列并显式超时）。</li>
+<li>awaitTermination(timeout)：关闭后等待线程池结束的时间。</li>
+</ul>
+</li>
+<li>keepAliveTime：空闲线程存活时间，不是任务等待时间。</li>
+</ul>
+<h3 id="线程池怎么区分核心线程和非核心线程"><a href="#线程池怎么区分核心线程和非核心线程" class="headerlink" title="线程池怎么区分核心线程和非核心线程"></a>线程池怎么区分核心线程和非核心线程</h3><ul>
+<li>&lt;&#x3D; corePoolSize 为核心线程；(corePoolSize, maximumPoolSize] 为非核心线程。</li>
+<li>非核心线程空闲超过 keepAliveTime 会回收；allowCoreThreadTimeOut(true) 时核心也会超时回收。</li>
+<li>提交流程：先占满核心→入队→队列满且 &lt; max 新建非核心→仍超出触发拒绝策略。</li>
+</ul>
+<h3 id="synchronized-和-Lock-有什么区别"><a href="#synchronized-和-Lock-有什么区别" class="headerlink" title="synchronized 和 Lock 有什么区别"></a>synchronized 和 Lock 有什么区别</h3><ul>
+<li>语法与释放：synchronized 关键字、自动释放；Lock（如 ReentrantLock）需手动 unlock。</li>
+<li>能力：Lock 支持可中断获取、可超时、公平锁、多个条件队列；synchronized 无上述扩展。</li>
+<li>可见性与重入：两者均保证互斥与可见性，均可重入。</li>
+<li>性能&#x2F;场景：Lock 更灵活，适合复杂并发与高竞争；synchronized 简洁、JIT 优化好。</li>
+</ul>
+<h3 id="synchronized-加在普通方法和静态方法区别？"><a href="#synchronized-加在普通方法和静态方法区别？" class="headerlink" title="synchronized 加在普通方法和静态方法区别？"></a>synchronized 加在普通方法和静态方法区别？</h3><ul>
+<li>普通方法：锁对象是实例（this），不同实例互不影响。</li>
+<li>静态方法：锁对象是类（Class），同一类所有实例互斥。</li>
+</ul>
+<h3 id="Lock-怎么实现公平和非公平的"><a href="#Lock-怎么实现公平和非公平的" class="headerlink" title="Lock 怎么实现公平和非公平的"></a>Lock 怎么实现公平和非公平的</h3><ul>
+<li>ReentrantLock(boolean fair)：true 公平（FIFO 取锁），false 非公平（新线程可插队）。</li>
+<li>实现基础：AQS 的 CLH 队列管理获取顺序与唤醒。</li>
+</ul>
+<h3 id="Transactional-注解什么时候失效"><a href="#Transactional-注解什么时候失效" class="headerlink" title="@Transactional 注解什么时候失效"></a>@Transactional 注解什么时候失效</h3><ul>
+<li>非 public 方法；同类内自调用（未经过代理）；final&#x2F;静态方法（无法代理）；</li>
+<li>捕获异常未抛出或抛出受检异常（默认仅 RuntimeException 回滚）；</li>
+<li>未被 Spring 管理&#x2F;错误的代理方式；异步线程执行；数据源&#x2F;事务管理器不匹配。</li>
+</ul>
+<h3 id="如何在类内调用另一个事务方法仍生效"><a href="#如何在类内调用另一个事务方法仍生效" class="headerlink" title="如何在类内调用另一个事务方法仍生效"></a>如何在类内调用另一个事务方法仍生效</h3><ul>
+<li>通过代理而非 this：<ul>
+<li>AopContext.currentProxy()（需 expose-proxy）。</li>
+<li>从 ApplicationContext 获取自身代理 Bean 调用。</li>
+<li>将目标方法拆到另一个 Bean，由容器注入后调用。</li>
+</ul>
+</li>
+</ul>
+<h3 id="动态代理有哪几种"><a href="#动态代理有哪几种" class="headerlink" title="动态代理有哪几种"></a>动态代理有哪几种</h3><ul>
+<li>JDK 动态代理（基于接口）；CGLIB（基于子类）；ByteBuddy&#x2F;Javassist（字节码生成）。</li>
+<li>Spring：有接口优先 JDK，否则用 CGLIB。</li>
+</ul>
+<h3 id="Resource-和-Autowired-区别（name-vs-type）"><a href="#Resource-和-Autowired-区别（name-vs-type）" class="headerlink" title="@Resource 和 @Autowired 区别（name vs type）"></a>@Resource 和 @Autowired 区别（name vs type）</h3><ul>
+<li>@Autowired：按类型装配，可配 @Qualifier 指定名称；required 默认 true。</li>
+<li>@Resource：JSR-250，优先按名称（字段名&#x2F;显式 name），找不到再按类型。</li>
+</ul>
+<h3 id="如何使用-Autowired-按名称注入"><a href="#如何使用-Autowired-按名称注入" class="headerlink" title="如何使用 @Autowired 按名称注入"></a>如何使用 @Autowired 按名称注入</h3><ul>
+<li>在依赖点使用 @Qualifier(“beanName”)。</li>
+<li>或在候选上使用 @Primary 调整默认选择（仍是按类型后选优）。</li>
+</ul>
+<h3 id="如何解决循环依赖"><a href="#如何解决循环依赖" class="headerlink" title="如何解决循环依赖"></a>如何解决循环依赖</h3><ul>
+<li>单例 Setter&#x2F;字段注入：Spring 通过三级缓存提前暴露代理可解。</li>
+<li>构造器循环：默认无法解决，需拆分依赖&#x2F;改 Setter&#x2F;引入 @Lazy。</li>
+<li>原型作用域：无法自动解决，考虑改为单例或显式装配。</li>
+</ul>
+<h3 id="懒加载是什么"><a href="#懒加载是什么" class="headerlink" title="懒加载是什么"></a>懒加载是什么</h3><ul>
+<li>延迟到真正使用时才创建&#x2F;加载资源，降低启动&#x2F;内存&#x2F;IO 成本。</li>
+<li>Spring：@Lazy；JPA：LAZY 关联需注意会话边界（避免 LazyInitializationException）。</li>
+</ul>
+<h3 id="事务隔离级别，分别解决了什么问题"><a href="#事务隔离级别，分别解决了什么问题" class="headerlink" title="事务隔离级别，分别解决了什么问题"></a>事务隔离级别，分别解决了什么问题</h3><ul>
+<li>读未提交（Read Uncommitted）：可能脏读。</li>
+<li>读已提交（Read Committed）：避免脏读，仍有不可重复读&#x2F;幻读。</li>
+<li>可重复读（Repeatable Read）：避免脏读&#x2F;不可重复读；幻读取决于读类型与锁。</li>
+<li>串行化（Serializable）：避免三类异常，吞吐最低。</li>
+</ul>
+<h3 id="RR-级别如何解决幻读"><a href="#RR-级别如何解决幻读" class="headerlink" title="RR 级别如何解决幻读"></a>RR 级别如何解决幻读</h3><ul>
+<li>InnoDB：<ul>
+<li>快照读（普通 SELECT）：MVCC 版本控制避免幻读。</li>
+<li>当前读（SELECT … FOR UPDATE&#x2F;UPDATE）：Next-Key Lock（记录锁+间隙锁）封锁范围，阻止插入幻行。</li>
+</ul>
+</li>
+</ul>
+<h3 id="MySQL-中有哪几种锁"><a href="#MySQL-中有哪几种锁" class="headerlink" title="MySQL 中有哪几种锁"></a>MySQL 中有哪几种锁</h3><ul>
+<li>粒度：表锁、行锁（记录锁、间隙锁、Next-Key 锁）。</li>
+<li>意向锁：IX&#x2F;IS（与行锁共存，提升加锁效率）。用于解决表锁行锁通信问题</li>
+<li>元数据锁（MDL）：保护表结构变更；AUTO-INC 锁：自增值分配。</li>
+<li>语义：共享&#x2F;排他、悲观&#x2F;乐观（逻辑层）。</li>
+</ul>
+<p>这个问题问得非常精准，已经触及到 InnoDB 锁机制的核心了！我们来用<strong>大白话+图解思维</strong>，把 <strong>行锁、记录锁、间隙锁、Next-Key 锁</strong>之间的关系彻底讲清楚。</p>
+<hr>
+<h3 id="🔑-一句话总结："><a href="#🔑-一句话总结：" class="headerlink" title="🔑 一句话总结："></a>🔑 一句话总结：</h3><blockquote>
+<p><strong>“行锁”是一个大类，它包括了“记录锁”和“间隙锁”，而 InnoDB 实际使用的是它们的组合：Next-Key Lock。</strong></p>
+</blockquote>
+<hr>
+<h2 id="🧩-一、先搞清概念：它们的关系就像“水果”和“苹果、香蕉”"><a href="#🧩-一、先搞清概念：它们的关系就像“水果”和“苹果、香蕉”" class="headerlink" title="🧩 一、先搞清概念：它们的关系就像“水果”和“苹果、香蕉”"></a>🧩 一、先搞清概念：它们的关系就像“水果”和“苹果、香蕉”</h2><table>
+<thead>
+<tr>
+<th>大类（广义）</th>
+<th>具体类型（狭义）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>行锁（Row-level Lock）</strong></td>
+<td>✅ 记录锁（Record Lock）<br>✅ 间隙锁（Gap Lock）<br>✅ Next-Key Lock（记录 + 间隙）</td>
+</tr>
+</tbody></table>
+<p>👉 所以：</p>
+<ul>
+<li>“行锁”是<strong>统称</strong>，表示“锁某一行或某个范围”</li>
+<li>“记录锁”、“间隙锁”是<strong>具体实现方式</strong></li>
+<li>InnoDB 的“行锁”其实是 <strong>Next-Key Lock</strong>（记录锁 + 间隙锁）</li>
+</ul>
+<hr>
+<h2 id="📚-二、三种锁分别是什么？（配合例子）"><a href="#📚-二、三种锁分别是什么？（配合例子）" class="headerlink" title="📚 二、三种锁分别是什么？（配合例子）"></a>📚 二、三种锁分别是什么？（配合例子）</h2><p>我们还是用电影院座位的例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">座位号：... 3, 5, 8, 9 ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="1️⃣-记录锁（Record-Lock）"><a href="#1️⃣-记录锁（Record-Lock）" class="headerlink" title="1️⃣ 记录锁（Record Lock）"></a>1️⃣ 记录锁（Record Lock）</h3><p>🔒 锁的是 <strong>已经存在的某一条记录</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 精准修改 5 号座位</span></span><br><span class="line"><span class="keyword">UPDATE</span> seats <span class="keyword">SET</span> name <span class="operator">=</span> <span class="string">&#x27;小王&#x27;</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>InnoDB 会给 <code>id=5</code> 这条记录加 <strong>记录锁（X锁）</strong></li>
+<li>别人不能改、不能删 <code>id=5</code></li>
+<li>但可以在 <code>(3,5)</code> 或 <code>(5,8)</code> 之间插入新座位（比如 <code>4</code> 或 <code>6</code>）</li>
+</ul>
+<blockquote>
+<p>✅ 类比：你锁住了“5号座位”这把椅子，别人不能坐，但可以在空地建新椅子。</p>
+</blockquote>
+<hr>
+<h3 id="2️⃣-间隙锁（Gap-Lock）"><a href="#2️⃣-间隙锁（Gap-Lock）" class="headerlink" title="2️⃣ 间隙锁（Gap Lock）"></a>2️⃣ 间隙锁（Gap Lock）</h3><p>🔒 锁的是 <strong>两个记录之间的“空隙”</strong>，不锁记录本身</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询 3 到 8 之间的空位（范围查询）</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> seats <span class="keyword">WHERE</span> id <span class="operator">&gt;</span> <span class="number">3</span> <span class="keyword">AND</span> id <span class="operator">&lt;</span> <span class="number">8</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>InnoDB 会加一个 <strong>间隙锁：(3, 8)</strong></li>
+<li>意思是：“<strong>不允许插入 id 在 (3,8) 范围内的新记录</strong>”</li>
+<li>所以 <code>INSERT INTO seats (id=4)</code>、<code>id=6</code> 都会被阻塞</li>
+</ul>
+<blockquote>
+<p>✅ 类比：你在 3 号和 8 号之间拉了一条警戒线，写着“不准在这之间加新椅子！”</p>
+</blockquote>
+<p>⚠️ 注意：间隙锁 <strong>不锁已存在的记录</strong>（比如 <code>id=5</code>），但通常会和记录锁一起用。</p>
+<hr>
+<h3 id="3️⃣-Next-Key-Lock（临键锁）"><a href="#3️⃣-Next-Key-Lock（临键锁）" class="headerlink" title="3️⃣ Next-Key Lock（临键锁）"></a>3️⃣ Next-Key Lock（临键锁）</h3><p>🔒 是 <strong>记录锁 + 间隙锁</strong> 的组合，锁一个<strong>左开右闭的区间</strong></p>
+<p>InnoDB 默认使用的就是这种锁！</p>
+<p>比如上面的查询：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> seats <span class="keyword">WHERE</span> id <span class="operator">&gt;</span> <span class="number">3</span> <span class="keyword">AND</span> id <span class="operator">&lt;</span> <span class="number">8</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
+
+<p>InnoDB 实际上会加多个 Next-Key Lock，比如：</p>
+<ul>
+<li>锁 <code>(3, 5]</code>：意思是“不允许插入 4 号，也不允许改 5 号”</li>
+<li>锁 <code>(5, 8)</code>：意思是“不允许插入 6、7 号”</li>
+</ul>
+<blockquote>
+<p>✅ 类比：你不仅锁住了“5号椅子”，还锁住了“3到5之间的空地”，形成一个完整的保护圈。</p>
+</blockquote>
+<hr>
+<h2 id="🧭-三、关系图解"><a href="#🧭-三、关系图解" class="headerlink" title="🧭 三、关系图解"></a>🧭 三、关系图解</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">座位：   ...   3     5     8     9   ...</span><br><span class="line"></span><br><span class="line">         ┌─────────────┐</span><br><span class="line">         │   间隙锁     │ → 锁 (3,5) 之间的空隙</span><br><span class="line">         └─────────────┘</span><br><span class="line"></span><br><span class="line">              ┌───────┐</span><br><span class="line">              │记录锁  │ → 锁 id=5 这条记录</span><br><span class="line">              └───────┘</span><br><span class="line"></span><br><span class="line">         ┌───────────────┐</span><br><span class="line">         │  Next-Key Lock │ → 锁 (3,5]：包含间隙 + 记录</span><br><span class="line">         └───────────────┘</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🧩-四、为什么需要组合？单独用不行吗？"><a href="#🧩-四、为什么需要组合？单独用不行吗？" class="headerlink" title="🧩 四、为什么需要组合？单独用不行吗？"></a>🧩 四、为什么需要组合？单独用不行吗？</h2><table>
+<thead>
+<tr>
+<th>单独用</th>
+<th>问题</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只用记录锁</td>
+<td>别人可以插入新记录 → 幻读</td>
+<td>❌ 不行</td>
+</tr>
+<tr>
+<td>只用间隙锁</td>
+<td>别人不能插，但能改已有记录</td>
+<td>❌ 不完整</td>
+</tr>
+<tr>
+<td><strong>记录锁 + 间隙锁（Next-Key）</strong></td>
+<td>既能防插入，又能防修改</td>
+<td>✅ 完美防止幻读</td>
+</tr>
+</tbody></table>
+<p>👉 所以 InnoDB 默认用 <strong>Next-Key Lock</strong> 来实现“可重复读”隔离级别下的<strong>幻读防护</strong>。</p>
+<hr>
+<h2 id="🚫-五、什么时候只用记录锁？（不加间隙）"><a href="#🚫-五、什么时候只用记录锁？（不加间隙）" class="headerlink" title="🚫 五、什么时候只用记录锁？（不加间隙）"></a>🚫 五、什么时候只用记录锁？（不加间隙）</h2><p>在以下情况，InnoDB <strong>只会加记录锁，不会加间隙锁</strong>：</p>
+<h3 id="✅-场景1：等值查询-唯一索引-记录存在"><a href="#✅-场景1：等值查询-唯一索引-记录存在" class="headerlink" title="✅ 场景1：等值查询 + 唯一索引 + 记录存在"></a>✅ 场景1：等值查询 + 唯一索引 + 记录存在</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> seats <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">5</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br><span class="line"><span class="comment">-- id 是主键或唯一索引，且 5 存在</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>只需要锁 <code>id=5</code> 这一条记录</li>
+<li>不需要锁间隙，因为不可能插入另一个 <code>id=5</code>（唯一性保证）</li>
+</ul>
+<p>👉 这时就是 <strong>纯记录锁</strong></p>
+<h3 id="❌-如果记录不存在，还是会加间隙锁！"><a href="#❌-如果记录不存在，还是会加间隙锁！" class="headerlink" title="❌ 如果记录不存在，还是会加间隙锁！"></a>❌ 如果记录不存在，还是会加间隙锁！</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> seats <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">6</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br><span class="line"><span class="comment">-- id=6 不存在，但会锁住 (5,8) 这个间隙，防止别人插入 6</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="✅-六、总结：一张表说清关系"><a href="#✅-六、总结：一张表说清关系" class="headerlink" title="✅ 六、总结：一张表说清关系"></a>✅ 六、总结：一张表说清关系</h2><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>锁什么</th>
+<th>是否阻塞插入</th>
+<th>是否阻塞修改</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>记录锁（Record Lock）</strong></td>
+<td>已存在的某一行</td>
+<td>❌ 不阻塞插入</td>
+<td>✅ 阻塞修改&#x2F;删除</td>
+<td>精确查询（唯一索引）</td>
+</tr>
+<tr>
+<td><strong>间隙锁（Gap Lock）</strong></td>
+<td>记录之间的“空隙”</td>
+<td>✅ 阻塞插入</td>
+<td>❌ 不阻塞修改（但通常配合记录锁）</td>
+<td>范围查询，防幻读</td>
+</tr>
+<tr>
+<td><strong>Next-Key Lock</strong></td>
+<td>记录 + 左侧间隙</td>
+<td>✅ 阻塞插入</td>
+<td>✅ 阻塞修改</td>
+<td>默认模式，防幻读</td>
+</tr>
+<tr>
+<td><strong>行锁（统称）</strong></td>
+<td>上面三者的总称</td>
+<td>视情况而定</td>
+<td>视情况而定</td>
+<td>所有 DML 操作</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="💡-最后一句话总结："><a href="#💡-最后一句话总结：" class="headerlink" title="💡 最后一句话总结："></a>💡 最后一句话总结：</h3><blockquote>
+<p><strong>“行锁”是总称，InnoDB 的“行锁”机制其实是“Next-Key Lock”——它由“记录锁”和“间隙锁”组成，既能锁住已存在的数据，又能锁住可能插入新数据的“空隙”，从而彻底防止幻读。</strong></p>
+</blockquote>
+<hr>
+<p>如果你想了解“Next-Key Lock 如何导致死锁”或者“如何通过索引优化减少锁范围”，我也可以继续深入 😊</p>
+<h3 id="HTTP-与-HTTPS，HTTPS-如何保证安全"><a href="#HTTP-与-HTTPS，HTTPS-如何保证安全" class="headerlink" title="HTTP 与 HTTPS，HTTPS 如何保证安全"></a>HTTP 与 HTTPS，HTTPS 如何保证安全</h3><ul>
+<li>HTTPS &#x3D; HTTP + TLS。</li>
+<li>机密性：对称加密；完整性：MAC&#x2F;AEAD；身份认证：证书链与 CA。</li>
+<li>密钥交换：RSA&#x2F;ECDHE（现代以 ECDHE 提供前向保密 PFS）。</li>
+</ul>
+<h3 id="三次握手过程"><a href="#三次握手过程" class="headerlink" title="三次握手过程"></a>三次握手过程</h3><ul>
+<li>客户端：SYN(seq&#x3D;x) → 服务器：SYN+ACK(seq&#x3D;y, ack&#x3D;x+1) → 客户端：ACK(ack&#x3D;y+1)，确认双方发送&#x2F;接收能力与初始序列号。</li>
+</ul>
+<h3 id="握手期间可以传参数吗"><a href="#握手期间可以传参数吗" class="headerlink" title="握手期间可以传参数吗"></a>握手期间可以传参数吗</h3><ul>
+<li>可以。TCP 选项：MSS、窗口扩大、SACK、时间戳等；</li>
+<li>TLS 握手：SNI、ALPN、支持的密码套件&#x2F;版本等。一般不携带应用层数据（TFO 可携带少量）。</li>
+</ul>
+<h2 id="二面"><a href="#二面" class="headerlink" title="二面"></a>二面</h2><h3 id="接口中可以定义哪些方法"><a href="#接口中可以定义哪些方法" class="headerlink" title="接口中可以定义哪些方法"></a>接口中可以定义哪些方法</h3><ul>
+<li>抽象方法、默认方法（default）、静态方法（static）、私有方法（Java 9+）；以及常量（public static final 字段）。</li>
+</ul>
+<h3 id="说一下包装类型，包装类型的缓存是什么"><a href="#说一下包装类型，包装类型的缓存是什么" class="headerlink" title="说一下包装类型，包装类型的缓存是什么"></a>说一下包装类型，包装类型的缓存是什么</h3><ul>
+<li>缓存：Byte&#x2F;Short&#x2F;Integer&#x2F;Long 为 [-128,127]；Boolean 两个常量；Character [0,127]。</li>
+<li>Integer 上限可通过 JVM -XX:AutoBoxCacheMax 调整。</li>
+</ul>
+<h3 id="存储小数需要高精度用什么类型"><a href="#存储小数需要高精度用什么类型" class="headerlink" title="存储小数需要高精度用什么类型"></a>存储小数需要高精度用什么类型</h3><ul>
+<li>BigDecimal（优先用 String 构造，明确舍入模式与精度）。</li>
+</ul>
+<h3 id="深拷贝和浅拷贝"><a href="#深拷贝和浅拷贝" class="headerlink" title="深拷贝和浅拷贝"></a>深拷贝和浅拷贝</h3><ul>
+<li>浅拷贝：复制引用；深拷贝：复制整个对象图。</li>
+<li>实现：序列化重建、拷贝构造&#x2F;工厂、手写复制、重写 clone 并深度处理可变字段。</li>
+</ul>
+<h3 id="从-Caffeine-获取对象是深拷贝还是浅拷贝"><a href="#从-Caffeine-获取对象是深拷贝还是浅拷贝" class="headerlink" title="从 Caffeine 获取对象是深拷贝还是浅拷贝"></a>从 Caffeine 获取对象是深拷贝还是浅拷贝</h3><ul>
+<li>默认返回同一引用（浅拷贝语义）。如需隔离，存放不可变对象或在 get 后复制。</li>
+</ul>
+<h3 id="线程的状态"><a href="#线程的状态" class="headerlink" title="线程的状态"></a>线程的状态</h3><ul>
+<li>NEW、RUNNABLE（就绪&#x2F;运行）、BLOCKED、WAITING、TIMED_WAITING、TERMINATED。</li>
+</ul>
+<h3 id="sleep-和-wait-区别"><a href="#sleep-和-wait-区别" class="headerlink" title="sleep 和 wait 区别"></a>sleep 和 wait 区别</h3><ul>
+<li>所属：sleep 在 Thread；wait 在 Object。</li>
+<li>锁：sleep 不释放锁；wait 释放锁并进入等待队列。</li>
+<li>唤醒：sleep 到时&#x2F;中断；wait 需 notify&#x2F;notifyAll 或超时。</li>
+<li>约束：wait 必须在同步块&#x2F;方法内调用。</li>
+</ul>
+<h3 id="线程通信方式"><a href="#线程通信方式" class="headerlink" title="线程通信方式"></a>线程通信方式</h3><ul>
+<li>wait&#x2F;notify(ALL)、Lock+Condition、BlockingQueue、CountDownLatch、CyclicBarrier、Semaphore、Exchanger、join、volatile&#x2F;原子类。</li>
+</ul>
+<h3 id="线程池参数，流程"><a href="#线程池参数，流程" class="headerlink" title="线程池参数，流程"></a>线程池参数，流程</h3><ul>
+<li>参数：corePoolSize、maximumPoolSize、keepAliveTime、TimeUnit、workQueue、threadFactory、RejectedExecutionHandler。</li>
+<li>流程：&lt;core 新线程→否则入队→队列满且 &lt;max 新建非核心→仍超出触发拒绝（Abort&#x2F;CallerRuns&#x2F;Discard&#x2F;DiscardOldest）。</li>
+</ul>
+<h3 id="MySQL-索引类型"><a href="#MySQL-索引类型" class="headerlink" title="MySQL 索引类型"></a>MySQL 索引类型</h3><ul>
+<li>B+树（InnoDB 聚簇&#x2F;二级）、哈希（MEMORY）、全文（InnoDB&#x2F;MyISAM）、R-Tree（空间&#x2F;GIS）。</li>
+<li>概念：前缀索引、联合索引、覆盖索引、最左前缀原则。</li>
+</ul>
+<h3 id="MyBatis-中-和-区别"><a href="#MyBatis-中-和-区别" class="headerlink" title="MyBatis 中 # 和 $ 区别"></a>MyBatis 中 # 和 $ 区别</h3><ul>
+<li>#{}：预编译占位，自动转义，防 SQL 注入，推荐用于值。</li>
+<li>${}：字符串拼接，用于动态对象名（表&#x2F;列&#x2F;排序），必须白名单校验。</li>
+</ul>
+<h3 id="自定义拦截器如何实现"><a href="#自定义拦截器如何实现" class="headerlink" title="自定义拦截器如何实现"></a>自定义拦截器如何实现</h3><ul>
+<li>Spring MVC：实现 HandlerInterceptor，注册到 WebMvcConfigurer#addInterceptors，配置路径与顺序。</li>
+<li>也可用 AOP 切面（@Aspect）实现横切关注点（日志、鉴权、埋点）。</li>
+</ul>
+<h3 id="线程池中提交的任务能取消吗"><a href="#线程池中提交的任务能取消吗" class="headerlink" title="线程池中提交的任务能取消吗"></a>线程池中提交的任务能取消吗</h3><ul>
+<li>能。保存 Future，调用 cancel(boolean mayInterruptIfRunning)。</li>
+<li>未执行：从队列移除；执行中：发送中断信号（任务需正确响应中断）。</li>
+</ul>
+<h2 id="spring为什么设置为默认单例"><a href="#spring为什么设置为默认单例" class="headerlink" title="spring为什么设置为默认单例"></a>spring为什么设置为默认单例</h2><ul>
+<li>大多数业务 Bean 无状态，单例复用降低创建与 GC 成本、占用更少内存。</li>
+<li>便于统一管理生命周期与横切能力（AOP、事务、事件、缓存等）。</li>
+<li>依赖注入、对象缓存友好，启动与运行期性能更好；且仅单例可通过三级缓存解决循环依赖。</li>
+<li>线程安全通过无状态&#x2F;不可变设计保障；有状态场景可用 <code>prototype</code> 或 Web 作用域。</li>
+</ul>
+<h2 id="springboot-默认的动态代理是哪种，为什么"><a href="#springboot-默认的动态代理是哪种，为什么" class="headerlink" title="springboot 默认的动态代理是哪种，为什么"></a>springboot 默认的动态代理是哪种，为什么</h2><p>非常棒的问题！我们来澄清一个常见的误解。</p>
+<hr>
+<h2 id="❌-常见误解："><a href="#❌-常见误解：" class="headerlink" title="❌ 常见误解："></a>❌ 常见误解：</h2><blockquote>
+<p>“Spring Boot 默认是：<strong>有接口用 JDK 代理，没接口用 CGLIB</strong>”</p>
+</blockquote>
+<p><strong>这个说法是 ❌ 错误的！</strong></p>
+<hr>
+<h2 id="✅-正确答案："><a href="#✅-正确答案：" class="headerlink" title="✅ 正确答案："></a>✅ 正确答案：</h2><blockquote>
+<p><strong>Spring Boot 默认情况下，<code>proxyTargetClass = true</code>，即：无论有没有接口，都优先使用 CGLIB 代理！</strong></p>
+</blockquote>
+<hr>
+<h3 id="证据来源：Spring-Boot-源码"><a href="#证据来源：Spring-Boot-源码" class="headerlink" title="证据来源：Spring Boot 源码"></a>证据来源：Spring Boot 源码</h3><p>在 Spring Boot 中，<code>@EnableAutoConfiguration</code> 会导入一系列自动配置，其中 AOP 的默认配置是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="meta">@Role(BeanDefinition.ROLE_INFRASTRUCTURE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AopAutoConfiguration</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line">    <span class="meta">@EnableAspectJAutoProxy(proxyTargetClass = true)</span> <span class="comment">// ← 注意这里！</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ClassProxyingConfiguration</span> &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>🔍 来源：<code>org.springframework.boot.autoconfigure.aop.AopAutoConfiguration</code></p>
+</blockquote>
+<p>看到关键点了没有？<br><code>@EnableAspectJAutoProxy(proxyTargetClass = true)</code> —— <strong>强制使用 CGLIB 代理！</strong></p>
+<hr>
+<h2 id="🎯-所以-Spring-Boot-的真实行为是："><a href="#🎯-所以-Spring-Boot-的真实行为是：" class="headerlink" title="🎯 所以 Spring Boot 的真实行为是："></a>🎯 所以 Spring Boot 的真实行为是：</h2><table>
+<thead>
+<tr>
+<th>条件</th>
+<th>使用的代理方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>有接口（如 <code>UserService</code>）</td>
+<td>✅ <strong>CGLIB 代理</strong>（生成子类）</td>
+</tr>
+<tr>
+<td>没接口（普通类）</td>
+<td>✅ <strong>CGLIB 代理</strong>（生成子类）</td>
+</tr>
+</tbody></table>
+<p>👉 <strong>统一使用 CGLIB，不再优先使用 JDK 动态代理！</strong></p>
+<hr>
+<h2 id="🤔-为什么-Spring-Boot-要这么做？"><a href="#🤔-为什么-Spring-Boot-要这么做？" class="headerlink" title="🤔 为什么 Spring Boot 要这么做？"></a>🤔 为什么 Spring Boot 要这么做？</h2><h3 id="1-避免代理类型混乱"><a href="#1-避免代理类型混乱" class="headerlink" title="1. 避免代理类型混乱"></a>1. <strong>避免代理类型混乱</strong></h3><ul>
+<li>传统 Spring：有的 Bean 是 JDK 代理（<code>$Proxy0</code>），有的是 CGLIB 代理（<code>$$EnhancerByCGLIB</code>）。</li>
+<li>类型不一致，容易导致 <code>ClassCastException</code>，尤其是在注入实现类时。</li>
+</ul>
+<h3 id="2-统一行为，减少坑"><a href="#2-统一行为，减少坑" class="headerlink" title="2. 统一行为，减少坑"></a>2. <strong>统一行为，减少坑</strong></h3><ul>
+<li>开发者不需要关心“有没有接口”。</li>
+<li>所有 AOP（<code>@Transactional</code>, <code>@Cacheable</code> 等）都能生效，即使方法不在接口中。</li>
+</ul>
+<h3 id="3-面向类编程更常见"><a href="#3-面向类编程更常见" class="headerlink" title="3. 面向类编程更常见"></a>3. <strong>面向类编程更常见</strong></h3><ul>
+<li>很多项目并不严格遵循“必须定义接口”的规范。</li>
+<li>直接在 Service 类上加注解更直观。</li>
+</ul>
+<h3 id="4-CGLIB-性能已足够好"><a href="#4-CGLIB-性能已足够好" class="headerlink" title="4. CGLIB 性能已足够好"></a>4. <strong>CGLIB 性能已足够好</strong></h3><ul>
+<li>现代 JVM 对 CGLIB 的支持很好，启动时间和调用性能差异不大。</li>
+<li>宁愿牺牲一点性能，换取一致性和开发体验。</li>
+</ul>
+<hr>
+<h2 id="✅-举个例子验证"><a href="#✅-举个例子验证" class="headerlink" title="✅ 举个例子验证"></a>✅ 举个例子验证</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendWelcomeEmail</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;发送邮件给：&quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 Spring Boot 中：</p>
+<ul>
+<li>即使 <code>sendWelcomeEmail</code> 不在 <code>UserService</code> 接口中，</li>
+<li>只要你注入的是 <code>UserServiceImpl</code> 类型：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> UserServiceImpl userService; <span class="comment">// ✅ 可以注入，且事务生效！</span></span><br></pre></td></tr></table></figure>
+
+<p>因为：</p>
+<ul>
+<li>Spring Boot 默认 <code>proxyTargetClass = true</code></li>
+<li>生成的是 CGLIB 代理子类</li>
+<li>该子类继承 <code>UserServiceImpl</code>，可以调用所有方法</li>
+<li><code>@Transactional</code> 被正确拦截</li>
+</ul>
+<hr>
+<h2 id="🔁-对比：传统-Spring-Framework"><a href="#🔁-对比：传统-Spring-Framework" class="headerlink" title="🔁 对比：传统 Spring Framework"></a>🔁 对比：传统 Spring Framework</h2><table>
+<thead>
+<tr>
+<th>环境</th>
+<th>默认 <code>proxyTargetClass</code></th>
+<th>代理策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Spring Framework（XML 或 <code>@EnableAspectJAutoProxy</code> 无参数）</td>
+<td><code>false</code></td>
+<td>有接口 → JDK<br>无接口 → CGLIB</td>
+</tr>
+<tr>
+<td><strong>Spring Boot</strong></td>
+<td><strong><code>true</code></strong></td>
+<td><strong>统一使用 CGLIB</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="✅-总结"><a href="#✅-总结" class="headerlink" title="✅ 总结"></a>✅ 总结</h2><blockquote>
+<p><strong>Spring Boot 默认开启了 <code>proxyTargetClass = true</code>，所以：</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>你的理解</th>
+<th>正确性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“有接口走 JDK，没接口走 CGLIB”</td>
+<td>❌</td>
+<td>这是 <strong>传统 Spring</strong> 的默认行为</td>
+</tr>
+<tr>
+<td>“Spring Boot 默认都走 CGLIB”</td>
+<td>✅</td>
+<td><strong>正确！无论有没有接口，都用 CGLIB 代理</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="💡-最佳实践建议"><a href="#💡-最佳实践建议" class="headerlink" title="💡 最佳实践建议"></a>💡 最佳实践建议</h2><ol>
+<li><p><strong>在 Spring Boot 项目中，可以放心地：</strong></p>
+<ul>
+<li>在实现类中写方法并加 <code>@Transactional</code></li>
+<li>注入实现类类型（如 <code>UserServiceImpl</code>）</li>
+<li>AOP 都会生效 ✅</li>
+</ul>
+</li>
+<li><p><strong>但仍推荐：</strong></p>
+<ul>
+<li>尽量面向接口编程（利于测试、解耦）</li>
+<li>避免 <code>final</code> 类和方法（否则 CGLIB 无法代理）</li>
+</ul>
+</li>
+<li><p><strong>如果你一定要用 JDK 代理：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableAspectJAutoProxy(proxyTargetClass = false)</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<p>✅ <strong>一句话总结：</strong></p>
+<blockquote>
+<p><strong>Spring Boot 为了开发体验和一致性，放弃了“优先 JDK 代理”的传统策略，改为“一律 CGLIB”，彻底解决了“方法不在接口中导致 AOP 不生效”的经典坑。</strong></p>
+</blockquote>
+<h2 id="循环依赖问题如何解决，为什么必须三级，一级二级为什么不行"><a href="#循环依赖问题如何解决，为什么必须三级，一级二级为什么不行" class="headerlink" title="循环依赖问题如何解决，为什么必须三级，一级二级为什么不行"></a>循环依赖问题如何解决，为什么必须三级，一级二级为什么不行</h2><h2 id="🎯-问题背景：什么是循环依赖？"><a href="#🎯-问题背景：什么是循环依赖？" class="headerlink" title="🎯 问题背景：什么是循环依赖？"></a>🎯 问题背景：什么是循环依赖？</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A 依赖 B，B 又依赖 A —— 形成循环依赖。</p>
+<p>Spring 要在创建 <code>A</code> 的过程中注入 <code>B</code>，但在创建 <code>B</code> 的过程中又要注入 <code>A</code>……怎么办？</p>
+<hr>
+<h2 id="✅-Spring-的解决方案：三级缓存（3-level-cache）"><a href="#✅-Spring-的解决方案：三级缓存（3-level-cache）" class="headerlink" title="✅ Spring 的解决方案：三级缓存（3-level cache）"></a>✅ Spring 的解决方案：三级缓存（3-level cache）</h2><p>Spring 使用 <strong>三级缓存机制</strong> 来解决单例 Bean 的循环依赖问题。</p>
+<h3 id="三个缓存定义（DefaultSingletonBeanRegistry-中）："><a href="#三个缓存定义（DefaultSingletonBeanRegistry-中）：" class="headerlink" title="三个缓存定义（DefaultSingletonBeanRegistry 中）："></a>三个缓存定义（<code>DefaultSingletonBeanRegistry</code> 中）：</h3><table>
+<thead>
+<tr>
+<th>缓存</th>
+<th>类型</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>一级缓存</strong></td>
+<td><code>singletonObjects</code></td>
+<td>存放<strong>完全初始化好</strong>的 Bean（已创建、已填充属性、已初始化）</td>
+</tr>
+<tr>
+<td><strong>二级缓存</strong></td>
+<td><code>earlySingletonObjects</code></td>
+<td>存放<strong>早期暴露的原始对象</strong>（未填充属性，未初始化）</td>
+</tr>
+<tr>
+<td><strong>三级缓存</strong></td>
+<td><code>singletonFactories</code></td>
+<td>存放<strong>对象工厂</strong>（<code>ObjectFactory</code>），用于创建早期引用</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧱-为什么需要三级？不能只用一级或二级吗？"><a href="#🧱-为什么需要三级？不能只用一级或二级吗？" class="headerlink" title="🧱 为什么需要三级？不能只用一级或二级吗？"></a>🧱 为什么需要三级？不能只用一级或二级吗？</h2><p>我们一步步推导：</p>
+<hr>
+<h3 id="❌-方案-1：只用一级缓存（singletonObjects）——-不行！"><a href="#❌-方案-1：只用一级缓存（singletonObjects）——-不行！" class="headerlink" title="❌ 方案 1：只用一级缓存（singletonObjects）—— 不行！"></a>❌ 方案 1：只用一级缓存（<code>singletonObjects</code>）—— <strong>不行！</strong></h3><ul>
+<li>一级缓存只存<strong>完全创建好的 Bean</strong>。</li>
+<li>但在循环依赖中，<code>A</code> 还没创建完（正在创建中），就要被 <code>B</code> 使用。</li>
+<li>如果只等 <code>A</code> 完全创建好再放一级缓存，那 <code>B</code> 就一直拿不到 <code>A</code>，死锁！</li>
+</ul>
+<blockquote>
+<p>🔴 <strong>结论</strong>：一级缓存只能存“成品”，无法解决“半成品”被提前引用的问题。</p>
+</blockquote>
+<hr>
+<h3 id="❌-方案-2：用一级-二级缓存（提前暴露原始对象）——-在大多数情况下可以，但无法支持-AOP-代理！"><a href="#❌-方案-2：用一级-二级缓存（提前暴露原始对象）——-在大多数情况下可以，但无法支持-AOP-代理！" class="headerlink" title="❌ 方案 2：用一级 + 二级缓存（提前暴露原始对象）—— 在大多数情况下可以，但无法支持 AOP 代理！"></a>❌ 方案 2：用一级 + 二级缓存（提前暴露原始对象）—— <strong>在大多数情况下可以，但无法支持 AOP 代理！</strong></h3><p>假设我们这样做：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 A</span></span><br><span class="line"><span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>(); <span class="comment">// 实例化</span></span><br><span class="line">addEarlySingleton(a); <span class="comment">// 提前暴露原始对象到二级缓存</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 填充属性：a.b = getBean(&quot;b&quot;)</span></span><br><span class="line">    <span class="comment">// 创建 B</span></span><br><span class="line">    <span class="type">B</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">    addEarlySingleton(b); <span class="comment">// 提前暴露 b</span></span><br><span class="line">    b.a = getBean(<span class="string">&quot;a&quot;</span>); <span class="comment">// 从二级缓存拿到 a（原始对象）</span></span><br><span class="line">    <span class="comment">// b 初始化完成 → 放入一级缓存</span></span><br><span class="line"></span><br><span class="line">a.b = b; <span class="comment">// 注入 b</span></span><br><span class="line"><span class="comment">// a 初始化完成 → 放入一级缓存</span></span><br></pre></td></tr></table></figure>
+
+<p>看起来没问题？✅<br>但问题来了：<strong>如果 A 需要被 AOP 代理（比如加了 <code>@Transactional</code>）怎么办？</strong></p>
+<hr>
+<h2 id="🚨-核心问题：AOP-代理对象-vs-原始对象"><a href="#🚨-核心问题：AOP-代理对象-vs-原始对象" class="headerlink" title="🚨 核心问题：AOP 代理对象 vs 原始对象"></a>🚨 核心问题：AOP 代理对象 vs 原始对象</h2><p>假设 <code>A</code> 加了 <code>@Transactional</code>，Spring 应该返回一个 <strong>代理对象</strong>，而不是原始对象 <code>new A()</code>。</p>
+<p>但在上面的流程中：</p>
+<ul>
+<li>我们提前把 <strong>原始对象 <code>new A()</code></strong> 放入了二级缓存。</li>
+<li><code>B</code> 拿到的是 <code>A</code> 的<strong>原始对象</strong>，不是代理对象！</li>
+<li>即使后面 <code>A</code> 创建完了，生成了代理对象，<code>B</code> 里持有的还是旧的原始对象。</li>
+</ul>
+<blockquote>
+<p>❌ <strong>结果</strong>：<code>B</code> 依赖的 <code>A</code> 没有事务功能，AOP 失效！</p>
+</blockquote>
+<hr>
+<h2 id="✅-正确方案：引入三级缓存（ObjectFactory）"><a href="#✅-正确方案：引入三级缓存（ObjectFactory）" class="headerlink" title="✅ 正确方案：引入三级缓存（ObjectFactory）"></a>✅ 正确方案：引入三级缓存（ObjectFactory）</h2><p>Spring 的聪明之处在于：<strong>提前暴露的不是对象，而是一个“工厂”</strong>。</p>
+<h3 id="三级缓存的核心思想："><a href="#三级缓存的核心思想：" class="headerlink" title="三级缓存的核心思想："></a>三级缓存的核心思想：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 三级缓存：Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories</span></span><br><span class="line"><span class="comment">// 工厂的作用：可以生成“早期引用”，这个引用可以是原始对象，也可以是代理对象！</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="流程详解："><a href="#流程详解：" class="headerlink" title="流程详解："></a>流程详解：</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">1. 创建 A：</span><br><span class="line">   A a = new A(); // 实例化</span><br><span class="line"></span><br><span class="line">2. 将 ObjectFactory 放入三级缓存：</span><br><span class="line">   singletonFactories.put(&quot;a&quot;, () -&gt; &#123;</span><br><span class="line">       // 这个工厂的作用：返回 A 的“早期引用”</span><br><span class="line">       // 如果 A 需要代理，就返回代理对象；否则返回原始对象</span><br><span class="line">       return getEarlyBeanReference(a); </span><br><span class="line">   &#125;);</span><br><span class="line"></span><br><span class="line">3. 填充属性：a.b = getBean(&quot;b&quot;)</span><br><span class="line">   ↓</span><br><span class="line">   创建 B：</span><br><span class="line">     B b = new B();</span><br><span class="line">     b.a = getBean(&quot;a&quot;); // 触发 getBean(&quot;a&quot;)</span><br><span class="line"></span><br><span class="line">4. getBean(&quot;a&quot;) 发现 A 正在创建中：</span><br><span class="line">   - 从三级缓存拿到 ObjectFactory</span><br><span class="line">   - 调用 factory.getObject() → 执行 getEarlyBeanReference(a)</span><br><span class="line"></span><br><span class="line">   getEarlyBeanReference() 会检查：</span><br><span class="line">     - A 是否需要 AOP 代理？</span><br><span class="line">     - 如果需要，生成代理对象并返回</span><br><span class="line">     - 如果不需要，返回原始对象 a</span><br><span class="line"></span><br><span class="line">   → 所以 b.a 拿到的是：**正确的早期引用（可能是代理对象！）**</span><br><span class="line"></span><br><span class="line">5. 把这个早期引用放入二级缓存（earlySingletonObjects），并从三级缓存删除</span><br><span class="line"></span><br><span class="line">6. B 创建完成 → 放入一级缓存</span><br><span class="line"></span><br><span class="line">7. 回到 A：a.b = b</span><br><span class="line">   A 完成初始化 → 正常生成最终对象（可能是代理）</span><br><span class="line">   放入一级缓存，替换掉二级缓存中的早期对象</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🌟-三级缓存的关键优势"><a href="#🌟-三级缓存的关键优势" class="headerlink" title="🌟 三级缓存的关键优势"></a>🌟 三级缓存的关键优势</h2><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>✅ <strong>支持 AOP 代理</strong></td>
+<td>通过 <code>ObjectFactory</code>，可以在暴露早期引用时动态决定是否返回代理对象</td>
+</tr>
+<tr>
+<td>✅ <strong>延迟代理创建</strong></td>
+<td>不在实例化后立即创建代理，而是等到被其他 Bean 依赖时才创建（懒加载）</td>
+</tr>
+<tr>
+<td>✅ <strong>保证引用一致性</strong></td>
+<td>后续所有对该 Bean 的早期引用，都通过同一个工厂生成，避免多次创建代理</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🔁-为什么需要二级缓存？不能只用三级吗？"><a href="#🔁-为什么需要二级缓存？不能只用三级吗？" class="headerlink" title="🔁 为什么需要二级缓存？不能只用三级吗？"></a>🔁 为什么需要二级缓存？不能只用三级吗？</h2><p>可以，但效率低。</p>
+<ul>
+<li>三级缓存中的 <code>ObjectFactory</code> 每次调用 <code>getObject()</code> 都可能重新创建对象（比如代理）。</li>
+<li>为了避免重复创建，Spring 将 <code>ObjectFactory</code> 生成的早期引用<strong>缓存到二级缓存</strong>。</li>
+<li>下次再获取时，直接从二级缓存取，不用再走工厂。</li>
+</ul>
+<blockquote>
+<p>💡 二级缓存的作用：<strong>缓存 <code>ObjectFactory</code> 的执行结果，避免重复创建早期对象</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="🧩-三级缓存的“替换”过程"><a href="#🧩-三级缓存的“替换”过程" class="headerlink" title="🧩 三级缓存的“替换”过程"></a>🧩 三级缓存的“替换”过程</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">创建中：三级缓存 →（调用工厂）→ 二级缓存 →（创建完成）→ 一级缓存</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>一旦 Bean 完全创建好，就从一、二、三级缓存中清理中间状态。</li>
+<li>最终只有<strong>一级缓存</strong>中有完整的 Bean。</li>
+</ul>
+<hr>
+<h2 id="✅-总结：为什么必须是三级缓存？"><a href="#✅-总结：为什么必须是三级缓存？" class="headerlink" title="✅ 总结：为什么必须是三级缓存？"></a>✅ 总结：为什么必须是三级缓存？</h2><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>能否解决循环依赖</th>
+<th>能否支持 AOP 代理</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只用一级缓存</td>
+<td>❌</td>
+<td>❌</td>
+<td>不行</td>
+</tr>
+<tr>
+<td>一级 + 二级（放原始对象）</td>
+<td>✅</td>
+<td>❌（拿不到代理）</td>
+<td><strong>不行</strong></td>
+</tr>
+<tr>
+<td>一级 + 二级 + 三级（ObjectFactory）</td>
+<td>✅</td>
+<td>✅（动态生成代理）</td>
+<td>✅ <strong>必须这样</strong></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>核心原因</strong>：<br><strong>为了在解决循环依赖的同时，保证 AOP 代理的正确性。</strong><br>只有通过 <code>ObjectFactory</code>（三级缓存），才能在暴露早期引用时，动态决定返回“原始对象”还是“代理对象”。</p>
+</blockquote>
+<hr>
+<h2 id="📚-一句话总结"><a href="#📚-一句话总结" class="headerlink" title="📚 一句话总结"></a>📚 一句话总结</h2><blockquote>
+<p><strong>Spring 用三级缓存，不是为了“解决循环依赖”，而是为了“在解决循环依赖的同时，还能正确生成 AOP 代理对象”。</strong><br>如果没有 AOP，二级缓存就够了；但因为有 AOP，必须用三级缓存来“延迟决定”返回什么引用。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/')">面试_8_20</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=面试_8_20&amp;url=http://example.com/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/&amp;pic=https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/%E9%9D%A2%E8%AF%95/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>面试<span class="tagsPageCount">3</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://origin.picgo.net/2025/08/21/MyBatis-144f9929151758527.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/19/Spring_IOC/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/21/Springca9e2519d2cfda6d.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Spring IOC</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/21/mybatis%E7%BC%93%E5%AD%98%E8%AF%A6%E8%A7%A3/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/21/MyBatis-144f9929151758527.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Mybatis缓存详解</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/08/19/%E9%9D%A2%E8%AF%95_%E6%BB%B4%E6%BB%B4/" title="面试_滴滴"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-08-19</div><div class="title">面试_滴滴</div></div></a></div><div><a href="/2025/08/18/%E9%9D%A2%E8%AF%95_%E9%AB%98%E5%BE%B7/" title="面试_高德"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-08-18</div><div class="title">面试_高德</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84%EF%BC%8C%E6%9C%89%E4%BB%80%E4%B9%88%E5%AE%89%E5%85%A8%E9%9A%90%E6%82%A3"><span class="toc-number">1.</span> <span class="toc-text">什么是反射，有什么安全隐患</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E6%9C%89%E5%93%AA%E4%BA%9B%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.</span> <span class="toc-text">反射有哪些应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">什么是序列化与反序列化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%98%AF%E6%B7%B1%E6%8B%B7%E8%B4%9D%E8%BF%98%E6%98%AF%E6%B5%85%E6%8B%B7%E8%B4%9D"><span class="toc-number">4.</span> <span class="toc-text">序列化和反序列化是深拷贝还是浅拷贝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%80%E5%A4%A7%E7%AD%89%E5%BE%85%E6%97%B6%E9%97%B4%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">5.</span> <span class="toc-text">线程池最大等待时间是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%80%8E%E4%B9%88%E5%8C%BA%E5%88%86%E6%A0%B8%E5%BF%83%E7%BA%BF%E7%A8%8B%E5%92%8C%E9%9D%9E%E6%A0%B8%E5%BF%83%E7%BA%BF%E7%A8%8B"><span class="toc-number">6.</span> <span class="toc-text">线程池怎么区分核心线程和非核心线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#synchronized-%E5%92%8C-Lock-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-number">7.</span> <span class="toc-text">synchronized 和 Lock 有什么区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#synchronized-%E5%8A%A0%E5%9C%A8%E6%99%AE%E9%80%9A%E6%96%B9%E6%B3%95%E5%92%8C%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">8.</span> <span class="toc-text">synchronized 加在普通方法和静态方法区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lock-%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E5%85%AC%E5%B9%B3%E5%92%8C%E9%9D%9E%E5%85%AC%E5%B9%B3%E7%9A%84"><span class="toc-number">9.</span> <span class="toc-text">Lock 怎么实现公平和非公平的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Transactional-%E6%B3%A8%E8%A7%A3%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%A4%B1%E6%95%88"><span class="toc-number">10.</span> <span class="toc-text">@Transactional 注解什么时候失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8%E7%B1%BB%E5%86%85%E8%B0%83%E7%94%A8%E5%8F%A6%E4%B8%80%E4%B8%AA%E4%BA%8B%E5%8A%A1%E6%96%B9%E6%B3%95%E4%BB%8D%E7%94%9F%E6%95%88"><span class="toc-number">11.</span> <span class="toc-text">如何在类内调用另一个事务方法仍生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D"><span class="toc-number">12.</span> <span class="toc-text">动态代理有哪几种</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resource-%E5%92%8C-Autowired-%E5%8C%BA%E5%88%AB%EF%BC%88name-vs-type%EF%BC%89"><span class="toc-number">13.</span> <span class="toc-text">@Resource 和 @Autowired 区别（name vs type）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Autowired-%E6%8C%89%E5%90%8D%E7%A7%B0%E6%B3%A8%E5%85%A5"><span class="toc-number">14.</span> <span class="toc-text">如何使用 @Autowired 按名称注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96"><span class="toc-number">15.</span> <span class="toc-text">如何解决循环依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%87%92%E5%8A%A0%E8%BD%BD%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">16.</span> <span class="toc-text">懒加载是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%8C%E5%88%86%E5%88%AB%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">17.</span> <span class="toc-text">事务隔离级别，分别解决了什么问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RR-%E7%BA%A7%E5%88%AB%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%B9%BB%E8%AF%BB"><span class="toc-number">18.</span> <span class="toc-text">RR 级别如何解决幻读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-%E4%B8%AD%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%E9%94%81"><span class="toc-number">19.</span> <span class="toc-text">MySQL 中有哪几种锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%91-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">20.</span> <span class="toc-text">🔑 一句话总结：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E4%B8%80%E3%80%81%E5%85%88%E6%90%9E%E6%B8%85%E6%A6%82%E5%BF%B5%EF%BC%9A%E5%AE%83%E4%BB%AC%E7%9A%84%E5%85%B3%E7%B3%BB%E5%B0%B1%E5%83%8F%E2%80%9C%E6%B0%B4%E6%9E%9C%E2%80%9D%E5%92%8C%E2%80%9C%E8%8B%B9%E6%9E%9C%E3%80%81%E9%A6%99%E8%95%89%E2%80%9D"><span class="toc-number"></span> <span class="toc-text">🧩 一、先搞清概念：它们的关系就像“水果”和“苹果、香蕉”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%9A-%E4%BA%8C%E3%80%81%E4%B8%89%E7%A7%8D%E9%94%81%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%EF%BC%88%E9%85%8D%E5%90%88%E4%BE%8B%E5%AD%90%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">📚 二、三种锁分别是什么？（配合例子）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%B8%8F%E2%83%A3-%E8%AE%B0%E5%BD%95%E9%94%81%EF%BC%88Record-Lock%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">1️⃣ 记录锁（Record Lock）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%B8%8F%E2%83%A3-%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%88Gap-Lock%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">2️⃣ 间隙锁（Gap Lock）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%B8%8F%E2%83%A3-Next-Key-Lock%EF%BC%88%E4%B8%B4%E9%94%AE%E9%94%81%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">3️⃣ Next-Key Lock（临键锁）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%AD-%E4%B8%89%E3%80%81%E5%85%B3%E7%B3%BB%E5%9B%BE%E8%A7%A3"><span class="toc-number"></span> <span class="toc-text">🧭 三、关系图解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E5%9B%9B%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%BB%84%E5%90%88%EF%BC%9F%E5%8D%95%E7%8B%AC%E7%94%A8%E4%B8%8D%E8%A1%8C%E5%90%97%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🧩 四、为什么需要组合？单独用不行吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%AB-%E4%BA%94%E3%80%81%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%8F%AA%E7%94%A8%E8%AE%B0%E5%BD%95%E9%94%81%EF%BC%9F%EF%BC%88%E4%B8%8D%E5%8A%A0%E9%97%B4%E9%9A%99%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">🚫 五、什么时候只用记录锁？（不加间隙）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E5%9C%BA%E6%99%AF1%EF%BC%9A%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2-%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95-%E8%AE%B0%E5%BD%95%E5%AD%98%E5%9C%A8"><span class="toc-number">1.</span> <span class="toc-text">✅ 场景1：等值查询 + 唯一索引 + 记录存在</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9D%8C-%E5%A6%82%E6%9E%9C%E8%AE%B0%E5%BD%95%E4%B8%8D%E5%AD%98%E5%9C%A8%EF%BC%8C%E8%BF%98%E6%98%AF%E4%BC%9A%E5%8A%A0%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%81"><span class="toc-number">2.</span> <span class="toc-text">❌ 如果记录不存在，还是会加间隙锁！</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E5%85%AD%E3%80%81%E6%80%BB%E7%BB%93%EF%BC%9A%E4%B8%80%E5%BC%A0%E8%A1%A8%E8%AF%B4%E6%B8%85%E5%85%B3%E7%B3%BB"><span class="toc-number"></span> <span class="toc-text">✅ 六、总结：一张表说清关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%A1-%E6%9C%80%E5%90%8E%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">💡 最后一句话总结：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-%E4%B8%8E-HTTPS%EF%BC%8CHTTPS-%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%AE%89%E5%85%A8"><span class="toc-number">2.</span> <span class="toc-text">HTTP 与 HTTPS，HTTPS 如何保证安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">三次握手过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%A1%E6%89%8B%E6%9C%9F%E9%97%B4%E5%8F%AF%E4%BB%A5%E4%BC%A0%E5%8F%82%E6%95%B0%E5%90%97"><span class="toc-number">4.</span> <span class="toc-text">握手期间可以传参数吗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E9%9D%A2"><span class="toc-number"></span> <span class="toc-text">二面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%8F%AF%E4%BB%A5%E5%AE%9A%E4%B9%89%E5%93%AA%E4%BA%9B%E6%96%B9%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">接口中可以定义哪些方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8C%85%E8%A3%85%E7%B1%BB%E5%9E%8B%EF%BC%8C%E5%8C%85%E8%A3%85%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BC%93%E5%AD%98%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">说一下包装类型，包装类型的缓存是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%B0%8F%E6%95%B0%E9%9C%80%E8%A6%81%E9%AB%98%E7%B2%BE%E5%BA%A6%E7%94%A8%E4%BB%80%E4%B9%88%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">存储小数需要高精度用什么类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B5%85%E6%8B%B7%E8%B4%9D"><span class="toc-number">4.</span> <span class="toc-text">深拷贝和浅拷贝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E-Caffeine-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E6%98%AF%E6%B7%B1%E6%8B%B7%E8%B4%9D%E8%BF%98%E6%98%AF%E6%B5%85%E6%8B%B7%E8%B4%9D"><span class="toc-number">5.</span> <span class="toc-text">从 Caffeine 获取对象是深拷贝还是浅拷贝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">6.</span> <span class="toc-text">线程的状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sleep-%E5%92%8C-wait-%E5%8C%BA%E5%88%AB"><span class="toc-number">7.</span> <span class="toc-text">sleep 和 wait 区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text">线程通信方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8F%82%E6%95%B0%EF%BC%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">9.</span> <span class="toc-text">线程池参数，流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-%E7%B4%A2%E5%BC%95%E7%B1%BB%E5%9E%8B"><span class="toc-number">10.</span> <span class="toc-text">MySQL 索引类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MyBatis-%E4%B8%AD-%E5%92%8C-%E5%8C%BA%E5%88%AB"><span class="toc-number">11.</span> <span class="toc-text">MyBatis 中 # 和 $ 区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8B%A6%E6%88%AA%E5%99%A8%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0"><span class="toc-number">12.</span> <span class="toc-text">自定义拦截器如何实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%AD%E6%8F%90%E4%BA%A4%E7%9A%84%E4%BB%BB%E5%8A%A1%E8%83%BD%E5%8F%96%E6%B6%88%E5%90%97"><span class="toc-number">13.</span> <span class="toc-text">线程池中提交的任务能取消吗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AE%BE%E7%BD%AE%E4%B8%BA%E9%BB%98%E8%AE%A4%E5%8D%95%E4%BE%8B"><span class="toc-number"></span> <span class="toc-text">spring为什么设置为默认单例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springboot-%E9%BB%98%E8%AE%A4%E7%9A%84%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%98%AF%E5%93%AA%E7%A7%8D%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88"><span class="toc-number"></span> <span class="toc-text">springboot 默认的动态代理是哪种，为什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9D%8C-%E5%B8%B8%E8%A7%81%E8%AF%AF%E8%A7%A3%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">❌ 常见误解：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E6%AD%A3%E7%A1%AE%E7%AD%94%E6%A1%88%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">✅ 正确答案：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E6%8D%AE%E6%9D%A5%E6%BA%90%EF%BC%9ASpring-Boot-%E6%BA%90%E7%A0%81"><span class="toc-number">1.</span> <span class="toc-text">证据来源：Spring Boot 源码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E6%89%80%E4%BB%A5-Spring-Boot-%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%A1%8C%E4%B8%BA%E6%98%AF%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">🎯 所以 Spring Boot 的真实行为是：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A4%94-%E4%B8%BA%E4%BB%80%E4%B9%88-Spring-Boot-%E8%A6%81%E8%BF%99%E4%B9%88%E5%81%9A%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🤔 为什么 Spring Boot 要这么做？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%81%BF%E5%85%8D%E4%BB%A3%E7%90%86%E7%B1%BB%E5%9E%8B%E6%B7%B7%E4%B9%B1"><span class="toc-number">1.</span> <span class="toc-text">1. 避免代理类型混乱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%BB%9F%E4%B8%80%E8%A1%8C%E4%B8%BA%EF%BC%8C%E5%87%8F%E5%B0%91%E5%9D%91"><span class="toc-number">2.</span> <span class="toc-text">2. 统一行为，减少坑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%9D%A2%E5%90%91%E7%B1%BB%E7%BC%96%E7%A8%8B%E6%9B%B4%E5%B8%B8%E8%A7%81"><span class="toc-number">3.</span> <span class="toc-text">3. 面向类编程更常见</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-CGLIB-%E6%80%A7%E8%83%BD%E5%B7%B2%E8%B6%B3%E5%A4%9F%E5%A5%BD"><span class="toc-number">4.</span> <span class="toc-text">4. CGLIB 性能已足够好</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%BE%E4%B8%AA%E4%BE%8B%E5%AD%90%E9%AA%8C%E8%AF%81"><span class="toc-number"></span> <span class="toc-text">✅ 举个例子验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%81-%E5%AF%B9%E6%AF%94%EF%BC%9A%E4%BC%A0%E7%BB%9F-Spring-Framework"><span class="toc-number"></span> <span class="toc-text">🔁 对比：传统 Spring Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">✅ 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%92%A1-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="toc-number"></span> <span class="toc-text">💡 最佳实践建议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E9%97%AE%E9%A2%98%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BF%85%E9%A1%BB%E4%B8%89%E7%BA%A7%EF%BC%8C%E4%B8%80%E7%BA%A7%E4%BA%8C%E7%BA%A7%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%A1%8C"><span class="toc-number"></span> <span class="toc-text">循环依赖问题如何解决，为什么必须三级，一级二级为什么不行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AF%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🎯 问题背景：什么是循环依赖？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-Spring-%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%883-level-cache%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">✅ Spring 的解决方案：三级缓存（3-level cache）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E4%B8%AA%E7%BC%93%E5%AD%98%E5%AE%9A%E4%B9%89%EF%BC%88DefaultSingletonBeanRegistry-%E4%B8%AD%EF%BC%89%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">三个缓存定义（DefaultSingletonBeanRegistry 中）：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%B1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%89%E7%BA%A7%EF%BC%9F%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%94%A8%E4%B8%80%E7%BA%A7%E6%88%96%E4%BA%8C%E7%BA%A7%E5%90%97%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🧱 为什么需要三级？不能只用一级或二级吗？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9D%8C-%E6%96%B9%E6%A1%88-1%EF%BC%9A%E5%8F%AA%E7%94%A8%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%88singletonObjects%EF%BC%89%E2%80%94%E2%80%94-%E4%B8%8D%E8%A1%8C%EF%BC%81"><span class="toc-number">1.</span> <span class="toc-text">❌ 方案 1：只用一级缓存（singletonObjects）—— 不行！</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9D%8C-%E6%96%B9%E6%A1%88-2%EF%BC%9A%E7%94%A8%E4%B8%80%E7%BA%A7-%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%88%E6%8F%90%E5%89%8D%E6%9A%B4%E9%9C%B2%E5%8E%9F%E5%A7%8B%E5%AF%B9%E8%B1%A1%EF%BC%89%E2%80%94%E2%80%94-%E5%9C%A8%E5%A4%A7%E5%A4%9A%E6%95%B0%E6%83%85%E5%86%B5%E4%B8%8B%E5%8F%AF%E4%BB%A5%EF%BC%8C%E4%BD%86%E6%97%A0%E6%B3%95%E6%94%AF%E6%8C%81-AOP-%E4%BB%A3%E7%90%86%EF%BC%81"><span class="toc-number">2.</span> <span class="toc-text">❌ 方案 2：用一级 + 二级缓存（提前暴露原始对象）—— 在大多数情况下可以，但无法支持 AOP 代理！</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%A8-%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98%EF%BC%9AAOP-%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1-vs-%E5%8E%9F%E5%A7%8B%E5%AF%B9%E8%B1%A1"><span class="toc-number"></span> <span class="toc-text">🚨 核心问题：AOP 代理对象 vs 原始对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E6%AD%A3%E7%A1%AE%E6%96%B9%E6%A1%88%EF%BC%9A%E5%BC%95%E5%85%A5%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%88ObjectFactory%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">✅ 正确方案：引入三级缓存（ObjectFactory）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">三级缓存的核心思想：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">流程详解：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8C%9F-%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E5%85%B3%E9%94%AE%E4%BC%98%E5%8A%BF"><span class="toc-number"></span> <span class="toc-text">🌟 三级缓存的关键优势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%81-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%9F%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%94%A8%E4%B8%89%E7%BA%A7%E5%90%97%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🔁 为什么需要二级缓存？不能只用三级吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E2%80%9C%E6%9B%BF%E6%8D%A2%E2%80%9D%E8%BF%87%E7%A8%8B"><span class="toc-number"></span> <span class="toc-text">🧩 三级缓存的“替换”过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E6%80%BB%E7%BB%93%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BF%85%E9%A1%BB%E6%98%AF%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">✅ 总结：为什么必须是三级缓存？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%9A-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">📚 一句话总结</span></a></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/08/21/mybatis%E7%BC%93%E5%AD%98%E8%AF%A6%E8%A7%A3/" title="Mybatis缓存详解"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/21/MyBatis-144f9929151758527.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mybatis缓存详解"/></a><div class="content"><a class="title" href="/2025/08/21/mybatis%E7%BC%93%E5%AD%98%E8%AF%A6%E8%A7%A3/" title="Mybatis缓存详解">Mybatis缓存详解</a><time datetime="2025-08-21T09:49:57.350Z" title="Created 2025-08-21 17:49:57">2025-08-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/" title="面试_8_20"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试_8_20"/></a><div class="content"><a class="title" href="/2025/08/20/%E9%9D%A2%E8%AF%95_8_20/" title="面试_8_20">面试_8_20</a><time datetime="2025-08-20T08:58:28.187Z" title="Created 2025-08-20 16:58:28">2025-08-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/19/Spring_IOC/" title="Spring IOC"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/21/Springca9e2519d2cfda6d.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring IOC"/></a><div class="content"><a class="title" href="/2025/08/19/Spring_IOC/" title="Spring IOC">Spring IOC</a><time datetime="2025-08-19T07:56:16.141Z" title="Created 2025-08-19 15:56:16">2025-08-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/19/%E9%9D%A2%E8%AF%95_%E6%BB%B4%E6%BB%B4/" title="面试_滴滴"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/202012111639381648986755c150cff23.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试_滴滴"/></a><div class="content"><a class="title" href="/2025/08/19/%E9%9D%A2%E8%AF%95_%E6%BB%B4%E6%BB%B4/" title="面试_滴滴">面试_滴滴</a><time datetime="2025-08-19T03:50:02.090Z" title="Created 2025-08-19 11:50:02">2025-08-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/18/%E5%B9%B6%E5%8F%91_io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="I/O多路复用"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/18/netty99741d1acc3d52a8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="I/O多路复用"/></a><div class="content"><a class="title" href="/2025/08/18/%E5%B9%B6%E5%8F%91_io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="I/O多路复用">I/O多路复用</a><time datetime="2025-08-18T09:41:03.662Z" title="Created 2025-08-18 17:41:03">2025-08-18</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">74</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">35</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">25</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AMQP/" style="font-size: 0.88rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 0.88rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 0.88rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 0.88rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>6</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>5</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 0.88rem;">Spring<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>3</sup></a><a href="/tags/Spring-Data/" style="font-size: 0.88rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 0.88rem;">Swagger<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 0.88rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 0.88rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 0.88rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.88rem;">数据结构<sup>4</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 0.88rem;">权限校验<sup>3</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 0.88rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>2</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 0.88rem;">面试<sup>3</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
