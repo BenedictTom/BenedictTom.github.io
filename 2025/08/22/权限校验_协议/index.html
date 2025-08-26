@@ -1,0 +1,1773 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>单点登录与认证协议 | Joie's Blog</title><meta name="keywords" content="权限校验"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="单点登录与认证协议"><meta name="application-name" content="单点登录与认证协议"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="单点登录与认证协议"><meta property="og:url" content="http://example.com/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="OAuth 2.0 概览OAuth 2.0 是一套“授权”框架，用于在不暴露用户密码的前提下，让第三方应用代表资源所有者访问受保护资源。它关注“凭什么访问”和“访问到什么程度”，而非“你是谁”。  参与方：  Resource Owner（资源所有者）：通常为用户。 Client（客户端应用）：请求"><meta property="og:locale" content="en"><meta property="og:image" content="https://origin.picgo.net/2025/08/22/xAuFeZc84N83facc507a2d9aac.webp"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://origin.picgo.net/2025/08/22/xAuFeZc84N83facc507a2d9aac.webp"><meta name="description" content="OAuth 2.0 概览OAuth 2.0 是一套“授权”框架，用于在不暴露用户密码的前提下，让第三方应用代表资源所有者访问受保护资源。它关注“凭什么访问”和“访问到什么程度”，而非“你是谁”。  参与方：  Resource Owner（资源所有者）：通常为用户。 Client（客户端应用）：请求"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: '单点登录与认证协议',
+  postAI: '',
+  pageFillDescription: 'OAuth 2.0 概览, 常见授权方式（Grants）, 标准端点与交互, 访问令牌与刷新令牌, OAuth 2.0 实践与安全要点, OIDC（OpenID Connect）, OAuth 2.0 与 OIDC 的区别与选型, 常见问题与排查, 术语速览, 以下来源于主播跟通义的聊天记录, 一、什么是分布式 Session？, 解决方案：分布式 Session, 分布式 Session 的核心特点：, 二、Spring Session 是什么？, 三、你提供的代码解析：GulimallSessionConfig, 1. cookieSerializer() 方法 —— 配置 Session ID 的 Cookie 行为, 详细说明：, 2. springSessionDefaultRedisSerializer() 方法 —— 配置 Redis 序列化方式, 原始注释掉的代码：, 当前使用的：, 四、整体流程图（简化版）, 五、常见应用场景, 六、注意事项, 总结, 🌟 一、一句话解释, 🧩 二、举个生活化的例子：餐厅取餐, 🔁 三、技术流程回顾（带 code 的 OAuth2 授权码模式）, ❓ 四、为什么要这么绕？不能直接返回 token 吗？, 如果直接返回 token（比如 ?access_token=xxx）会有什么问题？, ⚠️ 安全风险 1：Token 泄露在 URL 中, ⚠️ 安全风险 2：CSRF + Token 截获, ✅ 五、为什么用 code 模式就安全了？, 🛡 六、code 模式 vs 其他模式对比, ✅ 七、总结：为什么要用 code 换用户信息？, ✅ 一、一句话回答你的问题：, 🔁 二、类比理解：交通工具 vs 出行目的, ✅ 三、详细对比：SSO 与 OAuth2.0 的关系, 1. OAuth2.0 是什么？, 2. 那怎么用 OAuth2.0 实现 SSO？, ✅ OpenID Connect x3D OAuth2.0 + 身份认证（Identity Layer）, 🆚 四、主流 SSO 协议对比, 📌 五、重点区分：OAuth2.0 vs OIDC vs SSO, 🧩 六、举个实际例子：你在谷粒商城用微信登录, ✅ 七、总结回答你的问题, ❌ 不完全对正确说法是：, 🎯 最后建议：如何选择？, ✅ 一、用 code 换 token 就是 OAuth 2.0 的标准实现！, ✔️ 是的！你完全正确！, 🔁 二、OAuth 2.0 vs OpenID Connect：关键区别, 🧩 三、OpenID Connect 在 OAuth 2.0 基础上加了什么？, 1. 新增 scope=openid, 2. 返回 id_token（JWT 格式）, 🛠 四、加上 OIDC 后系统该如何设计？（实战架构）, 场景：谷粒商城（gulimall）实现 SSO 登录, 1. 架构组件, 2. 登录流程（OIDC + 授权码 + PKCE）, 3. 后续请求如何鉴权？, 4. 单点登录如何体现？, ✅ 五、OIDC 的优势（相比纯 OAuth2.0）, 📦 六、推荐技术栈（如何落地）, ✅ 总结, ✅ 简短回答：, 🔁 一、先分清两个概念：认证 vs 鉴权, 🧩 二、OIDC 到底提供了哪些身份信息？, 🏗 三、真实场景：多个系统如何配合 OIDC 做权限控制？, 场景：公司有三个系统, 🔐 登录流程（OIDC 负责认证）, 🛠 各系统如何做权限控制？（自己负责）, 1. Shop 系统, 2. Order 系统, 3. Admin 后台, 🔄 四、OIDC 如何帮助系统做权限？—— 提供锚点, 🌐 五、高级方案：OIDC 如何传递权限信息？（可选）, 方案 1：在 id_token 中加自定义 claim（不推荐大权限）, 方案 2：用 access_token + /userinfo 接口返回权限, 方案 3：系统间同步用户角色（推荐）, ✅ 六、总结：OIDC 到底知道什么？, 🎯 最后一句话：, ✅ 一句话回答：, 🏗 一、OIDC 的核心组件：Identity Provider（IdP）, 常见的 IdP（身份源）包括：, 🔁 二、OIDC 是怎么获取用户身份的？（流程详解）, 🆚 三、对比：OIDC vs OAuth 2.0 的知道用户是谁, 🔄 四、OIDC 也可以代理其他身份源（如微信登录）, ✅ 五、总结：OIDC 怎么知道用户是谁？, 🎯 最后一句话：, ✅ 一句话回答：, 🧩 一、真实世界中的 3 种架构模式, ✅ 模式 1：OIDC Server 拥有统一用户库（推荐）, ✅ 模式 2：OIDC Server 做认证代理（Federated Identity）, ❌ 模式 3：每个系统自己存用户（错误做法）, 🔄 二、OIDC Server 和业务系统的数据关系, 示例：Shop 系统的用户表, 🌐 三、OIDC Server 如何查数据库？—— 实际流程, ✅ 四、为什么需要统一用户库？, 🎯 五、总结：你的问题的答案, 🎁 最后一句话：概览是一套授权框架用于在不暴露用户密码的前提下让第三方应用代表资源所有者访问受保护资源它关注凭什么访问和访问到什么程度而非你是谁参与方资源所有者通常为用户客户端应用请求访问资源的应用授权服务器发放令牌并进行授权资源服务器托管受保护资源校验令牌核心概念授权许可获取令牌的方式如授权码授权码短期一次性码用于换取令牌访问令牌调用资源接口的凭据短期有效刷新令牌用于换取新的访问令牌通常仅在受信任环境下使用权限范围最小化授权原则精确声明允许访问的资源动作重定向地址授权回调地址必须严格匹配预注册列表防护随机串客户端发起授权时生成并校验授权码流在公有客户端中的增强安全机制常见授权方式授权码模式强烈推荐流程要点客户端生成与连同发起授权请求用户在授权服务器登录并同意授权后浏览器重定向回携带与原始客户端用向授权服务器换取可选以及若使用客户端持调用资源服务接口安全性避免令牌暴露在前端防止授权码在中途被窃取后被滥用客户端凭证模式用于后端后端机器到机器调用无用户参与按客户端身份与授权范围发令牌设备码模式适用于输入受限设备如设备获取用户在另一个设备完成登录与授权设备轮询换取令牌已不推荐废弃场景隐式模式令牌经浏览器直接下发存在泄露风险不再推荐资源所有者密码模式暴露用户密码给客户端已被弃用标准端点与交互发起授权返回授权码或错误用授权码客户端凭证设备码换取以及可选撤销令牌查询令牌状态与范围多用于不透明令牌访问令牌与刷新令牌短期可撤销可为不透明字符串也可为自包含声明仅在受信任环境使用通常不下发给纯前端建议启用刷新令牌轮换令牌格式携带签名可离线验证有过期时间签发方受众签发时间等不透明需调用授权服务器才能解析状态服务端更易撤销与集中管理实践与安全要点始终使用授权码后端使用客户端凭证严格校验禁止通配与开放重定向使用防再配合防重放最小化按资源边界拆分避免过度授权短期刷新令牌轮换泄露时可快速失效配合撤销与吊销机制全站强制禁止明文传输令牌避免在中泄露前后端分离推荐前端仅持内存敏感刷新逻辑放后端或使用严格搭配后端会话校验校验证书签名并考虑与黑名单机制回调白名单限制可信来源对第三方脚本谨慎建立在之上目标是身份认证它定义了如何向客户端证明用户是谁并提供标准化的用户信息获取方式关键产物格式通常为面向客户端声明用户身份信息唯一标识等客户端必须验证签名与关键声明与授权服务器一致包含本客户端未过期若使用需与请求时一致防重放通过获取用户可读信息等受控制如发现文档包含授权端点令牌端点地址支持的算法与响应类型等公钥集用于校验的签名常见流程授权码客户端带跳转授权用户登录并同意授权回调附带客户端用换取可选客户端本地验证签名与声明若需要更详细的用户资料用调与的区别与选型定位授权框架解决能否访问可访问到什么基于的认证协议解决你是谁令牌核心是授权凭据引入认证凭据标识用户身份端点与文档在此基础上增加等客户端关注点若仅需代表用户访问资源无登录态展示选即可若需要登录用户身份与资料单点登录选必填推荐选型登录授权码后端服务对接客户端凭证模式设备登录设备码模式可结合获取身份常见问题与排查回调报错检查完全匹配确认原样返回且被校验校验失败核对时间偏差签名算法与缓存策略跨域问题确认授权页与回调页域名配置策略刷新失败是否启用轮换刷新令牌有效期与撤销机制客户端机密是否泄露术语速览请求回调关联与防护防重放仅与相关受众发行者用户唯一标识控制交互体验与会话以下来源于主播跟通义的聊天记录配置类放大作用域指定有效期天会话级关闭浏览器后即失效指定序列化到的序列化器无法保存对象类型反序列化后默认使用封装分布式讲一下同时讲一下这个代码的作用我们来详细讲解一下分布式的概念以及你提供的这段代码的作用一什么是分布式在传统的单体应用中用户的登录状态通常存储在服务器的内存中比如使用存储用户信息这种模式下用户请求必须被同一个服务器处理才能保持登录状态即粘性否则会因为不共享而需要重新登录但在分布式系统或微服务架构中应用被拆分成多个服务部署在不同的服务器或容器上用户的请求可能被负载均衡分发到任意一个实例这时如果仍然保存在每个实例的本地内存中就会导致用户登录后下次请求被分发到另一台服务器丢失需要重新登录多台服务器之间无法共享状态解决方案分布式将数据从服务器本地内存中剥离出来统一存储到一个集中式的数据存储系统中如最常用数据库这样无论用户请求被分发到哪台服务器都可以通过访问这个共享存储来获取信息从而实现共享分布式的核心特点特性说明集中存储所有服务实例共享同一个存储如可扩展性可以轻松横向扩展服务实例数量高可用配合集群可实现高可用跨子域共享可通过配置实现多子域名共享二是什么是提供的一个项目用于透明地支持分布式它对开发者屏蔽了底层细节让你像使用普通一样操作但背后自动将数据存储到等外部存储中主要功能替换默认的实现支持等存储自动管理和支持集群环境下的同步三你提供的代码解析设置的作用域自定义名称有效期天方法配置的行为这个控制浏览器中存储的的行为详细说明将的作用域设置为注意前面会自动加点这样做的好处是子域名之间可以共享例如都能读取同一个实现单点登录的基础默认的名是这里改为目的是避免与其他应用冲突也便于识别设置的最大存活时间为天单位秒即使关闭浏览器天内再次打开仍能保持登录状态持久化登录如果不设置默认是会话级关闭浏览器即失效总结这个配置实现了跨子域的共享自定义名天免登录方法配置序列化方式这个定义了数据如何序列化后存入原始注释掉的代码使用但它有个问题反序列化时无法保留原始对象类型所有对象都会变成导致类型丢失当前使用的这是更高级的序列化器它会在序列化时写入对象的完整类名字段反序列化时可以根据类名还原成原始类型例如你存了一个对象取出来还是类型而不是优势保留类型信息支持复杂对象可读性强中看到的是格式安全性更好相比原生序列化四整体流程图简化版用户登录服务器创建如存入拦截将存入同时返回浏览器下次请求携带任意服务器收到请求解析从查找对应的恢复用户登录状态无需重新登录五常见应用场景场景说明微服务架构多个服务共享用户登录状态负载均衡多台机器部署用户可任意访问单点登录基础通过统一域名实现跨系统登录移动端共用统一认证状态六注意事项必须高可用存储依赖建议使用集群或哨兵模式序列化兼容性使用时存储的对象必须可被序列化有无参构造安全性要防止泄露使用清理机制中的有过期时间会自动维护总结你提供的这段代码是典型的实现分布式的配置功能实现方式跨服务共享使用存储子域名共享登录状态设置为长时间免登录设置有效期为天保持对象类型使用这套机制是构建大型电商平台如谷粒商城用户认证体系的基础组件之一如有需要我还可以补充如何结合注解启用该配置或者如何与结合使用单点登录一般都是有一个对吧然后各个通过登陆但是鉴权逻辑一般都是写在各个自己里面对吗如果要搭建一个单点登录系统建议使用现成的框架还是自己搭建单点登录确实通常包含一个中心化的服务器负责用户认证并且各个客户端应用通过该服务器进行用户登录一旦用户在服务器上完成登录他们就可以无障碍地访问已授权的多个服务或应用而无需再次登录关于鉴权逻辑的位置它既可以存在于服务器也可以存在于各个客户端应用中通常情况下服务器主要负责认证过程即确认用户的身份而具体的资源访问控制和权限检查鉴权则通常由各个应用自己管理这是因为不同的应用可能有不同的资源访问规则和权限需求在考虑是否搭建自己的系统时有以下几点建议使用现成框架如果时间和资源有限或者你希望减少维护成本使用现有的成熟的解决方案是更推荐的选择许多开源项目和商业产品都提供了强大的功能并且已经被广泛测试和使用比如等这些平台提供了丰富的配置选项支持多种认证协议如可以满足大多数场景的需求自行搭建如果你有特定的安全要求或是需要高度定制化那么自行开发系统也是可行的不过这需要投入大量的时间来设计实现和测试系统以确保其安全性此外自行搭建还需要持续关注安全更新和漏洞修复这对团队的技术能力提出了更高的要求综上所述除非你有非常特殊的需求或理由否则建议优先考虑使用现有的框架或服务这样不仅可以节省开发时间还能利用社区和供应商提供的支持和更新降低风险同时选择合适的工具也能帮助你更容易地集成和扩展你的身份验证和授权策略应用用换取用户信息完成登录这个是什么意思为什么要这样设计这是一个非常关键的问题涉及到协议的核心安全机制我们来一步步讲清楚应用用换取用户信息是什么为什么要这么设计不能直接返回或用户信息吗一一句话解释是一个临时兑换券应用拿着它去服务器后台换取真正的用户身份信息用户数据它不是用户信息本身而是一个安全中转凭证二举个生活化的例子餐厅取餐你在网上点了一份外卖下单成功平台给你一张取餐码比如你到餐厅门口把取餐码告诉店员店员查系统确认这个码有效然后从厨房取出你的饭这个取餐码就是你不能凭空说我要一份炸鸡必须有码取餐码本身不能吃不包含食物只是一个兑换凭证真正的食物用户信息是在后台准备的三技术流程回顾带的授权码模式用户访问发现未登录重定向到用户在页面输入账号密码安全在域名下登录成功重定向回注意此时浏览器只知道不知道服务器收到从后端直接调用接口返回张三应用拿到用户信息创建本地跳转到完成登录四为什么要这么绕不能直接返回吗如果直接返回比如会有什么问题安全风险泄露在中这个可能被浏览器历史记录保存日志系统记录应用日志第三方获取如统计脚本头泄露给其他网站相当于密码一旦泄露别人就能冒充你安全风险截获攻击者可以诱导你点击一个链接你登录后把发送到黑客就拿到了你的五为什么用模式就安全了因为安全点说明是一次性的换完就失效不能重复使用没有权限光有不能访问任何资源兑换必须后端调用需要客户端密钥而不会暴露在浏览器中只能用一次防止重放攻击校验防止被发到黑客服务器所以就像验证码只能用一次且必须配合密码才能兑换奖品六模式其他模式对比模式是否返回到前端安全性适用场景授权码模式不直接返回最高应用有后端隐式模式直接返回较低早期应用不推荐模式不返回高移动服务间调用现在推荐应用用更安全七总结为什么要用换用户信息原因说明防止泄露不经过浏览器确保客户端身份兑换时需要只有合法客户端知道支持审计和控制服务器可以记录谁用了哪个支持刷新机制可以返回用于长期登录符合标准被微信等广泛采用最后一句话总结就像银行的叫号单你在大厅浏览器拿号到窗口后端出示号码身份证银行员才给你办业务返回这样既安全又可控所以这个绕一圈的设计不是多余而是为了在开放网络中实现安全的身份认证是现代系统的基石所以也是协议是吗跟其他几种协议有啥区别非常好的问题我们来彻底搞清楚单点登录和是什么关系是吗它和其他协议如有什么区别一一句话回答你的问题单点登录是一种功能需求用户一次登录访问多个系统是一种授权协议让应用之间安全地共享资源权限本身不是但它可以用来实现所以是目标是工具之一二类比理解交通工具出行目的类比说明单点登录目标从家到公司无缝通勤一次认证多系统通行工具地铁可以实现通勤但本来是为换乘设计的工具专车基于地铁改造的通勤专列更适合工具高铁老式但稳定的通勤方式企业常用工具共享单车轻量简单适合校园小系统三详细对比与的关系是什么定位授权框架核心目标让第三方应用在用户授权下访问你的资源如微信登录时获取你的头像和昵称关键词换不直接提供用户身份信息它只管授权不管认证问题本身不能直接实现因为它不标准化用户是谁那怎么用实现通过扩展引入身份认证在基础上增加了一个关键东西是一个里面包含用户唯一标识张三这样客户端就知道你是谁了可以实现所以真正的实现通常是基于四主流协议对比协议全称类型特点适用场景现代标准移动端友好被微信广泛使用微服务老牌标准格式企业级如安全性高但复杂企业内网政府银行开源协议简单易懂轻量级适合体系校园系统中小公司纯授权授权协议不支持身份认证适合授权第三方授权如用微信账号登录但不获取身份五重点区分概念是什么能否实现功能需求一次登录多系统通行是目标授权协议获取不能直接实现缺身份基于的身份协议可以实现老牌身份断言协议可以实现开源协议可以实现所以如果你看到微信登录登录背后是如果你看到企业微信登录钉钉登录可能是或如果你看到校园统一登录可能是六举个实际例子你在谷粒商城用微信登录点击微信登录跳转到微信页面你扫码登录微信在域名下安全微信返回谷粒商城后端用换取用于调用用户唯一跨应用唯一用户信息创建本地登录成功这就是用实现的典型场景虽然微信没用标准但它扩展了用户信息接口效果类似七总结回答你的问题所以也是协议是吗不完全对正确说法是是一种需求或功能一次登录多系统通行是一种授权协议本身不直接支持但通过扩展后可以用来实现所以现代系统很多是基于构建的最后建议如何选择你的场景推荐协议新项目微服务如企业内部系统对接校园小公司项目只做第三方授权不登录纯一句话收尾是高速公路是跨省通勤就是那张通行卡它让高速路也能支持身份识别实现真正的无缝通行你之前提供的方案用换取就是协议的实现方式是吗跟协议有啥区别如果加上了协议该如何设计非常棒的问题你已经触及到现代身份认证系统的核心了我们来一步步深入解答你之前看到的用换流程是不是它和有什么区别如果加上系统该如何设计一用换就是的标准实现是的你完全正确你之前看到的这个流程重定向到登录成功回调后端用换取这就是的授权码模式是的核心授权流程但它只解决了授权问题还没解决我是谁的问题二关键区别对比项定位授权框架身份认证协议目标让我访问你的资源证明你是谁核心访问用户身份是否返回用户信息不标准需额外标准化通过基于基于扩展是否支持不能直接支持可以实现真正的简单说你是谁不重要我只想替你做点事比如发微博我要知道你是谁然后让你登录系统三在基础上加了什么新增客户端请求时必须加上表示这是一个请求触发身份认证请求用户基本信息请求邮箱返回格式在换的响应中除了还会返回这个是一个解码后长这样签发者用户唯一接收方过期时间签发时间防重放攻击张三客户端只需解码就知道你是谁了无需再调用用户信息接口四加上后系统该如何设计实战架构场景谷粒商城实现登录架构组件组件说明使用自研服务应用微服务统一网关可集成鉴权登录流程授权码用户访问前端检查无跳转授权端点防范移动端攻击在域名下登录安全登录成功重定向前端收到传给后端接口后端发起请求校验返回后端解码获取用户信息创建本地如写入浏览器跳转回登录完成后续请求如何鉴权浏览器自动携带网关或每个服务从查询信息或前端用调用单点登录如何体现用户已登录访问服务发现未登录无重定向到检查用户已在登录过有直接重定向回换创建本地用户无感登录完成这就是一次登录多系统通行五的优势相比纯优势说明标准化身份信息统一格式无需自定义减少网络请求不用再调接口支持状态检查提供检查登录状态支持登出提供和更安全防重放校验受众六推荐技术栈如何落地组件推荐方案开源客户端前端使用等库存储后端前端或内存不要存总结问题回答用换是吗是这是的授权码模式和有什么区别实现身份认证加上如何设计请求换时获取解码获取用户身份实现登录登出最后一句话是通行证申请流程是护照签发服务而就是持护照免签通行多国现代系统的最佳实践就是基于构建怎么知道身份校验的多个系统都有不同的用户加权限校验咋知道的这是一个非常深刻的问题你问的是能做身份认证你是谁但多个系统有不同的用户权限角色怎么知道每个系统的权限它怎么支持复杂的权限校验简短回答只负责身份认证证明你是谁它不负责权限控制你能不能访问某个资源权限校验仍然由各个系统自己完成只是把用户身份安全地传递给你一先分清两个概念认证鉴权概念英文含义谁负责认证你是谁负责鉴权你能做什么各个应用自己负责类比给你一张身份证证明你是张三商场保安看你身份证后再查内部系统张三有没有权限进区这是商场自己的权限系统说了算二到底提供了哪些身份信息通过提供标准化的用户身份用户唯一跨系统一致张三它告诉你用户的唯一标识最重要基本信息姓名邮箱头像但它不会告诉你你在订单系统有没有删除订单权限你在库存系统是不是管理员你在财务系统能看哪些数据这些都由各个系统自己管理三真实场景多个系统如何配合做权限控制场景公司有三个系统系统电商前台用户角色买家卖家客服系统订单管理权限查看订单删除订单导出数据后台运营管理角色运营管理员审计员它们都通过同一个登录登录流程负责认证用户登录验证账号密码返回每个系统拿到和各系统如何做权限控制自己负责系统查本地数据库权限逻辑可以发布商品不能删除他人订单可以下单不能进后台系统查本地权限表控制有才能删订单没有就不能显示删除按钮后台使用模型角色权限映射所有权限根据查角色决定能访问哪些菜单四如何帮助系统做权限提供锚点的核心价值是提供一个跨系统的用户唯一标识这个就像一把钥匙各个系统用它来查找自己的权限数据系统如何使用内部服务调用缓存中查五高级方案如何传递权限信息可选虽然标准不推荐在中放权限但可以通过以下方式扩展方案在中加自定义不推荐大权限张三缺点变大更新角色要重新登录方案用接口返回权限张三推荐权限动态更新不影响方案系统间同步用户角色推荐使用消息队列或定时同步用户角色变更发送事件系统消费更新本地角色表系统消费更新权限缓存六总结到底知道什么问题回答知道用户身份吗是的通过提供等知道用户在某个系统的权限吗不知道权限是各系统内部逻辑能做权限控制吗不能它只做认证多个系统怎么用用作为用户锚点去查自己系统的权限表最后一句话是身份证发放机构它只证明你是张三至于张三能不能进机房能不能审批报销能不能删除数据那是各个公司系统自己的人事和权限系统说了算所以用做统一登录认证用各系统的数据库权限服务做鉴权用字段把两者关联起来这才是现代微服务架构下最合理最安全的设计模式怎么知道用户是谁的这是一个非常核心非常本质的问题我们来一步步拆解到底是怎么知道用户是谁的它是自己认证的吗还是依赖别的系统里的信息是从哪来的一句话回答本身不直接知道用户是谁它依赖背后的身份源如数据库微信企业来认证用户认证通过后把用户身份信息打包成标准的发给客户端所以是身份信息的快递员真正的身份验证是由它背后的完成的一的核心组件在架构中有一个关键角色叫身份提供方这就是真正知道用户是谁的系统常见的身份源包括类型例子如何知道用户是谁用户名密码数据库自研系统查数据库匹配第三方登录微信用户在微信那边登录微信返回企业目录企业内部账号体系平台钉钉集成了多种身份源二是怎么获取用户身份的流程详解我们以谷粒商城用登录为例用户点击登录跳转到如用户在页面输入账号密码去查自己的用户数据库如果匹配成功确认你是张三创建一个记录用户已登录生成用户唯一张三重定向回客户端客户端用换得到解码知道你是张三所以是通过让用户在它的页面上登录来确认身份的然后把结果标准化地发出去三对比的知道用户是谁方式如何知道用户是谁是否标准纯客户端调用平台私有接口如不标准各平台不同自己认证用户生成标准化四也可以代理其他身份源如微信登录不一定自己存用户它可以作为中介用户选择微信登录跳转到微信页面你在微信页面扫码登录微信认证你微信返回根据创建或查找本地用户如果没找到自动注册一个用户微信用户张三生成自己的系统内部的用户张三发给客户端这就是联合登录把微信的身份翻译成自己的标准格式五总结怎么知道用户是谁问题回答自己知道用户是谁吗不是它自己知道是它背后的身份提供方知道怎么知道的通过用户名密码微信登录企业等方式认证的作用是什么把认证结果标准化为安全地传递给客户端支持登出刷新等是哪来的是给每个用户分配的唯一标识跨应用不变最后一句话就像公证处你用户拿着身份证密码微信去公证处做认证公证处确认你是张三然后它给你开一张标准化的公证书其他公司客户端看到这个公证书就知道你是张三所以认证你是谁由完成发证怎么证明你是谁由完成这才是的真正价值把身份变成一个可信任可传递标准化的数字凭证去查自己的用户数据库他不就是一个认证系统真正的数据库不是各个的数据库你问到了架构中最关键的设计矛盾非常深刻我们来彻底搞清楚真的要自己存用户数据吗不是每个业务系统都有自己的用户表吗查的数据库和业务系统的数据库是什么关系一句话回答可以有自己的统一用户库也可以不存数据只做认证代理它负责你是谁的认证而业务系统负责你有什么权限两者通过用户唯一关联实现解耦一真实世界中的种架构模式模式拥有统一用户库推荐统一用户中心有自己的用户表存账号密码手机号邮箱业务系统在自己的数据库中存字段关联到统一用户登录时用户在页面输入账号密码验证通过返回业务系统用去查本地权限角色订单等优点用户信息统一管理改密码注销账号方便真正的一个账号多系统通行解耦认证业务权限模式做认证代理微信企业业务系统不存用户密码只是中介它支持多种登录方式微信登录拿登录拿企业验证域账号根据外部如生成自己的并映射到本地用户业务系统仍然用关联权限优点无需管理密码支持社交登录企业登录适合对外服务如模式每个系统自己存用户错误做法每个系统都有自己的账号体系用户要在个地方注册次这不是这是多账号系统问题密码不统一无法实现一次登录多系统通行运维成本高二和业务系统的数据关系数据存储位置谁负责用户身份账号密码手机号邮箱的数据库统一用户中心用户权限角色菜单数据权限各业务系统自己的数据库自己管用户关联用字段连接双方都存示例系统的用户表来自的登录后三如何查数据库实际流程用户访问跳转用户输入账号密码执行如果匹配认证成功生成和张三重定向回用查本地权限所以查的是它自己管理的统一用户库不是或的业务库四为什么需要统一用户库问题有统一用户库无统一用户库用户改密码一次修改所有系统生效每个系统都要改用户注销账号删除统一用户通知各系统难以清理登录支持只能做登录代理数据一致性高低五总结你的问题的答案他不就是一个认证系统真正的数据库不是各个的数据库你说得完全正确是认证系统它应该有自己的统一用户库或对接外部业务系统是业务系统它们有自己的权限库订单库商品库不关心你是不是管理员能不能删订单它只关心你是谁返回业务系统拿着去查这个用户在我这里有什么权限最后一句话是身份证签发机构它只管发身份证是商场银行它们看到身份证后再查自己的系统这个身份证号码的人能不能进区能不能取款这就是认证与授权的解耦也是现代微服务架构的核心设计思想',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-08-25 09:42:53',
+  postMainColor: '#6a1d88ff',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AMQP/" style="font-size: 1.05rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 1.05rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 1.05rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 1.05rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>6</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>6</sup></a><a href="/tags/Redisson/" style="font-size: 1.05rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 1.05rem;">Spring<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 1.05rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 1.05rem;">Swagger<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 1.05rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 1.05rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 1.05rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 1.05rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.05rem;">数据结构<sup>4</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 1.05rem;">权限校验<sup>4</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.05rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>5</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>4</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 1.05rem;">面试<sup>3</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">42</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">28</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">8</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" itemprop="url">权限校验</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>权限校验</span></a></span></div></div><h1 class="post-title" itemprop="name headline">单点登录与认证协议</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2025-08-22T08:15:18.782Z" title="Created 2025-08-22 16:15:18">2025-08-22</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2025-08-25T01:42:53.993Z" title="Updated 2025-08-25 09:42:53">2025-08-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://origin.picgo.net/2025/08/22/xAuFeZc84N83facc507a2d9aac.webp"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/"><header><a class="post-meta-categories" href="/categories/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" itemprop="url">权限校验</a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" tabindex="-1" itemprop="url">权限校验</a><h1 id="CrawlerTitle" itemprop="name headline">单点登录与认证协议</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2025-08-22T08:15:18.782Z" title="Created 2025-08-22 16:15:18">2025-08-22</time><time itemprop="dateCreated datePublished" datetime="2025-08-25T01:42:53.993Z" title="Updated 2025-08-25 09:42:53">2025-08-25</time></header><h3 id="OAuth-2-0-概览"><a href="#OAuth-2-0-概览" class="headerlink" title="OAuth 2.0 概览"></a>OAuth 2.0 概览</h3><p>OAuth 2.0 是一套“授权”框架，用于在不暴露用户密码的前提下，让第三方应用代表资源所有者访问受保护资源。它关注“凭什么访问”和“访问到什么程度”，而非“你是谁”。</p>
+<ul>
+<li><p><strong>参与方</strong>：</p>
+<ul>
+<li><strong>Resource Owner（资源所有者）</strong>：通常为用户。</li>
+<li><strong>Client（客户端应用）</strong>：请求访问资源的应用（Web&#x2F;SPA&#x2F;Native&#x2F;Server）。</li>
+<li><strong>Authorization Server（授权服务器）</strong>：发放令牌并进行授权。</li>
+<li><strong>Resource Server（资源服务器）</strong>：托管受保护资源，校验令牌。</li>
+</ul>
+</li>
+<li><p><strong>核心概念</strong>：</p>
+<ul>
+<li><strong>Authorization Grant（授权许可）</strong>：获取令牌的方式（如授权码）。</li>
+<li><strong>Authorization Code（授权码）</strong>：短期一次性码，用于换取令牌。</li>
+<li><strong>Access Token（访问令牌）</strong>：调用资源接口的凭据，短期有效。</li>
+<li><strong>Refresh Token（刷新令牌）</strong>：用于换取新的访问令牌，通常仅在受信任环境下使用。</li>
+<li><strong>Scope（权限范围）</strong>：最小化授权原则，精确声明允许访问的资源&#x2F;动作。</li>
+<li><strong>Redirect URI（重定向地址）</strong>：授权回调地址，必须严格匹配预注册列表。</li>
+<li><strong>State</strong>：CSRF 防护随机串，客户端发起授权时生成并校验。</li>
+<li><strong>PKCE</strong>：授权码流在公有客户端（SPA&#x2F;Native）中的增强安全机制。</li>
+</ul>
+</li>
+</ul>
+<h3 id="常见授权方式（Grants）"><a href="#常见授权方式（Grants）" class="headerlink" title="常见授权方式（Grants）"></a>常见授权方式（Grants）</h3><ol>
+<li><strong>授权码模式（Authorization Code）+ PKCE（强烈推荐：Web SPA&#x2F;Native）</strong></li>
+</ol>
+<ul>
+<li>流程要点：<ol>
+<li>客户端生成 <code>code_verifier</code> 与 <code>code_challenge</code>（S256），连同 <code>state</code> 发起授权请求。</li>
+<li>用户在授权服务器登录并同意授权后，浏览器重定向回携带 <code>code</code> 与原始 <code>state</code>。</li>
+<li>客户端用 <code>code</code> + <code>code_verifier</code> 向授权服务器换取 <code>access_token</code>（可选 <code>refresh_token</code>）以及（若使用 OIDC）<code>id_token</code>。</li>
+<li>客户端持 <code>access_token</code> 调用资源服务接口。</li>
+</ol>
+</li>
+<li>安全性：避免令牌暴露在前端 URL，PKCE 防止授权码在中途被窃取后被滥用。</li>
+</ul>
+<ol start="2">
+<li><strong>客户端凭证模式（Client Credentials）</strong></li>
+</ol>
+<ul>
+<li>用于后端-后端（机器到机器）调用，无用户参与，按客户端身份与授权范围发令牌。</li>
+</ul>
+<ol start="3">
+<li><strong>设备码模式（Device Code）</strong></li>
+</ol>
+<ul>
+<li>适用于输入受限设备（如 TV、IoT）。设备获取 <code>device_code</code>；用户在另一个设备完成登录与授权；设备轮询换取令牌。</li>
+</ul>
+<ol start="4">
+<li>已不推荐&#x2F;废弃场景</li>
+</ol>
+<ul>
+<li><strong>隐式模式（Implicit）</strong>：令牌经浏览器 URL 直接下发，存在泄露风险，不再推荐。</li>
+<li><strong>资源所有者密码模式（Password）</strong>：暴露用户密码给客户端，已被弃用。</li>
+</ul>
+<h3 id="标准端点与交互"><a href="#标准端点与交互" class="headerlink" title="标准端点与交互"></a>标准端点与交互</h3><ul>
+<li><strong>&#x2F;authorize</strong>：发起授权，返回授权码或错误。</li>
+<li><strong>&#x2F;token</strong>：用授权码&#x2F;客户端凭证&#x2F;设备码换取 <code>access_token</code>（以及可选 <code>refresh_token</code>、<code>id_token</code>）。</li>
+<li><strong>&#x2F;revocation</strong>：撤销令牌（Access&#x2F;Refresh）。</li>
+<li><strong>&#x2F;introspection</strong>：查询令牌状态与范围（多用于不透明令牌）。</li>
+</ul>
+<h3 id="访问令牌与刷新令牌"><a href="#访问令牌与刷新令牌" class="headerlink" title="访问令牌与刷新令牌"></a>访问令牌与刷新令牌</h3><ul>
+<li><strong>Access Token</strong>：短期、可撤销。可为不透明字符串，也可为 JWT（自包含声明）。</li>
+<li><strong>Refresh Token</strong>：仅在受信任环境使用，通常不下发给纯前端 SPA；建议启用刷新令牌轮换（Rotation）。</li>
+<li><strong>令牌格式</strong>：<ul>
+<li><strong>JWT</strong>：携带签名（JWS），可离线验证，有过期时间 <code>exp</code>、签发方 <code>iss</code>、受众 <code>aud</code>、签发时间 <code>iat</code> 等。</li>
+<li><strong>Opaque（不透明）</strong>：需调用授权服务器 <code>introspection</code> 才能解析状态，服务端更易撤销与集中管理。</li>
+</ul>
+</li>
+</ul>
+<h3 id="OAuth-2-0-实践与安全要点"><a href="#OAuth-2-0-实践与安全要点" class="headerlink" title="OAuth 2.0 实践与安全要点"></a>OAuth 2.0 实践与安全要点</h3><ul>
+<li><strong>始终使用授权码 + PKCE</strong>（SPA&#x2F;Native）；后端使用<strong>客户端凭证</strong>。</li>
+<li><strong>严格校验 Redirect URI</strong>，禁止通配与开放重定向。</li>
+<li><strong>使用 <code>state</code> 防 CSRF</strong>；SPA&#x2F;OIDC 再配合 <code>nonce</code> 防重放。</li>
+<li><strong>最小化 Scope</strong>，按资源边界拆分，避免过度授权。</li>
+<li><strong>短期 Access Token + 刷新令牌轮换</strong>，泄露时可快速失效；配合撤销与吊销机制。</li>
+<li><strong>HTTPS 全站强制</strong>，禁止明文传输令牌；避免在 URL&#x2F;Referer 中泄露。</li>
+<li><strong>前后端分离推荐</strong>：前端仅持 <code>access_token</code>（内存&#x2F;Session Storage）；敏感刷新逻辑放后端 BFF；或使用 SameSite 严格 Cookie 搭配后端会话。</li>
+<li><strong>JWT 校验</strong>：校验证书（JWKs）、签名、<code>exp</code>&#x2F;<code>nbf</code>、<code>iss</code>&#x2F;<code>aud</code>，并考虑 <code>jti</code> 与黑名单机制。</li>
+<li><strong>CORS&#x2F;回调白名单</strong>：限制可信来源；对第三方脚本谨慎。</li>
+</ul>
+<hr>
+<h3 id="OIDC（OpenID-Connect）"><a href="#OIDC（OpenID-Connect）" class="headerlink" title="OIDC（OpenID Connect）"></a>OIDC（OpenID Connect）</h3><p>OIDC 建立在 OAuth 2.0 之上，目标是“身份认证”。它定义了如何向客户端证明“用户是谁”，并提供标准化的用户信息获取方式。</p>
+<ul>
+<li><p><strong>关键产物：ID Token</strong></p>
+<ul>
+<li>格式通常为 JWT（JWS）</li>
+<li>面向客户端，声明用户身份信息（<code>sub</code> 唯一标识、<code>iss</code>、<code>aud</code>、<code>exp</code>、<code>iat</code>、<code>auth_time</code>、<code>nonce</code> 等）。</li>
+<li>客户端必须验证签名与关键声明：<ul>
+<li><code>iss</code> 与授权服务器一致；</li>
+<li><code>aud</code> 包含本客户端 <code>client_id</code>；</li>
+<li><code>exp</code> 未过期；</li>
+<li>若使用 <code>nonce</code>，需与请求时一致（防重放）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>UserInfo Endpoint</strong>：</p>
+<ul>
+<li>通过 <code>access_token</code> 获取用户可读信息（<code>name</code>、<code>email</code>、<code>picture</code> 等）。</li>
+<li>受 Scope 控制（如 <code>openid email profile</code>）。</li>
+</ul>
+</li>
+<li><p><strong>Discovery &amp; JWKs</strong>：</p>
+<ul>
+<li>发现文档：<code>/.well-known/openid-configuration</code></li>
+<li>包含授权端点、令牌端点、UserInfo、JWKS 地址、支持的算法与响应类型等。</li>
+<li>JWKS（公钥集）用于校验 ID Token&#x2F;JWT 的签名。</li>
+</ul>
+</li>
+<li><p><strong>常见 OIDC 流程（授权码 + PKCE）</strong>：</p>
+<ol>
+<li>客户端带 <code>scope=openid profile email</code>、<code>state</code>、<code>nonce</code>、<code>code_challenge</code> 跳转授权。</li>
+<li>用户登录并同意授权，回调附带 <code>code</code>、<code>state</code>。</li>
+<li>客户端用 <code>code</code> + <code>code_verifier</code> 换取 <code>access_token</code>、<code>id_token</code>（可选 <code>refresh_token</code>）。</li>
+<li>客户端本地验证 <code>id_token</code> 签名与声明；若需要更详细的用户资料，用 <code>access_token</code> 调 UserInfo。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="OAuth-2-0-与-OIDC-的区别与选型"><a href="#OAuth-2-0-与-OIDC-的区别与选型" class="headerlink" title="OAuth 2.0 与 OIDC 的区别与选型"></a>OAuth 2.0 与 OIDC 的区别与选型</h3><ul>
+<li><p><strong>定位</strong>：</p>
+<ul>
+<li><strong>OAuth 2.0</strong>：授权框架，解决“能否访问、可访问到什么”。</li>
+<li><strong>OIDC</strong>：基于 OAuth 2.0 的认证协议，解决“你是谁”。</li>
+</ul>
+</li>
+<li><p><strong>令牌</strong>：</p>
+<ul>
+<li><strong>OAuth 2.0</strong>：核心是 <code>access_token</code>（授权凭据）。</li>
+<li><strong>OIDC</strong>：引入 <code>id_token</code>（认证凭据，标识用户身份）。</li>
+</ul>
+</li>
+<li><p><strong>端点与文档</strong>：</p>
+<ul>
+<li><strong>OAuth 2.0</strong>：<code>/authorize</code>、<code>/token</code>、<code>/revocation</code>、<code>/introspection</code>。</li>
+<li><strong>OIDC</strong>：在此基础上增加 <code>/.well-known/openid-configuration</code>、<code>/userinfo</code>、<code>/jwks</code> 等。</li>
+</ul>
+</li>
+<li><p><strong>客户端关注点</strong>：</p>
+<ul>
+<li>若仅需代表用户访问资源（无登录态展示），选 OAuth 2.0 即可。</li>
+<li>若需要登录、用户身份与资料、单点登录（SSO），选 OIDC（<code>openid</code> Scope 必填）。</li>
+</ul>
+</li>
+<li><p><strong>推荐选型</strong>：</p>
+<ul>
+<li><strong>Web&#x2F;SPA&#x2F;Native 登录</strong>：OIDC 授权码 + PKCE。</li>
+<li><strong>后端服务对接</strong>：OAuth 2.0 客户端凭证模式。</li>
+<li><strong>设备&#x2F;TV 登录</strong>：OAuth 2.0 设备码模式（可结合 OIDC 获取身份）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="常见问题与排查"><a href="#常见问题与排查" class="headerlink" title="常见问题与排查"></a>常见问题与排查</h3><ul>
+<li>回调报错：检查 Redirect URI 完全匹配；确认 <code>state</code> 原样返回且被校验。</li>
+<li>ID Token 校验失败：核对 <code>iss</code>&#x2F;<code>aud</code>、时间偏差、签名算法与 JWKS 缓存策略。</li>
+<li>跨域问题：确认授权页与回调页域名、CORS 配置、SameSite 策略。</li>
+<li>刷新失败：是否启用轮换、刷新令牌有效期与撤销机制、客户端机密是否泄露。</li>
+</ul>
+<hr>
+<h3 id="术语速览"><a href="#术语速览" class="headerlink" title="术语速览"></a>术语速览</h3><ul>
+<li><strong>state</strong>：请求&#x2F;回调关联与 CSRF 防护。</li>
+<li><strong>nonce</strong>：OIDC 防重放，仅与 <code>id_token</code> 相关。</li>
+<li><strong>aud&#x2F;iss&#x2F;sub</strong>：受众&#x2F;发行者&#x2F;用户唯一标识。</li>
+<li><strong>prompt&#x2F;login_hint&#x2F;max_age</strong>：控制交互体验与会话。</li>
+</ul>
+<hr>
+<h2 id="以下来源于主播跟通义的聊天记录"><a href="#以下来源于主播跟通义的聊天记录" class="headerlink" title="以下来源于主播跟通义的聊天记录"></a>以下来源于主播跟通义的聊天记录</h2><p>package com.atguigu.gulimall.auth.config;</p>
+<p>import org.springframework.context.annotation.Bean;<br>import org.springframework.context.annotation.Configuration;<br>import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;<br>import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;<br>import org.springframework.data.redis.serializer.RedisSerializer;<br>import org.springframework.session.web.http.CookieSerializer;<br>import org.springframework.session.web.http.DefaultCookieSerializer;</p>
+<p>&#x2F;**</p>
+<ul>
+<li><p>springsession配置类</p>
+</li>
+<li><p>@Author: wanzenghui</p>
+</li>
+<li><p>@Date: 2021&#x2F;11&#x2F;30 22:21<br> *&#x2F;<br>@Configuration<br>public class GulimallSessionConfig {<br> @Bean<br> public CookieSerializer cookieSerializer() {<br> DefaultCookieSerializer cookieSerializer &#x3D; new DefaultCookieSerializer();<br> cookieSerializer.setDomainName(“gulimall.com”);&#x2F;&#x2F; 放大作用域<br> cookieSerializer.setCookieName(“GULISESSION”);<br> cookieSerializer.setCookieMaxAge(60 * 60 * 24 * 7);&#x2F;&#x2F; 指定cookie有效期7天，会话级关闭浏览器后cookie即失效<br> return cookieSerializer;<br> }</p>
+<p> @Bean<br> public RedisSerializer<Object> springSessionDefaultRedisSerializer() {<br> &#x2F;&#x2F; 指定session序列化到redis的序列化器</p>
+</li>
+</ul>
+<p>&#x2F;&#x2F;        return new Jackson2JsonRedisSerializer<Object>(Object.class);&#x2F;&#x2F; 无法保存对象类型，反序列化后默认使用Map封装<br>        return new GenericJackson2JsonRedisSerializer();<br>    }<br>}</p>
+<p>分布式session讲一下，同时讲一下这个代码的作用</p>
+<p>我们来详细讲解一下 <strong>分布式 Session</strong> 的概念，以及你提供的这段 <code>GulimallSessionConfig</code> 代码的作用。</p>
+<hr>
+<h2 id="一、什么是分布式-Session？"><a href="#一、什么是分布式-Session？" class="headerlink" title="一、什么是分布式 Session？"></a>一、什么是分布式 Session？</h2><p>在传统的单体应用中，用户的登录状态（Session）通常存储在服务器的内存中。比如使用 <code>HttpSession</code> 存储用户信息。这种模式下，用户请求必须被同一个服务器处理才能保持登录状态（即“粘性 Session”），否则会因为 Session 不共享而需要重新登录。</p>
+<p>但在 <strong>分布式系统或微服务架构</strong> 中，应用被拆分成多个服务，部署在不同的服务器或容器上，用户的请求可能被负载均衡分发到任意一个实例。这时，如果 Session 仍然保存在每个实例的本地内存中，就会导致：</p>
+<ul>
+<li>用户登录后，下次请求被分发到另一台服务器，Session 丢失，需要重新登录。</li>
+<li>多台服务器之间无法共享状态。</li>
+</ul>
+<h3 id="解决方案：分布式-Session"><a href="#解决方案：分布式-Session" class="headerlink" title="解决方案：分布式 Session"></a>解决方案：<strong>分布式 Session</strong></h3><p>将 Session 数据从服务器本地内存中剥离出来，统一存储到一个<strong>集中式的数据存储系统</strong>中，如：</p>
+<ul>
+<li>Redis（最常用）</li>
+<li>数据库</li>
+<li>Memcached</li>
+</ul>
+<p>这样，无论用户请求被分发到哪台服务器，都可以通过访问这个共享存储来获取 Session 信息，从而实现 <strong>Session 共享</strong>。</p>
+<hr>
+<h3 id="分布式-Session-的核心特点："><a href="#分布式-Session-的核心特点：" class="headerlink" title="分布式 Session 的核心特点："></a>分布式 Session 的核心特点：</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>集中存储</strong></td>
+<td>所有服务实例共享同一个 Session 存储（如 Redis）</td>
+</tr>
+<tr>
+<td><strong>可扩展性</strong></td>
+<td>可以轻松横向扩展服务实例数量</td>
+</tr>
+<tr>
+<td><strong>高可用</strong></td>
+<td>配合 Redis 集群可实现高可用</td>
+</tr>
+<tr>
+<td><strong>跨子域共享</strong></td>
+<td>可通过 Cookie 配置实现多子域名共享 Session</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二、Spring-Session-是什么？"><a href="#二、Spring-Session-是什么？" class="headerlink" title="二、Spring Session 是什么？"></a>二、Spring Session 是什么？</h2><p><strong>Spring Session</strong> 是 Spring 提供的一个项目，用于透明地支持分布式 Session。它对开发者屏蔽了底层细节，让你像使用普通 <code>HttpSession</code> 一样操作 Session，但背后自动将数据存储到 Redis 等外部存储中。</p>
+<p>主要功能：</p>
+<ul>
+<li>替换默认的 <code>HttpSession</code> 实现</li>
+<li>支持 Redis、JDBC、MongoDB 等存储</li>
+<li>自动管理 Cookie 和 Session ID</li>
+<li>支持集群环境下的 Session 同步</li>
+</ul>
+<hr>
+<h2 id="三、你提供的代码解析：GulimallSessionConfig"><a href="#三、你提供的代码解析：GulimallSessionConfig" class="headerlink" title="三、你提供的代码解析：GulimallSessionConfig"></a>三、你提供的代码解析：<code>GulimallSessionConfig</code></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GulimallSessionConfig</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CookieSerializer <span class="title function_">cookieSerializer</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">DefaultCookieSerializer</span> <span class="variable">cookieSerializer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultCookieSerializer</span>();</span><br><span class="line">        cookieSerializer.setDomainName(<span class="string">&quot;gulimall.com&quot;</span>); <span class="comment">// 设置 Cookie 的作用域</span></span><br><span class="line">        cookieSerializer.setCookieName(<span class="string">&quot;GULISESSION&quot;</span>);   <span class="comment">// 自定义 Cookie 名称</span></span><br><span class="line">        cookieSerializer.setCookieMaxAge(<span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">7</span>); <span class="comment">// Cookie 有效期 7 天</span></span><br><span class="line">        <span class="keyword">return</span> cookieSerializer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RedisSerializer&lt;Object&gt; <span class="title function_">springSessionDefaultRedisSerializer</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">GenericJackson2JsonRedisSerializer</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-cookieSerializer-方法-——-配置-Session-ID-的-Cookie-行为"><a href="#1-cookieSerializer-方法-——-配置-Session-ID-的-Cookie-行为" class="headerlink" title="1. cookieSerializer() 方法 —— 配置 Session ID 的 Cookie 行为"></a>1. <code>cookieSerializer()</code> 方法 —— 配置 Session ID 的 Cookie 行为</h3><p>这个 Bean 控制浏览器中存储的 <strong>Session ID Cookie</strong> 的行为。</p>
+<h4 id="详细说明："><a href="#详细说明：" class="headerlink" title="详细说明："></a>详细说明：</h4><ul>
+<li><p><code>setDomainName(&quot;gulimall.com&quot;)</code></p>
+<ul>
+<li>将 Cookie 的作用域设置为 <code>.gulimall.com</code>（注意前面会自动加点）。</li>
+<li>这样做的好处是：<strong>子域名之间可以共享 Session</strong>。</li>
+<li>例如：<code>item.gulimall.com</code>、<code>cart.gulimall.com</code>、<code>user.gulimall.com</code> 都能读取同一个 <code>JSESSIONID</code>，实现 <strong>单点登录（SSO）</strong> 的基础。</li>
+</ul>
+</li>
+<li><p><code>setCookieName(&quot;GULISESSION&quot;)</code></p>
+<ul>
+<li>默认的 Session Cookie 名是 <code>JSESSIONID</code>，这里改为 <code>GULISESSION</code>。</li>
+<li>目的是避免与其他应用冲突，也便于识别。</li>
+</ul>
+</li>
+<li><p><code>setCookieMaxAge(60 * 60 * 24 * 7)</code></p>
+<ul>
+<li>设置 Cookie 的最大存活时间为 7 天（单位：秒）。</li>
+<li>即使关闭浏览器，7 天内再次打开仍能保持登录状态（<strong>持久化登录</strong>）。</li>
+<li>如果不设置，默认是会话级 Cookie（关闭浏览器即失效）。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>✅ 总结：这个配置实现了 <strong>跨子域的 Session 共享 + 自定义 Session 名 + 7 天免登录</strong></p>
+</blockquote>
+<hr>
+<h3 id="2-springSessionDefaultRedisSerializer-方法-——-配置-Redis-序列化方式"><a href="#2-springSessionDefaultRedisSerializer-方法-——-配置-Redis-序列化方式" class="headerlink" title="2. springSessionDefaultRedisSerializer() 方法 —— 配置 Redis 序列化方式"></a>2. <code>springSessionDefaultRedisSerializer()</code> 方法 —— 配置 Redis 序列化方式</h3><p>这个 Bean 定义了 Session 数据如何序列化后存入 Redis。</p>
+<h4 id="原始注释掉的代码："><a href="#原始注释掉的代码：" class="headerlink" title="原始注释掉的代码："></a>原始注释掉的代码：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// return new Jackson2JsonRedisSerializer&lt;Object&gt;(Object.class);</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用 <code>Jackson2JsonRedisSerializer</code>，但它有个问题：<strong>反序列化时无法保留原始对象类型</strong>，所有对象都会变成 <code>LinkedHashMap</code>，导致类型丢失。</li>
+</ul>
+<h4 id="当前使用的："><a href="#当前使用的：" class="headerlink" title="当前使用的："></a>当前使用的：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">GenericJackson2JsonRedisSerializer</span>();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这是更高级的 JSON 序列化器。</li>
+<li>它会在序列化时<strong>写入对象的完整类名（@class 字段）</strong>，反序列化时可以根据类名还原成原始类型。</li>
+<li>例如：你存了一个 <code>User</code> 对象，取出来还是 <code>User</code> 类型，而不是 <code>Map</code>。</li>
+</ul>
+<blockquote>
+<p>✅ 优势：</p>
+<ul>
+<li>保留类型信息</li>
+<li>支持复杂对象</li>
+<li>可读性强（Redis 中看到的是 JSON 格式）</li>
+<li>安全性更好（相比 JDK 原生序列化）</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="四、整体流程图（简化版）"><a href="#四、整体流程图（简化版）" class="headerlink" title="四、整体流程图（简化版）"></a>四、整体流程图（简化版）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">用户登录</span><br><span class="line">    ↓</span><br><span class="line">服务器创建 Session（如存入 user=id123）</span><br><span class="line">    ↓</span><br><span class="line">Spring Session 拦截，将 Session 存入 Redis</span><br><span class="line">    ↓</span><br><span class="line">同时返回 Set-Cookie: GULISESSION=abc123; Domain=.gulimall.com</span><br><span class="line">    ↓</span><br><span class="line">浏览器下次请求携带 Cookie: GULISESSION=abc123</span><br><span class="line">    ↓</span><br><span class="line">任意服务器收到请求，解析 Cookie，从 Redis 查找 abc123 对应的 Session</span><br><span class="line">    ↓</span><br><span class="line">恢复用户登录状态 → 无需重新登录</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、常见应用场景"><a href="#五、常见应用场景" class="headerlink" title="五、常见应用场景"></a>五、常见应用场景</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>微服务架构</td>
+<td>多个服务共享用户登录状态</td>
+</tr>
+<tr>
+<td>负载均衡</td>
+<td>多台机器部署，用户可任意访问</td>
+</tr>
+<tr>
+<td>单点登录（SSO）基础</td>
+<td>通过统一域名 Cookie 实现跨系统登录</td>
+</tr>
+<tr>
+<td>移动端 + Web 共用 API</td>
+<td>统一认证状态</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="六、注意事项"><a href="#六、注意事项" class="headerlink" title="六、注意事项"></a>六、注意事项</h2><ol>
+<li><strong>Redis 必须高可用</strong>：Session 存储依赖 Redis，建议使用 Redis 集群或哨兵模式。</li>
+<li><strong>序列化兼容性</strong>：使用 <code>GenericJackson2JsonRedisSerializer</code> 时，存储的对象必须可被 Jackson 序列化（有无参构造、getter&#x2F;setter）。</li>
+<li><strong>安全性</strong>：Session ID 要防止泄露（使用 HTTPS）。</li>
+<li><strong>清理机制</strong>：Redis 中的 Session 有过期时间（TTL），Spring Session 会自动维护。</li>
+</ol>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>你提供的这段代码是典型的 <strong>Spring Session + Redis 实现分布式 Session</strong> 的配置：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>跨服务共享 Session</td>
+<td>使用 Redis 存储</td>
+</tr>
+<tr>
+<td>子域名共享登录状态</td>
+<td>设置 Cookie Domain 为 <code>.gulimall.com</code></td>
+</tr>
+<tr>
+<td>长时间免登录</td>
+<td>设置 Cookie 有效期为 7 天</td>
+</tr>
+<tr>
+<td>保持对象类型</td>
+<td>使用 <code>GenericJackson2JsonRedisSerializer</code></td>
+</tr>
+</tbody></table>
+<p>这套机制是构建大型电商平台（如谷粒商城）用户认证体系的基础组件之一。</p>
+<p>如有需要，我还可以补充如何结合 <code>@EnableRedisHttpSession</code> 注解启用该配置，或者如何与 OAuth2、JWT 结合使用。</p>
+<p>单点登录一般都是有一个server 对吧，然后各个client通过server登陆，但是鉴权逻辑一般都是写在各个自己里面对吗，如果要搭建一个单点登录系统，建议使用现成的框架还是自己搭建</p>
+<p>单点登录（Single Sign-On, SSO）确实通常包含一个中心化的SSO服务器，负责用户认证，并且各个客户端应用通过该服务器进行用户登录。一旦用户在SSO服务器上完成登录，他们就可以无障碍地访问已授权的多个服务或应用，而无需再次登录。</p>
+<p>关于鉴权逻辑的位置，它既可以存在于SSO服务器也可以存在于各个客户端应用中。通常情况下，SSO服务器主要负责认证过程，即确认用户的身份；而具体的资源访问控制和权限检查（鉴权）则通常由各个应用自己管理。这是因为不同的应用可能有不同的资源访问规则和权限需求。</p>
+<p>在考虑是否搭建自己的SSO系统时，有以下几点建议：</p>
+<ol>
+<li><p><strong>使用现成框架</strong>：如果时间和资源有限，或者你希望减少维护成本，使用现有的、成熟的SSO解决方案是更推荐的选择。许多开源项目和商业产品都提供了强大的SSO功能，并且已经被广泛测试和使用，比如Keycloak、Auth0、Okta等。这些平台提供了丰富的配置选项，支持多种认证协议（如SAML、OAuth2、OpenID Connect），可以满足大多数场景的需求。</p>
+</li>
+<li><p><strong>自行搭建</strong>：如果你有特定的安全要求，或是需要高度定制化，那么自行开发SSO系统也是可行的。不过这需要投入大量的时间来设计、实现和测试系统，以确保其安全性。此外，自行搭建还需要持续关注安全更新和漏洞修复，这对团队的技术能力提出了更高的要求。</p>
+</li>
+</ol>
+<p>综上所述，除非你有非常特殊的需求或理由，否则建议优先考虑使用现有的SSO框架或服务。这样不仅可以节省开发时间，还能利用社区和供应商提供的支持和更新，降低风险。同时，选择合适的工具也能帮助你更容易地集成和扩展你的身份验证和授权策略。</p>
+<p>shop 应用用 code 换取用户信息，完成登录这个是什么意思，为什么要这样设计</p>
+<p>这是一个非常关键的问题，涉及到 <strong>OAuth2 协议的核心安全机制</strong>。</p>
+<p>我们来一步步讲清楚：</p>
+<blockquote>
+<p>✅ “shop 应用用 code 换取用户信息” 是什么？<br>✅ 为什么要这么设计？不能直接返回 token 或用户信息吗？</p>
+</blockquote>
+<hr>
+<h2 id="🌟-一、一句话解释"><a href="#🌟-一、一句话解释" class="headerlink" title="🌟 一、一句话解释"></a>🌟 一、一句话解释</h2><blockquote>
+<p><strong><code>code</code> 是一个“临时兑换券”，shop 应用拿着它去 SSO 服务器“后台”换取真正的用户身份信息（access_token + 用户数据）</strong>。</p>
+</blockquote>
+<p>它不是用户信息本身，而是一个<strong>安全中转凭证</strong>。</p>
+<hr>
+<h2 id="🧩-二、举个生活化的例子：餐厅取餐"><a href="#🧩-二、举个生活化的例子：餐厅取餐" class="headerlink" title="🧩 二、举个生活化的例子：餐厅取餐"></a>🧩 二、举个生活化的例子：餐厅取餐</h2><p>你在网上点了一份外卖：</p>
+<ol>
+<li>下单成功 → 平台给你一张 <strong>取餐码</strong>（比如 <code>8527</code>）</li>
+<li>你到餐厅门口，把取餐码告诉店员</li>
+<li>店员查系统，确认这个码有效，然后从厨房取出你的饭</li>
+</ol>
+<p>👉 这个“取餐码”就是 <code>code</code>。</p>
+<ul>
+<li>你不能凭空说“我要一份炸鸡”，必须有码</li>
+<li>取餐码本身不能吃（不包含食物），只是一个“兑换凭证”</li>
+<li>真正的食物（用户信息）是在后台准备的</li>
+</ul>
+<hr>
+<h2 id="🔁-三、技术流程回顾（带-code-的-OAuth2-授权码模式）"><a href="#🔁-三、技术流程回顾（带-code-的-OAuth2-授权码模式）" class="headerlink" title="🔁 三、技术流程回顾（带 code 的 OAuth2 授权码模式）"></a>🔁 三、技术流程回顾（带 code 的 OAuth2 授权码模式）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">用户访问：https://shop.gulimall.com/order</span><br><span class="line">          ↓</span><br><span class="line">发现未登录 → 重定向到 SSO：</span><br><span class="line">https://sso.gulimall.com/login?redirect_uri=...&amp;state=...</span><br><span class="line">          ↓</span><br><span class="line">用户在 SSO 页面输入账号密码（安全！在 SSO 域名下）</span><br><span class="line">          ↓</span><br><span class="line">登录成功 → SSO 重定向回：</span><br><span class="line">https://shop.gulimall.com/callback?code=ABC123&amp;state=xyz</span><br><span class="line">          ↓</span><br><span class="line">⚠️ 注意：此时浏览器只知道 code，不知道 access_token！</span><br><span class="line">          ↓</span><br><span class="line">shop 服务器收到 code，**从后端直接调用 SSO 接口**：</span><br><span class="line">POST https://sso.gulimall.com/oauth/token</span><br><span class="line">  client_id=SHOP_APP</span><br><span class="line">  client_secret=xxxxx</span><br><span class="line">  code=ABC123</span><br><span class="line">  redirect_uri=https://shop.gulimall.com/callback</span><br><span class="line">          ↓</span><br><span class="line">SSO 返回：</span><br><span class="line">&#123;</span><br><span class="line">  &quot;access_token&quot;: &quot;eyJhbGci...&quot;,</span><br><span class="line">  &quot;expires_in&quot;: 3600,</span><br><span class="line">  &quot;user_info&quot;: &#123; &quot;id&quot;: 123, &quot;name&quot;: &quot;张三&quot; &#125;</span><br><span class="line">&#125;</span><br><span class="line">          ↓</span><br><span class="line">shop 应用拿到用户信息，创建本地 Session</span><br><span class="line">          ↓</span><br><span class="line">跳转到 /order，完成登录</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="❓-四、为什么要这么“绕”？不能直接返回-token-吗？"><a href="#❓-四、为什么要这么“绕”？不能直接返回-token-吗？" class="headerlink" title="❓ 四、为什么要这么“绕”？不能直接返回 token 吗？"></a>❓ 四、为什么要这么“绕”？不能直接返回 token 吗？</h2><h3 id="如果直接返回-token（比如-access-token-xxx），会有什么问题？"><a href="#如果直接返回-token（比如-access-token-xxx），会有什么问题？" class="headerlink" title="如果直接返回 token（比如 ?access_token=xxx），会有什么问题？"></a>如果直接返回 token（比如 <code>?access_token=xxx</code>），会有什么问题？</h3><h4 id="⚠️-安全风险-1：Token-泄露在-URL-中"><a href="#⚠️-安全风险-1：Token-泄露在-URL-中" class="headerlink" title="⚠️ 安全风险 1：Token 泄露在 URL 中"></a>⚠️ 安全风险 1：Token 泄露在 URL 中</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://shop.gulimall.com/callback#access_token=eyJhbGciOi...</span><br></pre></td></tr></table></figure>
+
+<p>这个 URL 可能被：</p>
+<ul>
+<li>浏览器历史记录保存</li>
+<li>日志系统记录（Nginx、应用日志）</li>
+<li>第三方 JavaScript 获取（如统计脚本）</li>
+<li>Referer 头泄露给其他网站</li>
+</ul>
+<p>👉 <strong>access_token 相当于“密码”，一旦泄露，别人就能冒充你！</strong></p>
+<hr>
+<h4 id="⚠️-安全风险-2：CSRF-Token-截获"><a href="#⚠️-安全风险-2：CSRF-Token-截获" class="headerlink" title="⚠️ 安全风险 2：CSRF + Token 截获"></a>⚠️ 安全风险 2：CSRF + Token 截获</h4><p>攻击者可以诱导你点击一个链接：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://sso.gulimall.com/login?redirect_uri=http://hacker.com&amp;client_id=SHOP_APP&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>你登录后，SSO 把 <code>access_token</code> 发送到 <code>hacker.com</code>，黑客就拿到了你的 token！</p>
+<hr>
+<h2 id="✅-五、为什么用-code-模式就安全了？"><a href="#✅-五、为什么用-code-模式就安全了？" class="headerlink" title="✅ 五、为什么用 code 模式就安全了？"></a>✅ 五、为什么用 <code>code</code> 模式就安全了？</h2><p>因为：</p>
+<table>
+<thead>
+<tr>
+<th>安全点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🔐 <code>code</code> 是一次性的</td>
+<td>换完 token 就失效，不能重复使用</td>
+</tr>
+<tr>
+<td>🔐 <code>code</code> 没有权限</td>
+<td>光有 code 不能访问任何资源</td>
+</tr>
+<tr>
+<td>🔐 兑换必须后端调用</td>
+<td>需要 <code>client_id + client_secret</code>（客户端密钥），而 secret <strong>不会暴露在浏览器中</strong></td>
+</tr>
+<tr>
+<td>🔐 <code>code</code> 只能用一次</td>
+<td>防止重放攻击</td>
+</tr>
+<tr>
+<td>🔐 <code>redirect_uri</code> 校验</td>
+<td>防止 code 被发到黑客服务器</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 所以：<code>code</code> 就像“验证码”，只能用一次，且必须配合“密码”（client_secret）才能兑换奖品（token）</p>
+</blockquote>
+<hr>
+<h2 id="🛡-六、code-模式-vs-其他模式对比"><a href="#🛡-六、code-模式-vs-其他模式对比" class="headerlink" title="🛡 六、code 模式 vs 其他模式对比"></a>🛡 六、<code>code</code> 模式 vs 其他模式对比</h2><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>是否返回 token 到前端</th>
+<th>安全性</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>授权码模式（Authorization Code）</strong></td>
+<td>❌ 不直接返回</td>
+<td>✅ 最高</td>
+<td>Web 应用（有后端）</td>
+</tr>
+<tr>
+<td><strong>隐式模式（Implicit）</strong></td>
+<td>✅ 直接返回</td>
+<td>⚠️ 较低</td>
+<td>早期 SPA 应用（不推荐）</td>
+</tr>
+<tr>
+<td><strong>PKCE 模式</strong></td>
+<td>❌ 不返回</td>
+<td>✅ 高</td>
+<td>移动 App、SPA</td>
+</tr>
+<tr>
+<td><strong>Client Credentials</strong></td>
+<td>——</td>
+<td>✅</td>
+<td>服务间调用</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>🔔 现在推荐：Web 应用用 <strong>Authorization Code + PKCE</strong>，更安全。</p>
+</blockquote>
+<hr>
+<h2 id="✅-七、总结：为什么要“用-code-换用户信息”？"><a href="#✅-七、总结：为什么要“用-code-换用户信息”？" class="headerlink" title="✅ 七、总结：为什么要“用 code 换用户信息”？"></a>✅ 七、总结：为什么要“用 code 换用户信息”？</h2><table>
+<thead>
+<tr>
+<th>原因</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>✅ <strong>防止 token 泄露</strong></td>
+<td>token 不经过浏览器 URL</td>
+</tr>
+<tr>
+<td>✅ <strong>确保客户端身份</strong></td>
+<td>兑换时需要 <code>client_secret</code>，只有合法客户端知道</td>
+</tr>
+<tr>
+<td>✅ <strong>支持审计和控制</strong></td>
+<td>SSO 服务器可以记录谁用了哪个 code</td>
+</tr>
+<tr>
+<td>✅ <strong>支持刷新机制</strong></td>
+<td>可以返回 <code>refresh_token</code>，用于长期登录</td>
+</tr>
+<tr>
+<td>✅ <strong>符合 OAuth2 标准</strong></td>
+<td>被 Google、微信、GitHub 等广泛采用</td>
+</tr>
+</tbody></table>
+<hr>
+<p>🎯 最后一句话总结：</p>
+<blockquote>
+<p><strong><code>code</code> 就像银行的“叫号单”</strong>：</p>
+<ul>
+<li>你在大厅（浏览器）拿号（code）</li>
+<li>到窗口（后端）出示号码 + 身份证（client_secret）</li>
+<li>银行员（SSO）才给你办业务（返回 token）</li>
+</ul>
+<p>这样既安全，又可控。</p>
+</blockquote>
+<p>所以，这个“绕一圈”的设计，不是多余，而是为了<strong>在开放网络中实现安全的身份认证</strong>，是现代 SSO 系统的基石。</p>
+<p>所以sso也是oauth2.0协议是吗，跟其他几种协议有啥区别</p>
+<p>非常好的问题！</p>
+<p>我们来彻底搞清楚：</p>
+<blockquote>
+<p>✅ <strong>SSO（单点登录）和 OAuth2.0 是什么关系？</strong><br>✅ <strong>SSO 是 OAuth2.0 吗？</strong><br>✅ <strong>它和其他协议（如 OpenID Connect、SAML、CAS）有什么区别？</strong></p>
+</blockquote>
+<hr>
+<h2 id="✅-一、一句话回答你的问题："><a href="#✅-一、一句话回答你的问题：" class="headerlink" title="✅ 一、一句话回答你的问题："></a>✅ 一、一句话回答你的问题：</h2><blockquote>
+<p><strong>SSO（单点登录）是一种“功能需求”</strong> —— 用户一次登录，访问多个系统。<br><strong>OAuth2.0 是一种“授权协议”</strong> —— 让应用之间安全地共享资源权限。<br><strong>OAuth2.0 本身不是 SSO，但它可以用来实现 SSO。</strong></p>
+</blockquote>
+<p>👉 所以：<strong>SSO 是目标，OAuth2.0 是工具之一。</strong></p>
+<hr>
+<h2 id="🔁-二、类比理解：交通工具-vs-出行目的"><a href="#🔁-二、类比理解：交通工具-vs-出行目的" class="headerlink" title="🔁 二、类比理解：交通工具 vs 出行目的"></a>🔁 二、类比理解：交通工具 vs 出行目的</h2><table>
+<thead>
+<tr>
+<th>类比</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🎯 <strong>SSO（单点登录）</strong></td>
+<td>目标：从家到公司“无缝通勤”（一次认证，多系统通行）</td>
+</tr>
+<tr>
+<td>🚗 <strong>OAuth2.0</strong></td>
+<td>工具：地铁（可以实现通勤，但本来是为“换乘”设计的）</td>
+</tr>
+<tr>
+<td>🚌 <strong>OpenID Connect</strong></td>
+<td>工具：专车（基于地铁改造的“通勤专列”，更适合 SSO）</td>
+</tr>
+<tr>
+<td>🚆 <strong>SAML</strong></td>
+<td>工具：高铁（老式但稳定的通勤方式，企业常用）</td>
+</tr>
+<tr>
+<td>🛴 <strong>CAS</strong></td>
+<td>工具：共享单车（轻量、简单，适合校园&#x2F;小系统）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="✅-三、详细对比：SSO-与-OAuth2-0-的关系"><a href="#✅-三、详细对比：SSO-与-OAuth2-0-的关系" class="headerlink" title="✅ 三、详细对比：SSO 与 OAuth2.0 的关系"></a>✅ 三、详细对比：SSO 与 OAuth2.0 的关系</h2><h3 id="1-OAuth2-0-是什么？"><a href="#1-OAuth2-0-是什么？" class="headerlink" title="1. OAuth2.0 是什么？"></a>1. <strong>OAuth2.0 是什么？</strong></h3><ul>
+<li><strong>定位</strong>：<strong>授权框架</strong>（Authorization Framework）</li>
+<li><strong>核心目标</strong>：让第三方应用在用户授权下，访问你的资源（如微信登录时“获取你的头像和昵称”）</li>
+<li><strong>关键词</strong>：<code>access_token</code>、<code>scope</code>、<code>client_id</code>、<code>code</code> 换 token</li>
+<li><strong>不直接提供用户身份信息</strong>（它只管“授权”，不管“认证”）</li>
+</ul>
+<blockquote>
+<p>⚠️ 问题：OAuth2.0 本身<strong>不能直接实现 SSO</strong>，因为它不标准化“用户是谁”。</p>
+</blockquote>
+<hr>
+<h3 id="2-那怎么用-OAuth2-0-实现-SSO？"><a href="#2-那怎么用-OAuth2-0-实现-SSO？" class="headerlink" title="2. 那怎么用 OAuth2.0 实现 SSO？"></a>2. <strong>那怎么用 OAuth2.0 实现 SSO？</strong></h3><p>通过扩展 → 引入 <strong>OpenID Connect（OIDC）</strong></p>
+<h4 id="✅-OpenID-Connect-OAuth2-0-身份认证（Identity-Layer）"><a href="#✅-OpenID-Connect-OAuth2-0-身份认证（Identity-Layer）" class="headerlink" title="✅ OpenID Connect &#x3D; OAuth2.0 + 身份认证（Identity Layer）"></a>✅ OpenID Connect &#x3D; OAuth2.0 + 身份认证（Identity Layer）</h4><ul>
+<li>在 OAuth2.0 基础上，增加了一个关键东西：<strong>ID Token</strong></li>
+<li><code>ID Token</code> 是一个 JWT，里面包含：<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234567890&quot;</span><span class="punctuation">,</span>      <span class="comment">// 用户唯一标识</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张三&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;zhangsan@xxx.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;iss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://sso.gulimall.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;exp&quot;</span><span class="punctuation">:</span> <span class="number">1311281970</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>这样，客户端就知道“你是谁”了 → 可以实现 SSO</li>
+</ul>
+<blockquote>
+<p>🔗 所以：<strong>真正的 SSO 实现，通常是基于 OAuth2.0 + OpenID Connect</strong></p>
+</blockquote>
+<hr>
+<h2 id="🆚-四、主流-SSO-协议对比"><a href="#🆚-四、主流-SSO-协议对比" class="headerlink" title="🆚 四、主流 SSO 协议对比"></a>🆚 四、主流 SSO 协议对比</h2><table>
+<thead>
+<tr>
+<th>协议</th>
+<th>全称</th>
+<th>类型</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>OAuth2.0 + OIDC</strong></td>
+<td>OpenID Connect</td>
+<td>现代标准</td>
+<td>✅ JSON + RESTful<br>✅ 移动端友好<br>✅ 被 Google、微信、GitHub 广泛使用</td>
+<td>Web、App、微服务</td>
+</tr>
+<tr>
+<td><strong>SAML 2.0</strong></td>
+<td>Security Assertion Markup Language</td>
+<td>老牌标准</td>
+<td>✅ XML 格式<br>✅ 企业级（如 AD FS）<br>✅ 安全性高，但复杂</td>
+<td>企业内网、政府、银行</td>
+</tr>
+<tr>
+<td><strong>CAS</strong></td>
+<td>Central Authentication Service</td>
+<td>开源协议</td>
+<td>✅ 简单易懂<br>✅ 轻量级<br>✅ 适合 Java 体系</td>
+<td>校园系统、中小公司</td>
+</tr>
+<tr>
+<td><strong>OAuth2.0（纯授权）</strong></td>
+<td>-</td>
+<td>授权协议</td>
+<td>❌ 不支持身份认证<br>✅ 适合 API 授权</td>
+<td>第三方授权（如“用微信账号登录”但不获取身份）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📌-五、重点区分：OAuth2-0-vs-OIDC-vs-SSO"><a href="#📌-五、重点区分：OAuth2-0-vs-OIDC-vs-SSO" class="headerlink" title="📌 五、重点区分：OAuth2.0 vs OIDC vs SSO"></a>📌 五、重点区分：OAuth2.0 vs OIDC vs SSO</h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>是什么</th>
+<th>能否实现 SSO</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SSO</strong></td>
+<td>功能需求（一次登录，多系统通行）</td>
+<td>✅ 是目标</td>
+</tr>
+<tr>
+<td><strong>OAuth2.0</strong></td>
+<td>授权协议（获取 access_token）</td>
+<td>❌ 不能直接实现（缺身份）</td>
+</tr>
+<tr>
+<td><strong>OpenID Connect (OIDC)</strong></td>
+<td>基于 OAuth2.0 的身份协议</td>
+<td>✅ 可以实现 SSO</td>
+</tr>
+<tr>
+<td><strong>SAML</strong></td>
+<td>老牌身份断言协议</td>
+<td>✅ 可以实现 SSO</td>
+</tr>
+<tr>
+<td><strong>CAS</strong></td>
+<td>开源 SSO 协议</td>
+<td>✅ 可以实现 SSO</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>✅ 所以：  </p>
+<ul>
+<li>如果你看到“微信登录”、“Google 登录”，背后是 <strong>OAuth2.0 + OpenID Connect</strong>  </li>
+<li>如果你看到“企业微信登录”、“钉钉登录”，可能是 <strong>SAML 或 OIDC</strong>  </li>
+<li>如果你看到“校园统一登录”，可能是 <strong>CAS</strong></li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="🧩-六、举个实际例子：你在“谷粒商城”用微信登录"><a href="#🧩-六、举个实际例子：你在“谷粒商城”用微信登录" class="headerlink" title="🧩 六、举个实际例子：你在“谷粒商城”用微信登录"></a>🧩 六、举个实际例子：你在“谷粒商城”用微信登录</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">点击“微信登录”</span><br><span class="line">    ↓</span><br><span class="line">跳转到微信 OAuth2 页面：</span><br><span class="line">https://open.weixin.qq.com/connect/qrconnect?</span><br><span class="line">  response_type=code</span><br><span class="line">  &amp;client_id=YOUR_APP_ID</span><br><span class="line">  &amp;redirect_uri=...</span><br><span class="line">  &amp;scope=snsapi_login</span><br><span class="line">  &amp;state=xyz</span><br><span class="line">    ↓</span><br><span class="line">你扫码登录微信（在 weixin.qq.com 域名下，安全）</span><br><span class="line">    ↓</span><br><span class="line">微信返回：redirect_uri?code=ABC123</span><br><span class="line">    ↓</span><br><span class="line">谷粒商城后端用 code + client_secret 换取：</span><br><span class="line">   access_token（用于调用 API）</span><br><span class="line">   openid（用户唯一 ID）</span><br><span class="line">   unionid（跨应用唯一 ID）</span><br><span class="line">   nickname, headimgurl（用户信息）</span><br><span class="line">    ↓</span><br><span class="line">创建本地 Session → 登录成功</span><br></pre></td></tr></table></figure>
+
+<p>👉 这就是 <strong>用 OAuth2.0 实现 SSO 的典型场景</strong>，虽然微信没用标准 OIDC，但它扩展了用户信息接口，效果类似。</p>
+<hr>
+<h2 id="✅-七、总结回答你的问题"><a href="#✅-七、总结回答你的问题" class="headerlink" title="✅ 七、总结回答你的问题"></a>✅ 七、总结回答你的问题</h2><blockquote>
+<p><strong>“所以 SSO 也是 OAuth2.0 协议是吗？”</strong></p>
+</blockquote>
+<h3 id="❌-不完全对，正确说法是："><a href="#❌-不完全对，正确说法是：" class="headerlink" title="❌ 不完全对，正确说法是："></a>❌ 不完全对，正确说法是：</h3><ul>
+<li><strong>SSO 是一种需求或功能</strong>（一次登录，多系统通行）</li>
+<li><strong>OAuth2.0 是一种授权协议</strong>，<strong>本身不直接支持 SSO</strong></li>
+<li><strong>但通过 OpenID Connect 扩展后，OAuth2.0 可以用来实现 SSO</strong></li>
+<li>所以：<strong>现代 SSO 系统很多是基于 OAuth2.0 + OIDC 构建的</strong></li>
+</ul>
+<hr>
+<h2 id="🎯-最后建议：如何选择？"><a href="#🎯-最后建议：如何选择？" class="headerlink" title="🎯 最后建议：如何选择？"></a>🎯 最后建议：如何选择？</h2><table>
+<thead>
+<tr>
+<th>你的场景</th>
+<th>推荐协议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>新项目、Web + App + 微服务</td>
+<td>✅ <strong>OAuth2.0 + OpenID Connect</strong>（如 Keycloak、Auth0）</td>
+</tr>
+<tr>
+<td>企业内部系统、对接 AD</td>
+<td>✅ <strong>SAML 2.0</strong></td>
+</tr>
+<tr>
+<td>校园、小公司、Java 项目</td>
+<td>✅ <strong>CAS</strong></td>
+</tr>
+<tr>
+<td>只做第三方授权（不登录）</td>
+<td>✅ <strong>纯 OAuth2.0</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<p>🎯 一句话收尾：</p>
+<blockquote>
+<p><strong>OAuth2.0 是“高速公路”，SSO 是“跨省通勤”，OpenID Connect 就是那张“ETC 通行卡”——它让高速路也能支持身份识别，实现真正的无缝通行。</strong></p>
+</blockquote>
+<p>你之前提供的方案用code换取token就是oauth2.0协议的实现方式是吗，跟OpenID Connect协议有啥区别，如果加上了OpenID Connect协议，该如何设计</p>
+<p>非常棒的问题！你已经触及到现代身份认证系统的核心了。</p>
+<p>我们来一步步深入解答：</p>
+<blockquote>
+<p>✅ 你之前看到的“用 code 换 token”流程，是不是 OAuth 2.0？<br>✅ 它和 OpenID Connect（OIDC）有什么区别？<br>✅ 如果加上 OIDC，系统该如何设计？</p>
+</blockquote>
+<hr>
+<h2 id="✅-一、“用-code-换-token”-就是-OAuth-2-0-的标准实现！"><a href="#✅-一、“用-code-换-token”-就是-OAuth-2-0-的标准实现！" class="headerlink" title="✅ 一、“用 code 换 token” 就是 OAuth 2.0 的标准实现！"></a>✅ 一、“用 code 换 token” 就是 OAuth 2.0 的标准实现！</h2><h3 id="✔️-是的！你完全正确！"><a href="#✔️-是的！你完全正确！" class="headerlink" title="✔️ 是的！你完全正确！"></a>✔️ 是的！你完全正确！</h3><p>你之前看到的这个流程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 重定向到 SSO：?response_type=code</span><br><span class="line">2. 登录成功 → 回调：?code=ABC123</span><br><span class="line">3. 后端用 code + client_secret 换取 access_token</span><br></pre></td></tr></table></figure>
+
+<p>👉 这就是 <strong>OAuth 2.0 的“授权码模式”（Authorization Code Flow）</strong> —— 是 OAuth 2.0 的核心授权流程。</p>
+<p>但它 <strong>只解决了“授权”问题</strong>，还没解决“我是谁”的问题。</p>
+<hr>
+<h2 id="🔁-二、OAuth-2-0-vs-OpenID-Connect：关键区别"><a href="#🔁-二、OAuth-2-0-vs-OpenID-Connect：关键区别" class="headerlink" title="🔁 二、OAuth 2.0 vs OpenID Connect：关键区别"></a>🔁 二、OAuth 2.0 vs OpenID Connect：关键区别</h2><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>OAuth 2.0</th>
+<th>OpenID Connect (OIDC)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>定位</strong></td>
+<td>授权框架（Authorization）</td>
+<td>身份认证协议（Authentication）</td>
+</tr>
+<tr>
+<td><strong>目标</strong></td>
+<td>“让我访问你的资源”</td>
+<td>“证明你是谁”</td>
+</tr>
+<tr>
+<td><strong>核心 Token</strong></td>
+<td><code>access_token</code>（访问 API）</td>
+<td><code>id_token</code>（用户身份） + <code>access_token</code></td>
+</tr>
+<tr>
+<td><strong>是否返回用户信息</strong></td>
+<td>❌ 不标准（需额外 API）</td>
+<td>✅ 标准化（通过 ID Token）</td>
+</tr>
+<tr>
+<td><strong>基于</strong></td>
+<td>-</td>
+<td>✅ 基于 OAuth 2.0 扩展</td>
+</tr>
+<tr>
+<td><strong>是否支持 SSO</strong></td>
+<td>❌ 不能直接支持</td>
+<td>✅ 可以实现真正的 SSO</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>🎯 简单说：</p>
+<ul>
+<li><strong>OAuth 2.0</strong>：你是谁不重要，我只想“替你做点事”（比如发微博）</li>
+<li><strong>OIDC</strong>：我要知道“你是谁”，然后让你登录系统（SSO）</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="🧩-三、OpenID-Connect-在-OAuth-2-0-基础上加了什么？"><a href="#🧩-三、OpenID-Connect-在-OAuth-2-0-基础上加了什么？" class="headerlink" title="🧩 三、OpenID Connect 在 OAuth 2.0 基础上加了什么？"></a>🧩 三、OpenID Connect 在 OAuth 2.0 基础上加了什么？</h2><h3 id="1-新增-scope-openid"><a href="#1-新增-scope-openid" class="headerlink" title="1. 新增 scope=openid"></a>1. 新增 <code>scope=openid</code></h3><p>客户端请求时必须加上：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">https://sso.gulimall.com/oauth/authorize?</span><br><span class="line">  response_type=code</span><br><span class="line">  &amp;client_id=SHOP_APP</span><br><span class="line">  &amp;redirect_uri=https://shop.com/callback</span><br><span class="line">  &amp;scope=openid profile email</span><br><span class="line">  &amp;state=xyz</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>openid</code>：表示这是一个 OIDC 请求（触发身份认证）</li>
+<li><code>profile</code>：请求用户基本信息（name, avatar, gender…）</li>
+<li><code>email</code>：请求邮箱</li>
+</ul>
+<hr>
+<h3 id="2-返回-id-token（JWT-格式）"><a href="#2-返回-id-token（JWT-格式）" class="headerlink" title="2. 返回 id_token（JWT 格式）"></a>2. 返回 <code>id_token</code>（JWT 格式）</h3><p>在“code 换 token”的响应中，除了 <code>access_token</code>，还会返回：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;access_token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eyJhbGci...&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;token_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bearer&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;expires_in&quot;</span><span class="punctuation">:</span> <span class="number">3600</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id_token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlZ...&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>👉 这个 <code>id_token</code> 是一个 <strong>JWT（JSON Web Token）</strong>，解码后长这样：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;iss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://sso.gulimall.com&quot;</span><span class="punctuation">,</span>        <span class="comment">// 签发者</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234567890&quot;</span><span class="punctuation">,</span>                      <span class="comment">// 用户唯一 ID（subject）</span></span><br><span class="line">  <span class="attr">&quot;aud&quot;</span><span class="punctuation">:</span> <span class="string">&quot;SHOP_APP&quot;</span><span class="punctuation">,</span>                        <span class="comment">// 接收方（client_id）</span></span><br><span class="line">  <span class="attr">&quot;exp&quot;</span><span class="punctuation">:</span> <span class="number">1311281970</span><span class="punctuation">,</span>                        <span class="comment">// 过期时间</span></span><br><span class="line">  <span class="attr">&quot;iat&quot;</span><span class="punctuation">:</span> <span class="number">1311280970</span><span class="punctuation">,</span>                        <span class="comment">// 签发时间</span></span><br><span class="line">  <span class="attr">&quot;auth_time&quot;</span><span class="punctuation">:</span> <span class="number">1311280960</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nonce&quot;</span><span class="punctuation">:</span> <span class="string">&quot;n-0S6_WzA2Mj&quot;</span><span class="punctuation">,</span>                 <span class="comment">// 防重放攻击</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张三&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;nickname&quot;</span><span class="punctuation">:</span> <span class="string">&quot;San Zhang&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;zhangsan@xxx.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;email_verified&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;picture&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://example.com/avatar.png&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ 客户端只需解码 <code>id_token</code>，就知道“你是谁”了，无需再调用用户信息接口！</p>
+</blockquote>
+<hr>
+<h2 id="🛠-四、加上-OIDC-后，系统该如何设计？（实战架构）"><a href="#🛠-四、加上-OIDC-后，系统该如何设计？（实战架构）" class="headerlink" title="🛠 四、加上 OIDC 后，系统该如何设计？（实战架构）"></a>🛠 四、加上 OIDC 后，系统该如何设计？（实战架构）</h2><h3 id="场景：谷粒商城（gulimall）实现-SSO-登录"><a href="#场景：谷粒商城（gulimall）实现-SSO-登录" class="headerlink" title="场景：谷粒商城（gulimall）实现 SSO 登录"></a>场景：谷粒商城（gulimall）实现 SSO 登录</h3><h4 id="1-架构组件"><a href="#1-架构组件" class="headerlink" title="1. 架构组件"></a>1. 架构组件</h4><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SSO Server</strong></td>
+<td>使用 Keycloak &#x2F; Auth0 &#x2F; 自研 OIDC 服务</td>
+</tr>
+<tr>
+<td><strong>Shop Client</strong></td>
+<td>gulimall.com（Web 应用）</td>
+</tr>
+<tr>
+<td><strong>Order Client</strong></td>
+<td>order.gulimall.com（微服务）</td>
+</tr>
+<tr>
+<td><strong>Gateway</strong></td>
+<td>统一网关，可集成鉴权</td>
+</tr>
+</tbody></table>
+<hr>
+<h4 id="2-登录流程（OIDC-授权码-PKCE）"><a href="#2-登录流程（OIDC-授权码-PKCE）" class="headerlink" title="2. 登录流程（OIDC + 授权码 + PKCE）"></a>2. 登录流程（OIDC + 授权码 + PKCE）</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">用户访问 https://shop.gulimall.com/order</span><br><span class="line">    ↓</span><br><span class="line">前端检查 localStorage 无 token</span><br><span class="line">    ↓</span><br><span class="line">跳转 OIDC 授权端点：</span><br><span class="line">https://sso.gulimall.com/oauth/authorize?</span><br><span class="line">  response_type=code</span><br><span class="line">  &amp;client_id=SHOP_WEB</span><br><span class="line">  &amp;redirect_uri=https://shop.gulimall.com/callback</span><br><span class="line">  &amp;scope=openid profile email</span><br><span class="line">  &amp;state=abc123</span><br><span class="line">  &amp;code_challenge=...      ← PKCE 防范移动端攻击</span><br><span class="line">  &amp;code_challenge_method=S256</span><br><span class="line">    ↓</span><br><span class="line">在 sso.gulimall.com 域名下登录（安全）</span><br><span class="line">    ↓</span><br><span class="line">登录成功 → 重定向：</span><br><span class="line">https://shop.gulimall.com/callback?code=ABC123&amp;state=abc123</span><br><span class="line">    ↓</span><br><span class="line">前端收到 code → 传给 shop 后端 /callback 接口</span><br><span class="line">    ↓</span><br><span class="line">shop 后端发起请求：</span><br><span class="line">POST https://sso.gulimall.com/oauth/token</span><br><span class="line">  client_id=SHOP_WEB</span><br><span class="line">  client_secret=xxxxx</span><br><span class="line">  code=ABC123</span><br><span class="line">  code_verifier=...        ← PKCE 校验</span><br><span class="line">  redirect_uri=https://shop.gulimall.com/callback</span><br><span class="line">    ↓</span><br><span class="line">SSO 返回：</span><br><span class="line">&#123;</span><br><span class="line">  &quot;access_token&quot;: &quot;eyJhb...&quot;,</span><br><span class="line">  &quot;id_token&quot;: &quot;eyJhbGciOiJSUzI1Ni...&quot;,</span><br><span class="line">  &quot;token_type&quot;: &quot;Bearer&quot;,</span><br><span class="line">  &quot;expires_in&quot;: 3600</span><br><span class="line">&#125;</span><br><span class="line">    ↓</span><br><span class="line">shop 后端：</span><br><span class="line">  1. 解码 id_token → 获取用户信息（sub, name, email）</span><br><span class="line">  2. 创建本地 Session（如写入 Redis）</span><br><span class="line">  3. set-cookie: GULISESSION=xyz</span><br><span class="line">    ↓</span><br><span class="line">浏览器跳转回 /order，登录完成</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-后续请求如何鉴权？"><a href="#3-后续请求如何鉴权？" class="headerlink" title="3. 后续请求如何鉴权？"></a>3. 后续请求如何鉴权？</h4><ul>
+<li>浏览器自动携带 <code>Cookie: GULISESSION=xyz</code></li>
+<li>网关或每个服务从 Redis 查询 Session 信息</li>
+<li>或：前端用 <code>access_token</code> 调用 API（Header: <code>Authorization: Bearer xxx</code>）</li>
+</ul>
+<hr>
+<h4 id="4-单点登录如何体现？"><a href="#4-单点登录如何体现？" class="headerlink" title="4. 单点登录如何体现？"></a>4. 单点登录如何体现？</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">用户已登录 shop.gulimall.com</span><br><span class="line">    ↓</span><br><span class="line">访问 order.gulimall.com</span><br><span class="line">    ↓</span><br><span class="line">order 服务发现未登录（无 GULISESSION）</span><br><span class="line">    ↓</span><br><span class="line">重定向到 SSO：</span><br><span class="line">https://sso.gulimall.com/oauth/authorize?...</span><br><span class="line">    ↓</span><br><span class="line">SSO 检查：用户已在 sso.gulimall.com 登录过（有 Session）</span><br><span class="line">    ↓</span><br><span class="line">直接重定向回：</span><br><span class="line">https://order.gulimall.com/callback?code=XYZ789</span><br><span class="line">    ↓</span><br><span class="line">order 换 token → 创建本地 Session</span><br><span class="line">    ↓</span><br><span class="line">用户“无感登录”完成！</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ 这就是 SSO：<strong>一次登录，多系统通行</strong></p>
+</blockquote>
+<hr>
+<h2 id="✅-五、OIDC-的优势（相比纯-OAuth2-0）"><a href="#✅-五、OIDC-的优势（相比纯-OAuth2-0）" class="headerlink" title="✅ 五、OIDC 的优势（相比纯 OAuth2.0）"></a>✅ 五、OIDC 的优势（相比纯 OAuth2.0）</h2><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>✅ 标准化身份信息</td>
+<td><code>id_token</code> 统一格式，无需自定义 API</td>
+</tr>
+<tr>
+<td>✅ 减少网络请求</td>
+<td>不用再调 <code>/userinfo</code> 接口</td>
+</tr>
+<tr>
+<td>✅ 支持 SSO 状态检查</td>
+<td>提供 <code>/authorize?prompt=none</code> 检查登录状态</td>
+</tr>
+<tr>
+<td>✅ 支持登出</td>
+<td>提供 <code>/logout</code> 和 <code>post_logout_redirect_uri</code></td>
+</tr>
+<tr>
+<td>✅ 更安全</td>
+<td><code>nonce</code> 防重放，<code>aud</code> 校验受众</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📦-六、推荐技术栈（如何落地）"><a href="#📦-六、推荐技术栈（如何落地）" class="headerlink" title="📦 六、推荐技术栈（如何落地）"></a>📦 六、推荐技术栈（如何落地）</h2><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>OIDC Server</strong></td>
+<td>Keycloak（开源）、Auth0、Okta、Azure AD</td>
+</tr>
+<tr>
+<td><strong>Java 客户端</strong></td>
+<td>Spring Security + <code>spring-boot-starter-oauth2-client</code></td>
+</tr>
+<tr>
+<td><strong>前端</strong></td>
+<td>使用 oidc-client-js &#x2F; AppAuth 等库</td>
+</tr>
+<tr>
+<td><strong>Token 存储</strong></td>
+<td>后端：Redis（Session）<br>前端：<code>httpOnly</code> Cookie 或 内存（不要存 localStorage）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="✅-总结"><a href="#✅-总结" class="headerlink" title="✅ 总结"></a>✅ 总结</h2><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>“用 code 换 token” 是 OAuth 2.0 吗？</strong></td>
+<td>✅ 是，这是 OAuth 2.0 的授权码模式</td>
+</tr>
+<tr>
+<td><strong>和 OIDC 有什么区别？</strong></td>
+<td>OIDC &#x3D; OAuth2.0 + <code>openid</code> scope + <code>id_token</code>（JWT）→ 实现身份认证</td>
+</tr>
+<tr>
+<td><strong>加上 OIDC 如何设计？</strong></td>
+<td>1. 请求 <code>scope=openid</code><br>2. 换 token 时获取 <code>id_token</code><br>3. 解码 JWT 获取用户身份<br>4. 实现 SSO 登录&#x2F;登出</td>
+</tr>
+</tbody></table>
+<hr>
+<p>🎯 最后一句话：</p>
+<blockquote>
+<p><strong>OAuth 2.0 是“通行证申请流程”，<br>OpenID Connect 是“护照签发服务”，<br>而 SSO 就是“持护照免签通行多国”——<br>现代 SSO 系统的最佳实践，就是基于 OIDC 构建。</strong></p>
+</blockquote>
+<p>oidc怎么知道身份校验的，多个系统都有不同的用户加权限校验，oidc咋知道的</p>
+<p>这是一个非常深刻的问题！</p>
+<p>你问的是：</p>
+<blockquote>
+<p><strong>OIDC 能做身份认证（你是谁），但多个系统有不同的用户、权限、角色，OIDC 怎么知道每个系统的权限？它怎么支持复杂的权限校验？</strong></p>
+</blockquote>
+<hr>
+<h2 id="✅-简短回答："><a href="#✅-简短回答：" class="headerlink" title="✅ 简短回答："></a>✅ 简短回答：</h2><blockquote>
+<p><strong>OIDC 只负责“身份认证”（Authentication）—— 证明你是谁。</strong><br><strong>它不负责“权限控制”（Authorization）—— 你能不能访问某个资源。</strong><br><strong>权限校验仍然由各个系统自己完成，OIDC 只是把“用户身份”安全地传递给你。</strong></p>
+</blockquote>
+<hr>
+<h2 id="🔁-一、先分清两个概念：认证-vs-鉴权"><a href="#🔁-一、先分清两个概念：认证-vs-鉴权" class="headerlink" title="🔁 一、先分清两个概念：认证 vs 鉴权"></a>🔁 一、先分清两个概念：<strong>认证 vs 鉴权</strong></h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>英文</th>
+<th>含义</th>
+<th>谁负责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>认证</strong></td>
+<td>Authentication</td>
+<td>“你是谁？”（Who are you?）</td>
+<td>✅ OIDC 负责</td>
+</tr>
+<tr>
+<td><strong>鉴权</strong></td>
+<td>Authorization</td>
+<td>“你能做什么？”（What can you do?）</td>
+<td>❌ 各个应用自己负责</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>🎯 类比：  </p>
+<ul>
+<li>OIDC 给你一张 <strong>身份证</strong>（证明你是张三）  </li>
+<li>商场保安看你身份证后，再查内部系统：“张三有没有权限进VIP区？” → 这是商场自己的权限系统说了算</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="🧩-二、OIDC-到底提供了哪些“身份信息”？"><a href="#🧩-二、OIDC-到底提供了哪些“身份信息”？" class="headerlink" title="🧩 二、OIDC 到底提供了哪些“身份信息”？"></a>🧩 二、OIDC 到底提供了哪些“身份信息”？</h2><p>OIDC 通过 <code>id_token</code>（JWT）提供标准化的用户身份：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234567890&quot;</span><span class="punctuation">,</span>           <span class="comment">// 用户唯一 ID（跨系统一致）</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张三&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;zhangsan@company.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;picture&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://...&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;iss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://sso.gulimall.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;aud&quot;</span><span class="punctuation">:</span> <span class="string">&quot;SHOP_APP&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;exp&quot;</span><span class="punctuation">:</span> <span class="number">1386623054</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>👉 它告诉你：</p>
+<ul>
+<li>用户的唯一标识 <code>sub</code>（最重要！）</li>
+<li>基本信息（姓名、邮箱、头像）</li>
+</ul>
+<p>但它<strong>不会告诉你</strong>：</p>
+<ul>
+<li>你在“订单系统”有没有“删除订单”权限</li>
+<li>你在“库存系统”是不是“管理员”</li>
+<li>你在“财务系统”能看哪些数据</li>
+</ul>
+<p>这些都由<strong>各个系统自己管理</strong>。</p>
+<hr>
+<h2 id="🏗-三、真实场景：多个系统如何配合-OIDC-做权限控制？"><a href="#🏗-三、真实场景：多个系统如何配合-OIDC-做权限控制？" class="headerlink" title="🏗 三、真实场景：多个系统如何配合 OIDC 做权限控制？"></a>🏗 三、真实场景：多个系统如何配合 OIDC 做权限控制？</h2><h3 id="场景：公司有三个系统"><a href="#场景：公司有三个系统" class="headerlink" title="场景：公司有三个系统"></a>场景：公司有三个系统</h3><ul>
+<li><strong>Shop 系统</strong>：电商前台（用户角色：买家、卖家、客服）</li>
+<li><strong>Order 系统</strong>：订单管理（权限：查看订单、删除订单、导出数据）</li>
+<li><strong>Admin 后台</strong>：运营管理（角色：运营、管理员、审计员）</li>
+</ul>
+<p>它们都通过同一个 OIDC Server 登录。</p>
+<hr>
+<h3 id="🔐-登录流程（OIDC-负责认证）"><a href="#🔐-登录流程（OIDC-负责认证）" class="headerlink" title="🔐 登录流程（OIDC 负责认证）"></a>🔐 登录流程（OIDC 负责认证）</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">用户登录 → OIDC Server 验证账号密码</span><br><span class="line">    ↓</span><br><span class="line">返回 id_token：sub=U123456, email=zhangsan@xxx.com</span><br><span class="line">    ↓</span><br><span class="line">每个系统拿到 sub 和 email</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🛠-各系统如何做权限控制？（自己负责）"><a href="#🛠-各系统如何做权限控制？（自己负责）" class="headerlink" title="🛠 各系统如何做权限控制？（自己负责）"></a>🛠 各系统如何做权限控制？（自己负责）</h3><h4 id="1-Shop-系统"><a href="#1-Shop-系统" class="headerlink" title="1. Shop 系统"></a>1. Shop 系统</h4><ul>
+<li>查本地数据库：<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> role <span class="keyword">FROM</span> shop_user <span class="keyword">WHERE</span> oidc_sub <span class="operator">=</span> <span class="string">&#x27;U123456&#x27;</span>;</span><br><span class="line">→ role <span class="operator">=</span> <span class="string">&#x27;seller&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li>权限逻辑：<ul>
+<li><code>seller</code>：可以发布商品，不能删除他人订单</li>
+<li><code>buyer</code>：可以下单，不能进后台</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-Order-系统"><a href="#2-Order-系统" class="headerlink" title="2. Order 系统"></a>2. Order 系统</h4><ul>
+<li>查本地权限表：<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> permissions <span class="keyword">FROM</span> order_permissions <span class="keyword">WHERE</span> user_id <span class="operator">=</span> <span class="string">&#x27;U123456&#x27;</span>;</span><br><span class="line">→ [<span class="string">&#x27;view_order&#x27;</span>, <span class="string">&#x27;export_data&#x27;</span>]</span><br></pre></td></tr></table></figure></li>
+<li>控制：<ul>
+<li>有 <code>delete_order</code> 才能删订单</li>
+<li>没有就不能显示“删除”按钮</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-Admin-后台"><a href="#3-Admin-后台" class="headerlink" title="3. Admin 后台"></a>3. Admin 后台</h4><ul>
+<li>使用 RBAC 模型：<ul>
+<li>角色：admin、operator、auditor</li>
+<li>权限映射：admin → 所有权限</li>
+</ul>
+</li>
+<li>根据 <code>sub</code> 查角色 → 决定能访问哪些菜单</li>
+</ul>
+<hr>
+<h2 id="🔄-四、OIDC-如何帮助系统做权限？——-提供“锚点”"><a href="#🔄-四、OIDC-如何帮助系统做权限？——-提供“锚点”" class="headerlink" title="🔄 四、OIDC 如何帮助系统做权限？—— 提供“锚点”"></a>🔄 四、OIDC 如何帮助系统做权限？—— 提供“锚点”</h2><p>OIDC 的核心价值是：<strong>提供一个跨系统的用户唯一标识 <code>sub</code></strong>。</p>
+<blockquote>
+<p>🔗 这个 <code>sub</code> 就像一把“钥匙”，各个系统用它来查找自己的权限数据。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>系统</th>
+<th>如何使用 <code>sub</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Shop</td>
+<td><code>SELECT * FROM users WHERE oidc_sub = &#39;U123456&#39;</code></td>
+</tr>
+<tr>
+<td>Order</td>
+<td><code>GET /permissions?user_id=U123456</code>（内部服务调用）</td>
+</tr>
+<tr>
+<td>Admin</td>
+<td>缓存中查 <code>role_cache[U123456]</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🌐-五、高级方案：OIDC-如何传递权限信息？（可选）"><a href="#🌐-五、高级方案：OIDC-如何传递权限信息？（可选）" class="headerlink" title="🌐 五、高级方案：OIDC 如何传递权限信息？（可选）"></a>🌐 五、高级方案：OIDC 如何传递权限信息？（可选）</h2><p>虽然标准 OIDC 不推荐在 <code>id_token</code> 中放权限，但可以通过以下方式扩展：</p>
+<h3 id="方案-1：在-id-token-中加自定义-claim（不推荐大权限）"><a href="#方案-1：在-id-token-中加自定义-claim（不推荐大权限）" class="headerlink" title="方案 1：在 id_token 中加自定义 claim（不推荐大权限）"></a>方案 1：在 <code>id_token</code> 中加自定义 claim（不推荐大权限）</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;U123456&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张三&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;admin&quot;</span><span class="punctuation">,</span> <span class="string">&quot;finance_viewer&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;groups&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;dev-team&quot;</span><span class="punctuation">,</span> <span class="string">&quot;shanghai-office&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>⚠️ 缺点：token 变大，更新角色要重新登录</p>
+<hr>
+<h3 id="方案-2：用-access-token-userinfo-接口返回权限"><a href="#方案-2：用-access-token-userinfo-接口返回权限" class="headerlink" title="方案 2：用 access_token + /userinfo 接口返回权限"></a>方案 2：用 <code>access_token</code> + <code>/userinfo</code> 接口返回权限</h3><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /userinfo</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Bearer eyJhbGci...</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;U123456&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张三&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;seller&quot;</span><span class="punctuation">,</span> <span class="string">&quot;premium_user&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;permissions&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;product:create&quot;</span><span class="punctuation">,</span> <span class="string">&quot;order:export&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>✅ 推荐：权限动态更新，不影响 ID Token</p>
+<hr>
+<h3 id="方案-3：系统间同步用户角色（推荐）"><a href="#方案-3：系统间同步用户角色（推荐）" class="headerlink" title="方案 3：系统间同步用户角色（推荐）"></a>方案 3：系统间同步用户角色（推荐）</h3><p>使用消息队列或定时同步：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">OIDC Server 用户角色变更</span><br><span class="line">    ↓</span><br><span class="line">发送事件：UserUpdatedEvent&#123;sub=U123456, role=admin&#125;</span><br><span class="line">    ↓</span><br><span class="line">Shop 系统消费 → 更新本地角色表</span><br><span class="line">Order 系统消费 → 更新权限缓存</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="✅-六、总结：OIDC-到底“知道”什么？"><a href="#✅-六、总结：OIDC-到底“知道”什么？" class="headerlink" title="✅ 六、总结：OIDC 到底“知道”什么？"></a>✅ 六、总结：OIDC 到底“知道”什么？</h2><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>OIDC 知道用户身份吗？</strong></td>
+<td>✅ 是的，通过 <code>id_token</code> 提供 <code>sub</code>、email、name 等</td>
+</tr>
+<tr>
+<td><strong>OIDC 知道用户在某个系统的权限吗？</strong></td>
+<td>❌ 不知道，权限是各系统内部逻辑</td>
+</tr>
+<tr>
+<td><strong>OIDC 能做权限控制吗？</strong></td>
+<td>❌ 不能，它只做认证</td>
+</tr>
+<tr>
+<td><strong>多个系统怎么用 OIDC？</strong></td>
+<td>✅ 用 <code>sub</code> 作为“用户 ID 锚点”，去查自己系统的权限表</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-最后一句话："><a href="#🎯-最后一句话：" class="headerlink" title="🎯 最后一句话："></a>🎯 最后一句话：</h2><blockquote>
+<p><strong>OIDC 是“身份证发放机构”，它只证明“你是张三”。</strong><br><strong>至于“张三能不能进机房、能不能审批报销、能不能删除数据”——那是各个公司、系统自己的人事和权限系统说了算。</strong></p>
+</blockquote>
+<p>所以：</p>
+<ul>
+<li>✅ 用 OIDC 做统一登录（认证）</li>
+<li>✅ 用各系统的数据库&#x2F;权限服务做鉴权</li>
+<li>✅ 用 <code>sub</code> 字段把两者关联起来</li>
+</ul>
+<p>这才是现代微服务架构下最合理、最安全的设计模式。</p>
+<p>OIDC怎么知道用户是谁的</p>
+<p>这是一个非常核心、非常本质的问题！</p>
+<p>我们来一步步拆解：</p>
+<blockquote>
+<p>❓ <strong>OIDC 到底是怎么“知道用户是谁”的？</strong><br>❓ 它是自己认证的吗？还是依赖别的系统？<br>❓ <code>id_token</code> 里的信息是从哪来的？</p>
+</blockquote>
+<hr>
+<h2 id="✅-一句话回答："><a href="#✅-一句话回答：" class="headerlink" title="✅ 一句话回答："></a>✅ 一句话回答：</h2><blockquote>
+<p><strong>OIDC 本身不直接“知道”用户是谁，它依赖背后的“身份源”（如数据库、LDAP、微信、企业 AD）来认证用户，认证通过后，把用户身份信息打包成标准的 <code>id_token</code>（JWT），发给客户端。</strong></p>
+</blockquote>
+<p>👉 所以：<strong>OIDC 是“身份信息的快递员”，真正的“身份验证”是由它背后的 Identity Provider（IdP）完成的。</strong></p>
+<hr>
+<h2 id="🏗-一、OIDC-的核心组件：Identity-Provider（IdP）"><a href="#🏗-一、OIDC-的核心组件：Identity-Provider（IdP）" class="headerlink" title="🏗 一、OIDC 的核心组件：Identity Provider（IdP）"></a>🏗 一、OIDC 的核心组件：Identity Provider（IdP）</h2><p>在 OIDC 架构中，有一个关键角色叫：</p>
+<blockquote>
+<p><strong>Identity Provider（IdP）—— 身份提供方</strong></p>
+</blockquote>
+<p>这就是真正“知道用户是谁”的系统。</p>
+<h3 id="常见的-IdP（身份源）包括："><a href="#常见的-IdP（身份源）包括：" class="headerlink" title="常见的 IdP（身份源）包括："></a>常见的 IdP（身份源）包括：</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>例子</th>
+<th>如何“知道用户是谁”</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🗄️ 用户名密码数据库</td>
+<td>自研系统、Keycloak</td>
+<td>查数据库：username + password 匹配</td>
+</tr>
+<tr>
+<td>🌐 第三方登录</td>
+<td>微信、Google、GitHub</td>
+<td>用户在微信那边登录，微信返回 openid</td>
+</tr>
+<tr>
+<td>🏢 企业目录</td>
+<td>LDAP、Active Directory</td>
+<td>企业内部账号体系</td>
+</tr>
+<tr>
+<td>🧑‍💼 SSO 平台</td>
+<td>Okta、Auth0、钉钉</td>
+<td>集成了多种身份源</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🔁-二、OIDC-是怎么“获取”用户身份的？（流程详解）"><a href="#🔁-二、OIDC-是怎么“获取”用户身份的？（流程详解）" class="headerlink" title="🔁 二、OIDC 是怎么“获取”用户身份的？（流程详解）"></a>🔁 二、OIDC 是怎么“获取”用户身份的？（流程详解）</h2><p>我们以“谷粒商城用 OIDC 登录”为例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">用户点击“登录”</span><br><span class="line">    ↓</span><br><span class="line">跳转到 OIDC Server（如：https://sso.gulimall.com）</span><br><span class="line">    ↓</span><br><span class="line">用户在 sso.gulimall.com 页面输入：</span><br><span class="line">   账号：zhangsan</span><br><span class="line">   密码：123456</span><br><span class="line">    ↓</span><br><span class="line">OIDC Server 去查自己的用户数据库：</span><br><span class="line">   SELECT * FROM users WHERE username=&#x27;zhangsan&#x27; AND password=&#x27;123456&#x27;;</span><br><span class="line">    ↓</span><br><span class="line">如果匹配成功 → 确认“你是张三”</span><br><span class="line">    ↓</span><br><span class="line">OIDC Server 创建一个 session（记录用户已登录）</span><br><span class="line">    ↓</span><br><span class="line">生成 id_token（JWT）：</span><br><span class="line">   &#123;</span><br><span class="line">     &quot;sub&quot;: &quot;U123456&quot;,        ← 用户唯一 ID</span><br><span class="line">     &quot;name&quot;: &quot;张三&quot;,</span><br><span class="line">     &quot;email&quot;: &quot;zhangsan@xxx.com&quot;,</span><br><span class="line">     &quot;iss&quot;: &quot;https://sso.gulimall.com&quot;,</span><br><span class="line">     &quot;aud&quot;: &quot;SHOP_APP&quot;</span><br><span class="line">   &#125;</span><br><span class="line">    ↓</span><br><span class="line">重定向回客户端：?code=ABC123</span><br><span class="line">    ↓</span><br><span class="line">客户端用 code 换 token → 得到 id_token</span><br><span class="line">    ↓</span><br><span class="line">解码 id_token → 知道“你是张三”</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ 所以：<strong>OIDC 是通过“让用户在它的页面上登录”来确认身份的，然后把结果标准化地发出去。</strong></p>
+</blockquote>
+<hr>
+<h2 id="🆚-三、对比：OIDC-vs-OAuth-2-0-的“知道用户是谁”"><a href="#🆚-三、对比：OIDC-vs-OAuth-2-0-的“知道用户是谁”" class="headerlink" title="🆚 三、对比：OIDC vs OAuth 2.0 的“知道用户是谁”"></a>🆚 三、对比：OIDC vs OAuth 2.0 的“知道用户是谁”</h2><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>如何知道用户是谁</th>
+<th>是否标准</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>纯 OAuth 2.0</strong></td>
+<td>客户端调用平台私有接口（如 <code>/userinfo</code>）</td>
+<td>❌ 不标准，各平台不同</td>
+</tr>
+<tr>
+<td><strong>OIDC</strong></td>
+<td>SSO Server 自己认证用户，生成 <code>id_token</code></td>
+<td>✅ 标准化，<code>sub</code> + JWT</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🔄-四、OIDC-也可以“代理”其他身份源（如微信登录）"><a href="#🔄-四、OIDC-也可以“代理”其他身份源（如微信登录）" class="headerlink" title="🔄 四、OIDC 也可以“代理”其他身份源（如微信登录）"></a>🔄 四、OIDC 也可以“代理”其他身份源（如微信登录）</h2><p>OIDC Server 不一定自己存用户，它可以作为“中介”：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">用户选择“微信登录”</span><br><span class="line">    ↓</span><br><span class="line">OIDC Server 跳转到微信 OAuth2 页面</span><br><span class="line">    ↓</span><br><span class="line">你在微信页面扫码登录（微信认证你）</span><br><span class="line">    ↓</span><br><span class="line">微信返回：openid + access_token</span><br><span class="line">    ↓</span><br><span class="line">OIDC Server 根据 openid 创建或查找本地用户：</span><br><span class="line">   SELECT user_id FROM social_login WHERE openid=&#x27;oABC123&#x27;;</span><br><span class="line">    ↓</span><br><span class="line">如果没找到 → 自动注册一个用户（“微信用户张三”）</span><br><span class="line">    ↓</span><br><span class="line">生成自己的 id_token：</span><br><span class="line">   &#123;</span><br><span class="line">     &quot;sub&quot;: &quot;U987654&quot;,      ← OIDC 系统内部的用户 ID</span><br><span class="line">     &quot;name&quot;: &quot;张三&quot;,</span><br><span class="line">     &quot;email&quot;: &quot;weixin_123@unionid.com&quot;,</span><br><span class="line">     &quot;iss&quot;: &quot;https://sso.gulimall.com&quot;</span><br><span class="line">   &#125;</span><br><span class="line">    ↓</span><br><span class="line">发给客户端</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ 这就是“联合登录”（Federated Identity）：OIDC 把微信的身份“翻译”成自己的标准格式。</p>
+</blockquote>
+<hr>
+<h2 id="✅-五、总结：OIDC-怎么“知道”用户是谁？"><a href="#✅-五、总结：OIDC-怎么“知道”用户是谁？" class="headerlink" title="✅ 五、总结：OIDC 怎么“知道”用户是谁？"></a>✅ 五、总结：OIDC 怎么“知道”用户是谁？</h2><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>OIDC 自己知道用户是谁吗？</strong></td>
+<td>❌ 不是它自己知道，是它背后的 <strong>IdP（身份提供方）</strong> 知道</td>
+</tr>
+<tr>
+<td><strong>IdP 怎么知道的？</strong></td>
+<td>通过用户名密码、微信登录、LDAP、企业 AD 等方式认证</td>
+</tr>
+<tr>
+<td><strong>OIDC 的作用是什么？</strong></td>
+<td>✅ 把认证结果标准化为 <code>id_token</code>（JWT）<br>✅ 安全地传递给客户端<br>✅ 支持 SSO、登出、刷新等</td>
+</tr>
+<tr>
+<td><strong><code>sub</code> 是哪来的？</strong></td>
+<td>是 IdP 给每个用户分配的<strong>唯一标识</strong>，跨应用不变</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-最后一句话：-1"><a href="#🎯-最后一句话：-1" class="headerlink" title="🎯 最后一句话："></a>🎯 最后一句话：</h2><blockquote>
+<p><strong>OIDC 就像“公证处”：</strong></p>
+<ul>
+<li>你（用户）拿着身份证（密码&#x2F;微信）去公证处（IdP）做认证</li>
+<li>公证处确认你是张三</li>
+<li>然后它给你开一张<strong>标准化的公证书</strong>（<code>id_token</code>）</li>
+<li>其他公司（客户端）看到这个公证书，就知道“你是张三”</li>
+</ul>
+</blockquote>
+<p>所以：</p>
+<ul>
+<li><strong>认证</strong>（你是谁）→ 由 IdP 完成</li>
+<li><strong>发证</strong>（怎么证明你是谁）→ 由 OIDC 完成</li>
+</ul>
+<p>这才是 OIDC 的真正价值：<strong>把“身份”变成一个可信任、可传递、标准化的数字凭证。</strong></p>
+<p>OIDC Server 去查自己的用户数据库：<br>他不就是一个认证系统，真正的数据库不是各个server的数据库</p>
+<p>你问到了 <strong>SSO&#x2F;OIDC 架构中最关键的设计矛盾</strong>，非常深刻！</p>
+<p>我们来彻底搞清楚：</p>
+<blockquote>
+<p>❓ <strong>OIDC Server 真的要自己存用户数据吗？</strong><br>❓ <strong>不是每个业务系统（shop、order）都有自己的用户表吗？</strong><br>❓ <strong>OIDC Server 查的数据库，和业务系统的数据库，是什么关系？</strong></p>
+</blockquote>
+<hr>
+<h2 id="✅-一句话回答：-1"><a href="#✅-一句话回答：-1" class="headerlink" title="✅ 一句话回答："></a>✅ 一句话回答：</h2><blockquote>
+<p><strong>OIDC Server 可以有自己的“统一用户库”，也可以不存数据，只做“认证代理”</strong>。<br><strong>它负责“你是谁”的认证，而业务系统负责“你有什么权限”</strong>。<br><strong>两者通过 <code>sub</code>（用户唯一 ID）关联，实现解耦。</strong></p>
+</blockquote>
+<hr>
+<h2 id="🧩-一、真实世界中的-3-种架构模式"><a href="#🧩-一、真实世界中的-3-种架构模式" class="headerlink" title="🧩 一、真实世界中的 3 种架构模式"></a>🧩 一、真实世界中的 3 种架构模式</h2><h3 id="✅-模式-1：OIDC-Server-拥有“统一用户库”（推荐）"><a href="#✅-模式-1：OIDC-Server-拥有“统一用户库”（推荐）" class="headerlink" title="✅ 模式 1：OIDC Server 拥有“统一用户库”（推荐）"></a>✅ 模式 1：OIDC Server 拥有“统一用户库”（推荐）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">                      [统一用户中心]</span><br><span class="line">                          ↑ ↑ ↑</span><br><span class="line">                         /  |  \</span><br><span class="line">                        /   |   \</span><br><span class="line">              [OIDC Server] |    \</span><br><span class="line">                          \ |     \</span><br><span class="line">                           \|      \</span><br><span class="line">[Shop DB]           [Order DB]     [Admin DB]</span><br><span class="line">  user_id ← sub       user_id ← sub   user_id ← sub</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>OIDC Server</strong>：有自己的用户表（<code>users</code>），存账号、密码、手机号、邮箱</li>
+<li><strong>业务系统</strong>：在自己的数据库中存 <code>oidc_sub</code> 字段，关联到统一用户</li>
+<li><strong>登录时</strong>：用户在 OIDC 页面输入账号密码 → 验证通过 → 返回 <code>sub=U123456</code></li>
+<li><strong>业务系统</strong>：用 <code>sub</code> 去查本地权限、角色、订单等</li>
+</ul>
+<blockquote>
+<p>✅ 优点：  </p>
+<ul>
+<li>用户信息统一管理（改密码、注销账号方便）  </li>
+<li>真正的 SSO（一个账号，多系统通行）  </li>
+<li>解耦：认证 vs 业务权限</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="✅-模式-2：OIDC-Server-做“认证代理”（Federated-Identity）"><a href="#✅-模式-2：OIDC-Server-做“认证代理”（Federated-Identity）" class="headerlink" title="✅ 模式 2：OIDC Server 做“认证代理”（Federated Identity）"></a>✅ 模式 2：OIDC Server 做“认证代理”（Federated Identity）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">        [OIDC Server]</span><br><span class="line">       /     |     \</span><br><span class="line">      /      |      \</span><br><span class="line">[微信]    [Google]    [企业 AD/LDAP]</span><br><span class="line">     \      |      /</span><br><span class="line">      \     |     /</span><br><span class="line">       [业务系统]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>OIDC Server <strong>不存用户密码</strong>，只是“中介”</li>
+<li>它支持多种登录方式：<ul>
+<li>微信登录 → 拿 <code>openid</code></li>
+<li>Google 登录 → 拿 <code>sub</code></li>
+<li>企业 AD → 验证域账号</li>
+</ul>
+</li>
+<li>OIDC Server 根据外部 ID（如 <code>openid</code>）生成自己的 <code>sub</code>，并映射到本地用户</li>
+<li>业务系统仍然用 <code>sub</code> 关联权限</li>
+</ul>
+<blockquote>
+<p>✅ 优点：  </p>
+<ul>
+<li>无需管理密码  </li>
+<li>支持社交登录、企业登录  </li>
+<li>适合对外服务（如 SaaS）</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="❌-模式-3：每个系统自己存用户（错误做法）"><a href="#❌-模式-3：每个系统自己存用户（错误做法）" class="headerlink" title="❌ 模式 3：每个系统自己存用户（错误做法）"></a>❌ 模式 3：每个系统自己存用户（错误做法）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[Shop DB]        [Order DB]        [Admin DB]</span><br><span class="line">  user1            user1             user1</span><br><span class="line">  password         password          password</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每个系统都有自己的账号体系</li>
+<li>用户要在 3 个地方注册 3 次</li>
+<li>❌ 这不是 SSO！这是“多账号系统”</li>
+</ul>
+<blockquote>
+<p>⚠️ 问题：</p>
+<ul>
+<li>密码不统一</li>
+<li>无法实现“一次登录，多系统通行”</li>
+<li>运维成本高</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="🔄-二、OIDC-Server-和业务系统的数据关系"><a href="#🔄-二、OIDC-Server-和业务系统的数据关系" class="headerlink" title="🔄 二、OIDC Server 和业务系统的数据关系"></a>🔄 二、OIDC Server 和业务系统的数据关系</h2><table>
+<thead>
+<tr>
+<th>数据</th>
+<th>存储位置</th>
+<th>谁负责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>用户身份</strong><br>（账号、密码、手机号、邮箱）</td>
+<td>✅ OIDC Server 的数据库</td>
+<td>统一用户中心</td>
+</tr>
+<tr>
+<td><strong>用户权限</strong><br>（角色、菜单、数据权限）</td>
+<td>✅ 各业务系统自己的数据库</td>
+<td>shop、order 自己管</td>
+</tr>
+<tr>
+<td><strong>用户关联</strong></td>
+<td>✅ 用 <code>sub</code> 字段连接</td>
+<td>双方都存 <code>sub</code></td>
+</tr>
+</tbody></table>
+<h3 id="示例：Shop-系统的用户表"><a href="#示例：Shop-系统的用户表" class="headerlink" title="示例：Shop 系统的用户表"></a>示例：Shop 系统的用户表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> shop_user (</span><br><span class="line">  id <span class="type">BIGINT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">  oidc_sub <span class="type">VARCHAR</span>(<span class="number">64</span>) <span class="keyword">UNIQUE</span>,  <span class="comment">-- ← 来自 OIDC 的 sub</span></span><br><span class="line">  role ENUM(<span class="string">&#x27;buyer&#x27;</span>, <span class="string">&#x27;seller&#x27;</span>),</span><br><span class="line">  created_at DATETIME,</span><br><span class="line">  <span class="keyword">FOREIGN KEY</span> (oidc_sub) <span class="keyword">REFERENCES</span> oidc.users(sub)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>登录后：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> role <span class="keyword">FROM</span> shop_user <span class="keyword">WHERE</span> oidc_sub <span class="operator">=</span> <span class="string">&#x27;U123456&#x27;</span>;</span><br><span class="line">→ <span class="string">&#x27;seller&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🌐-三、OIDC-Server-如何“查数据库”？——-实际流程"><a href="#🌐-三、OIDC-Server-如何“查数据库”？——-实际流程" class="headerlink" title="🌐 三、OIDC Server 如何“查数据库”？—— 实际流程"></a>🌐 三、OIDC Server 如何“查数据库”？—— 实际流程</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">用户访问 https://shop.gulimall.com/order</span><br><span class="line">    ↓</span><br><span class="line">跳转 OIDC Server：https://sso.gulimall.com/login</span><br><span class="line">    ↓</span><br><span class="line">用户输入：账号 zhangsan + 密码 123456</span><br><span class="line">    ↓</span><br><span class="line">OIDC Server 执行：</span><br><span class="line">   SELECT * FROM users </span><br><span class="line">   WHERE username = &#x27;zhangsan&#x27; </span><br><span class="line">     AND password_hash = HASH(&#x27;123456&#x27;);</span><br><span class="line">    ↓</span><br><span class="line">如果匹配 → 认证成功</span><br><span class="line">    ↓</span><br><span class="line">生成 session 和 id_token：</span><br><span class="line">   &#123;</span><br><span class="line">     &quot;sub&quot;: &quot;U123456&quot;,</span><br><span class="line">     &quot;name&quot;: &quot;张三&quot;,</span><br><span class="line">     &quot;email&quot;: &quot;zhangsan@xxx.com&quot;</span><br><span class="line">   &#125;</span><br><span class="line">    ↓</span><br><span class="line">重定向回 shop → shop 用 sub 查本地权限</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ 所以：OIDC Server 查的是<strong>它自己管理的“统一用户库”</strong>，不是 shop 或 order 的业务库。</p>
+</blockquote>
+<hr>
+<h2 id="✅-四、为什么需要“统一用户库”？"><a href="#✅-四、为什么需要“统一用户库”？" class="headerlink" title="✅ 四、为什么需要“统一用户库”？"></a>✅ 四、为什么需要“统一用户库”？</h2><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>有统一用户库</th>
+<th>无统一用户库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>用户改密码</td>
+<td>✅ 一次修改，所有系统生效</td>
+<td>❌ 每个系统都要改</td>
+</tr>
+<tr>
+<td>用户注销账号</td>
+<td>✅ 删除统一用户 + 通知各系统</td>
+<td>❌ 难以清理</td>
+</tr>
+<tr>
+<td>SSO 登录</td>
+<td>✅ 支持</td>
+<td>❌ 只能做“登录代理”</td>
+</tr>
+<tr>
+<td>数据一致性</td>
+<td>✅ 高</td>
+<td>❌ 低</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🎯-五、总结：你的问题的答案"><a href="#🎯-五、总结：你的问题的答案" class="headerlink" title="🎯 五、总结：你的问题的答案"></a>🎯 五、总结：你的问题的答案</h2><blockquote>
+<p><strong>“他不就是一个认证系统，真正的数据库不是各个 server 的数据库”</strong></p>
+</blockquote>
+<p>✅ 你说得<strong>完全正确</strong>！</p>
+<ul>
+<li><strong>OIDC Server 是认证系统</strong>，它应该有自己的“统一用户库”（或对接外部 IdP）</li>
+<li><strong>业务系统（shop、order）是业务系统</strong>，它们有自己的“权限库”、“订单库”、“商品库”</li>
+<li><strong>OIDC Server 不关心你是不是管理员、能不能删订单</strong></li>
+<li><strong>它只关心：“你是谁” → 返回 <code>sub</code></strong></li>
+<li><strong>业务系统拿着 <code>sub</code> 去查：“这个用户在我这里有什么权限”</strong></li>
+</ul>
+<hr>
+<h2 id="🎁-最后一句话："><a href="#🎁-最后一句话：" class="headerlink" title="🎁 最后一句话："></a>🎁 最后一句话：</h2><blockquote>
+<p><strong>OIDC Server 是“身份证签发机构”</strong>，它只管发身份证（<code>id_token</code>）<br><strong>Shop、Order 是“商场、银行”</strong>，它们看到身份证后，再查自己的系统：“这个身份证号码的人，能不能进VIP区、能不能取款”  </p>
+</blockquote>
+<p>这就是 <strong>“认证”与“授权”的解耦</strong>，也是现代微服务架构的核心设计思想。</p>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/')">单点登录与认证协议</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=单点登录与认证协议&amp;url=http://example.com/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/&amp;pic=https://origin.picgo.net/2025/08/22/xAuFeZc84N83facc507a2d9aac.webp" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>权限校验<span class="tagsPageCount">4</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://origin.picgo.net/2025/08/07/1eb94f064cf74b04865bdaf1b3c8e9be6939674b9205c975.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/22/Cloud_Sleuth/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/22/sleuth19f5bc8f25ffccbe.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Sleuth + Zinkin</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/25/CLoud_Sentinel/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/25/sentinel4a22b3eba66a94ef.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Sentinel</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/07/25/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_CST/" title="权限校验_CST"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/08/01/Frame-28-1024x838ca25f53ef910b53f.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-07-25</div><div class="title">权限校验_CST</div></div></a></div><div><a href="/2025/07/24/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_Shiro/" title="权限校验_Shiro"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/07/28/551994ea3dcf7d3b61c743.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-07-24</div><div class="title">权限校验_Shiro</div></div></a></div><div><a href="/2025/07/29/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_SpringSecurity/" title="权限校验_SpringSecurity"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/08/01/k5c6isf4ci6ippivd60vb0ab2f6eec10f7b3.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-07-29</div><div class="title">权限校验_SpringSecurity</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#OAuth-2-0-%E6%A6%82%E8%A7%88"><span class="toc-number">1.</span> <span class="toc-text">OAuth 2.0 概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%8E%88%E6%9D%83%E6%96%B9%E5%BC%8F%EF%BC%88Grants%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">常见授权方式（Grants）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E7%AB%AF%E7%82%B9%E4%B8%8E%E4%BA%A4%E4%BA%92"><span class="toc-number">3.</span> <span class="toc-text">标准端点与交互</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C%E4%B8%8E%E5%88%B7%E6%96%B0%E4%BB%A4%E7%89%8C"><span class="toc-number">4.</span> <span class="toc-text">访问令牌与刷新令牌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OAuth-2-0-%E5%AE%9E%E8%B7%B5%E4%B8%8E%E5%AE%89%E5%85%A8%E8%A6%81%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">OAuth 2.0 实践与安全要点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OIDC%EF%BC%88OpenID-Connect%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">OIDC（OpenID Connect）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OAuth-2-0-%E4%B8%8E-OIDC-%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E9%80%89%E5%9E%8B"><span class="toc-number">7.</span> <span class="toc-text">OAuth 2.0 与 OIDC 的区别与选型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E6%8E%92%E6%9F%A5"><span class="toc-number">8.</span> <span class="toc-text">常见问题与排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AF%E8%AF%AD%E9%80%9F%E8%A7%88"><span class="toc-number">9.</span> <span class="toc-text">术语速览</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E6%9D%A5%E6%BA%90%E4%BA%8E%E4%B8%BB%E6%92%AD%E8%B7%9F%E9%80%9A%E4%B9%89%E7%9A%84%E8%81%8A%E5%A4%A9%E8%AE%B0%E5%BD%95"><span class="toc-number"></span> <span class="toc-text">以下来源于主播跟通义的聊天记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F-Session%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">一、什么是分布式 Session？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A%E5%88%86%E5%B8%83%E5%BC%8F-Session"><span class="toc-number">1.</span> <span class="toc-text">解决方案：分布式 Session</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-Session-%E7%9A%84%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">分布式 Session 的核心特点：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Spring-Session-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">二、Spring Session 是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%BD%A0%E6%8F%90%E4%BE%9B%E7%9A%84%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90%EF%BC%9AGulimallSessionConfig"><span class="toc-number"></span> <span class="toc-text">三、你提供的代码解析：GulimallSessionConfig</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-cookieSerializer-%E6%96%B9%E6%B3%95-%E2%80%94%E2%80%94-%E9%85%8D%E7%BD%AE-Session-ID-%E7%9A%84-Cookie-%E8%A1%8C%E4%B8%BA"><span class="toc-number">1.</span> <span class="toc-text">1. cookieSerializer() 方法 —— 配置 Session ID 的 Cookie 行为</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">详细说明：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-springSessionDefaultRedisSerializer-%E6%96%B9%E6%B3%95-%E2%80%94%E2%80%94-%E9%85%8D%E7%BD%AE-Redis-%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">2. springSessionDefaultRedisSerializer() 方法 —— 配置 Redis 序列化方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E6%B3%A8%E9%87%8A%E6%8E%89%E7%9A%84%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">原始注释掉的代码：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%93%E5%89%8D%E4%BD%BF%E7%94%A8%E7%9A%84%EF%BC%9A"><span class="toc-number">2.2.</span> <span class="toc-text">当前使用的：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B%E5%9B%BE%EF%BC%88%E7%AE%80%E5%8C%96%E7%89%88%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">四、整体流程图（简化版）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number"></span> <span class="toc-text">五、常见应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number"></span> <span class="toc-text">六、注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8C%9F-%E4%B8%80%E3%80%81%E4%B8%80%E5%8F%A5%E8%AF%9D%E8%A7%A3%E9%87%8A"><span class="toc-number"></span> <span class="toc-text">🌟 一、一句话解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E4%BA%8C%E3%80%81%E4%B8%BE%E4%B8%AA%E7%94%9F%E6%B4%BB%E5%8C%96%E7%9A%84%E4%BE%8B%E5%AD%90%EF%BC%9A%E9%A4%90%E5%8E%85%E5%8F%96%E9%A4%90"><span class="toc-number"></span> <span class="toc-text">🧩 二、举个生活化的例子：餐厅取餐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%81-%E4%B8%89%E3%80%81%E6%8A%80%E6%9C%AF%E6%B5%81%E7%A8%8B%E5%9B%9E%E9%A1%BE%EF%BC%88%E5%B8%A6-code-%E7%9A%84-OAuth2-%E6%8E%88%E6%9D%83%E7%A0%81%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">🔁 三、技术流程回顾（带 code 的 OAuth2 授权码模式）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9D%93-%E5%9B%9B%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%99%E4%B9%88%E2%80%9C%E7%BB%95%E2%80%9D%EF%BC%9F%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5%E8%BF%94%E5%9B%9E-token-%E5%90%97%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">❓ 四、为什么要这么“绕”？不能直接返回 token 吗？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E7%9B%B4%E6%8E%A5%E8%BF%94%E5%9B%9E-token%EF%BC%88%E6%AF%94%E5%A6%82-access-token-xxx%EF%BC%89%EF%BC%8C%E4%BC%9A%E6%9C%89%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">如果直接返回 token（比如 ?access_token&#x3D;xxx），会有什么问题？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E5%AE%89%E5%85%A8%E9%A3%8E%E9%99%A9-1%EF%BC%9AToken-%E6%B3%84%E9%9C%B2%E5%9C%A8-URL-%E4%B8%AD"><span class="toc-number">1.1.</span> <span class="toc-text">⚠️ 安全风险 1：Token 泄露在 URL 中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E5%AE%89%E5%85%A8%E9%A3%8E%E9%99%A9-2%EF%BC%9ACSRF-Token-%E6%88%AA%E8%8E%B7"><span class="toc-number">1.2.</span> <span class="toc-text">⚠️ 安全风险 2：CSRF + Token 截获</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%BA%94%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8-code-%E6%A8%A1%E5%BC%8F%E5%B0%B1%E5%AE%89%E5%85%A8%E4%BA%86%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">✅ 五、为什么用 code 模式就安全了？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9B%A1-%E5%85%AD%E3%80%81code-%E6%A8%A1%E5%BC%8F-vs-%E5%85%B6%E4%BB%96%E6%A8%A1%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="toc-number"></span> <span class="toc-text">🛡 六、code 模式 vs 其他模式对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E2%80%9C%E7%94%A8-code-%E6%8D%A2%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E2%80%9D%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">✅ 七、总结：为什么要“用 code 换用户信息”？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%80%E3%80%81%E4%B8%80%E5%8F%A5%E8%AF%9D%E5%9B%9E%E7%AD%94%E4%BD%A0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">✅ 一、一句话回答你的问题：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%81-%E4%BA%8C%E3%80%81%E7%B1%BB%E6%AF%94%E7%90%86%E8%A7%A3%EF%BC%9A%E4%BA%A4%E9%80%9A%E5%B7%A5%E5%85%B7-vs-%E5%87%BA%E8%A1%8C%E7%9B%AE%E7%9A%84"><span class="toc-number"></span> <span class="toc-text">🔁 二、类比理解：交通工具 vs 出行目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%89%E3%80%81%E8%AF%A6%E7%BB%86%E5%AF%B9%E6%AF%94%EF%BC%9ASSO-%E4%B8%8E-OAuth2-0-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number"></span> <span class="toc-text">✅ 三、详细对比：SSO 与 OAuth2.0 的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-OAuth2-0-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">1. OAuth2.0 是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%82%A3%E6%80%8E%E4%B9%88%E7%94%A8-OAuth2-0-%E5%AE%9E%E7%8E%B0-SSO%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">2. 那怎么用 OAuth2.0 实现 SSO？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%9C%85-OpenID-Connect-OAuth2-0-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%EF%BC%88Identity-Layer%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">✅ OpenID Connect &#x3D; OAuth2.0 + 身份认证（Identity Layer）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%86%9A-%E5%9B%9B%E3%80%81%E4%B8%BB%E6%B5%81-SSO-%E5%8D%8F%E8%AE%AE%E5%AF%B9%E6%AF%94"><span class="toc-number"></span> <span class="toc-text">🆚 四、主流 SSO 协议对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8C-%E4%BA%94%E3%80%81%E9%87%8D%E7%82%B9%E5%8C%BA%E5%88%86%EF%BC%9AOAuth2-0-vs-OIDC-vs-SSO"><span class="toc-number"></span> <span class="toc-text">📌 五、重点区分：OAuth2.0 vs OIDC vs SSO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E5%85%AD%E3%80%81%E4%B8%BE%E4%B8%AA%E5%AE%9E%E9%99%85%E4%BE%8B%E5%AD%90%EF%BC%9A%E4%BD%A0%E5%9C%A8%E2%80%9C%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%9D%E7%94%A8%E5%BE%AE%E4%BF%A1%E7%99%BB%E5%BD%95"><span class="toc-number"></span> <span class="toc-text">🧩 六、举个实际例子：你在“谷粒商城”用微信登录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93%E5%9B%9E%E7%AD%94%E4%BD%A0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number"></span> <span class="toc-text">✅ 七、总结回答你的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9D%8C-%E4%B8%8D%E5%AE%8C%E5%85%A8%E5%AF%B9%EF%BC%8C%E6%AD%A3%E7%A1%AE%E8%AF%B4%E6%B3%95%E6%98%AF%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">❌ 不完全对，正确说法是：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E6%9C%80%E5%90%8E%E5%BB%BA%E8%AE%AE%EF%BC%9A%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🎯 最后建议：如何选择？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%80%E3%80%81%E2%80%9C%E7%94%A8-code-%E6%8D%A2-token%E2%80%9D-%E5%B0%B1%E6%98%AF-OAuth-2-0-%E7%9A%84%E6%A0%87%E5%87%86%E5%AE%9E%E7%8E%B0%EF%BC%81"><span class="toc-number"></span> <span class="toc-text">✅ 一、“用 code 换 token” 就是 OAuth 2.0 的标准实现！</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%94%EF%B8%8F-%E6%98%AF%E7%9A%84%EF%BC%81%E4%BD%A0%E5%AE%8C%E5%85%A8%E6%AD%A3%E7%A1%AE%EF%BC%81"><span class="toc-number">1.</span> <span class="toc-text">✔️ 是的！你完全正确！</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%81-%E4%BA%8C%E3%80%81OAuth-2-0-vs-OpenID-Connect%EF%BC%9A%E5%85%B3%E9%94%AE%E5%8C%BA%E5%88%AB"><span class="toc-number"></span> <span class="toc-text">🔁 二、OAuth 2.0 vs OpenID Connect：关键区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E4%B8%89%E3%80%81OpenID-Connect-%E5%9C%A8-OAuth-2-0-%E5%9F%BA%E7%A1%80%E4%B8%8A%E5%8A%A0%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🧩 三、OpenID Connect 在 OAuth 2.0 基础上加了什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%96%B0%E5%A2%9E-scope-openid"><span class="toc-number">1.</span> <span class="toc-text">1. 新增 scope&#x3D;openid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%BF%94%E5%9B%9E-id-token%EF%BC%88JWT-%E6%A0%BC%E5%BC%8F%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">2. 返回 id_token（JWT 格式）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9B%A0-%E5%9B%9B%E3%80%81%E5%8A%A0%E4%B8%8A-OIDC-%E5%90%8E%EF%BC%8C%E7%B3%BB%E7%BB%9F%E8%AF%A5%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F%EF%BC%88%E5%AE%9E%E6%88%98%E6%9E%B6%E6%9E%84%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">🛠 四、加上 OIDC 后，系统该如何设计？（实战架构）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%EF%BC%9A%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%EF%BC%88gulimall%EF%BC%89%E5%AE%9E%E7%8E%B0-SSO-%E7%99%BB%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">场景：谷粒商城（gulimall）实现 SSO 登录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%9E%B6%E6%9E%84%E7%BB%84%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">1. 架构组件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%99%BB%E5%BD%95%E6%B5%81%E7%A8%8B%EF%BC%88OIDC-%E6%8E%88%E6%9D%83%E7%A0%81-PKCE%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">2. 登录流程（OIDC + 授权码 + PKCE）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%90%8E%E7%BB%AD%E8%AF%B7%E6%B1%82%E5%A6%82%E4%BD%95%E9%89%B4%E6%9D%83%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">3. 后续请求如何鉴权？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%E5%A6%82%E4%BD%95%E4%BD%93%E7%8E%B0%EF%BC%9F"><span class="toc-number">1.4.</span> <span class="toc-text">4. 单点登录如何体现？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%BA%94%E3%80%81OIDC-%E7%9A%84%E4%BC%98%E5%8A%BF%EF%BC%88%E7%9B%B8%E6%AF%94%E7%BA%AF-OAuth2-0%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">✅ 五、OIDC 的优势（相比纯 OAuth2.0）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%A6-%E5%85%AD%E3%80%81%E6%8E%A8%E8%8D%90%E6%8A%80%E6%9C%AF%E6%A0%88%EF%BC%88%E5%A6%82%E4%BD%95%E8%90%BD%E5%9C%B0%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">📦 六、推荐技术栈（如何落地）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">✅ 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E7%AE%80%E7%9F%AD%E5%9B%9E%E7%AD%94%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">✅ 简短回答：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%81-%E4%B8%80%E3%80%81%E5%85%88%E5%88%86%E6%B8%85%E4%B8%A4%E4%B8%AA%E6%A6%82%E5%BF%B5%EF%BC%9A%E8%AE%A4%E8%AF%81-vs-%E9%89%B4%E6%9D%83"><span class="toc-number"></span> <span class="toc-text">🔁 一、先分清两个概念：认证 vs 鉴权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E4%BA%8C%E3%80%81OIDC-%E5%88%B0%E5%BA%95%E6%8F%90%E4%BE%9B%E4%BA%86%E5%93%AA%E4%BA%9B%E2%80%9C%E8%BA%AB%E4%BB%BD%E4%BF%A1%E6%81%AF%E2%80%9D%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🧩 二、OIDC 到底提供了哪些“身份信息”？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8F%97-%E4%B8%89%E3%80%81%E7%9C%9F%E5%AE%9E%E5%9C%BA%E6%99%AF%EF%BC%9A%E5%A4%9A%E4%B8%AA%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E9%85%8D%E5%90%88-OIDC-%E5%81%9A%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">🏗 三、真实场景：多个系统如何配合 OIDC 做权限控制？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%EF%BC%9A%E5%85%AC%E5%8F%B8%E6%9C%89%E4%B8%89%E4%B8%AA%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">场景：公司有三个系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%90-%E7%99%BB%E5%BD%95%E6%B5%81%E7%A8%8B%EF%BC%88OIDC-%E8%B4%9F%E8%B4%A3%E8%AE%A4%E8%AF%81%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">🔐 登录流程（OIDC 负责认证）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9B%A0-%E5%90%84%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E5%81%9A%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6%EF%BC%9F%EF%BC%88%E8%87%AA%E5%B7%B1%E8%B4%9F%E8%B4%A3%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">🛠 各系统如何做权限控制？（自己负责）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Shop-%E7%B3%BB%E7%BB%9F"><span class="toc-number">3.1.</span> <span class="toc-text">1. Shop 系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Order-%E7%B3%BB%E7%BB%9F"><span class="toc-number">3.2.</span> <span class="toc-text">2. Order 系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Admin-%E5%90%8E%E5%8F%B0"><span class="toc-number">3.3.</span> <span class="toc-text">3. Admin 后台</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%84-%E5%9B%9B%E3%80%81OIDC-%E5%A6%82%E4%BD%95%E5%B8%AE%E5%8A%A9%E7%B3%BB%E7%BB%9F%E5%81%9A%E6%9D%83%E9%99%90%EF%BC%9F%E2%80%94%E2%80%94-%E6%8F%90%E4%BE%9B%E2%80%9C%E9%94%9A%E7%82%B9%E2%80%9D"><span class="toc-number"></span> <span class="toc-text">🔄 四、OIDC 如何帮助系统做权限？—— 提供“锚点”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8C%90-%E4%BA%94%E3%80%81%E9%AB%98%E7%BA%A7%E6%96%B9%E6%A1%88%EF%BC%9AOIDC-%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E6%9D%83%E9%99%90%E4%BF%A1%E6%81%AF%EF%BC%9F%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">🌐 五、高级方案：OIDC 如何传递权限信息？（可选）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-1%EF%BC%9A%E5%9C%A8-id-token-%E4%B8%AD%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89-claim%EF%BC%88%E4%B8%8D%E6%8E%A8%E8%8D%90%E5%A4%A7%E6%9D%83%E9%99%90%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">方案 1：在 id_token 中加自定义 claim（不推荐大权限）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-2%EF%BC%9A%E7%94%A8-access-token-userinfo-%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E%E6%9D%83%E9%99%90"><span class="toc-number">2.</span> <span class="toc-text">方案 2：用 access_token + &#x2F;userinfo 接口返回权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-3%EF%BC%9A%E7%B3%BB%E7%BB%9F%E9%97%B4%E5%90%8C%E6%AD%A5%E7%94%A8%E6%88%B7%E8%A7%92%E8%89%B2%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">方案 3：系统间同步用户角色（推荐）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E5%85%AD%E3%80%81%E6%80%BB%E7%BB%93%EF%BC%9AOIDC-%E5%88%B0%E5%BA%95%E2%80%9C%E7%9F%A5%E9%81%93%E2%80%9D%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">✅ 六、总结：OIDC 到底“知道”什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E6%9C%80%E5%90%8E%E4%B8%80%E5%8F%A5%E8%AF%9D%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">🎯 最后一句话：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%80%E5%8F%A5%E8%AF%9D%E5%9B%9E%E7%AD%94%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">✅ 一句话回答：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8F%97-%E4%B8%80%E3%80%81OIDC-%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%EF%BC%9AIdentity-Provider%EF%BC%88IdP%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">🏗 一、OIDC 的核心组件：Identity Provider（IdP）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84-IdP%EF%BC%88%E8%BA%AB%E4%BB%BD%E6%BA%90%EF%BC%89%E5%8C%85%E6%8B%AC%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">常见的 IdP（身份源）包括：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%81-%E4%BA%8C%E3%80%81OIDC-%E6%98%AF%E6%80%8E%E4%B9%88%E2%80%9C%E8%8E%B7%E5%8F%96%E2%80%9D%E7%94%A8%E6%88%B7%E8%BA%AB%E4%BB%BD%E7%9A%84%EF%BC%9F%EF%BC%88%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">🔁 二、OIDC 是怎么“获取”用户身份的？（流程详解）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%86%9A-%E4%B8%89%E3%80%81%E5%AF%B9%E6%AF%94%EF%BC%9AOIDC-vs-OAuth-2-0-%E7%9A%84%E2%80%9C%E7%9F%A5%E9%81%93%E7%94%A8%E6%88%B7%E6%98%AF%E8%B0%81%E2%80%9D"><span class="toc-number"></span> <span class="toc-text">🆚 三、对比：OIDC vs OAuth 2.0 的“知道用户是谁”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%84-%E5%9B%9B%E3%80%81OIDC-%E4%B9%9F%E5%8F%AF%E4%BB%A5%E2%80%9C%E4%BB%A3%E7%90%86%E2%80%9D%E5%85%B6%E4%BB%96%E8%BA%AB%E4%BB%BD%E6%BA%90%EF%BC%88%E5%A6%82%E5%BE%AE%E4%BF%A1%E7%99%BB%E5%BD%95%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">🔄 四、OIDC 也可以“代理”其他身份源（如微信登录）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%BA%94%E3%80%81%E6%80%BB%E7%BB%93%EF%BC%9AOIDC-%E6%80%8E%E4%B9%88%E2%80%9C%E7%9F%A5%E9%81%93%E2%80%9D%E7%94%A8%E6%88%B7%E6%98%AF%E8%B0%81%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">✅ 五、总结：OIDC 怎么“知道”用户是谁？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E6%9C%80%E5%90%8E%E4%B8%80%E5%8F%A5%E8%AF%9D%EF%BC%9A-1"><span class="toc-number"></span> <span class="toc-text">🎯 最后一句话：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E4%B8%80%E5%8F%A5%E8%AF%9D%E5%9B%9E%E7%AD%94%EF%BC%9A-1"><span class="toc-number"></span> <span class="toc-text">✅ 一句话回答：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-%E4%B8%80%E3%80%81%E7%9C%9F%E5%AE%9E%E4%B8%96%E7%95%8C%E4%B8%AD%E7%9A%84-3-%E7%A7%8D%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F"><span class="toc-number"></span> <span class="toc-text">🧩 一、真实世界中的 3 种架构模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E6%A8%A1%E5%BC%8F-1%EF%BC%9AOIDC-Server-%E6%8B%A5%E6%9C%89%E2%80%9C%E7%BB%9F%E4%B8%80%E7%94%A8%E6%88%B7%E5%BA%93%E2%80%9D%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">✅ 模式 1：OIDC Server 拥有“统一用户库”（推荐）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9C%85-%E6%A8%A1%E5%BC%8F-2%EF%BC%9AOIDC-Server-%E5%81%9A%E2%80%9C%E8%AE%A4%E8%AF%81%E4%BB%A3%E7%90%86%E2%80%9D%EF%BC%88Federated-Identity%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">✅ 模式 2：OIDC Server 做“认证代理”（Federated Identity）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9D%8C-%E6%A8%A1%E5%BC%8F-3%EF%BC%9A%E6%AF%8F%E4%B8%AA%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%B7%B1%E5%AD%98%E7%94%A8%E6%88%B7%EF%BC%88%E9%94%99%E8%AF%AF%E5%81%9A%E6%B3%95%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">❌ 模式 3：每个系统自己存用户（错误做法）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%84-%E4%BA%8C%E3%80%81OIDC-Server-%E5%92%8C%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%95%B0%E6%8D%AE%E5%85%B3%E7%B3%BB"><span class="toc-number"></span> <span class="toc-text">🔄 二、OIDC Server 和业务系统的数据关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9AShop-%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%94%A8%E6%88%B7%E8%A1%A8"><span class="toc-number">1.</span> <span class="toc-text">示例：Shop 系统的用户表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8C%90-%E4%B8%89%E3%80%81OIDC-Server-%E5%A6%82%E4%BD%95%E2%80%9C%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E2%80%9D%EF%BC%9F%E2%80%94%E2%80%94-%E5%AE%9E%E9%99%85%E6%B5%81%E7%A8%8B"><span class="toc-number"></span> <span class="toc-text">🌐 三、OIDC Server 如何“查数据库”？—— 实际流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9C%85-%E5%9B%9B%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E2%80%9C%E7%BB%9F%E4%B8%80%E7%94%A8%E6%88%B7%E5%BA%93%E2%80%9D%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">✅ 四、为什么需要“统一用户库”？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E4%BA%94%E3%80%81%E6%80%BB%E7%BB%93%EF%BC%9A%E4%BD%A0%E7%9A%84%E9%97%AE%E9%A2%98%E7%9A%84%E7%AD%94%E6%A1%88"><span class="toc-number"></span> <span class="toc-text">🎯 五、总结：你的问题的答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%81-%E6%9C%80%E5%90%8E%E4%B8%80%E5%8F%A5%E8%AF%9D%EF%BC%9A"><span class="toc-number"></span> <span class="toc-text">🎁 最后一句话：</span></a></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/08/25/Redis_Redission/" title="Redisson全面指南"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/07/1eb94f064cf74b04865bdaf1b3c8e9be6939674b9205c975.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redisson全面指南"/></a><div class="content"><a class="title" href="/2025/08/25/Redis_Redission/" title="Redisson全面指南">Redisson全面指南</a><time datetime="2025-08-25T06:40:36.706Z" title="Created 2025-08-25 14:40:36">2025-08-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/25/CLoud_Sentinel/" title="Sentinel"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/25/sentinel4a22b3eba66a94ef.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Sentinel"/></a><div class="content"><a class="title" href="/2025/08/25/CLoud_Sentinel/" title="Sentinel">Sentinel</a><time datetime="2025-08-25T02:39:23.554Z" title="Created 2025-08-25 10:39:23">2025-08-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/" title="单点登录与认证协议"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/22/xAuFeZc84N83facc507a2d9aac.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单点登录与认证协议"/></a><div class="content"><a class="title" href="/2025/08/22/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C_%E5%8D%8F%E8%AE%AE/" title="单点登录与认证协议">单点登录与认证协议</a><time datetime="2025-08-22T08:15:18.782Z" title="Created 2025-08-22 16:15:18">2025-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/22/Cloud_Sleuth/" title="Sleuth + Zinkin"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/22/sleuth19f5bc8f25ffccbe.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Sleuth + Zinkin"/></a><div class="content"><a class="title" href="/2025/08/22/Cloud_Sleuth/" title="Sleuth + Zinkin">Sleuth + Zinkin</a><time datetime="2025-08-22T06:42:57.286Z" title="Created 2025-08-22 14:42:57">2025-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/21/mybatis%E7%BC%93%E5%AD%98%E8%AF%A6%E8%A7%A3/" title="Mybatis缓存详解"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/21/MyBatis-144f9929151758527.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mybatis缓存详解"/></a><div class="content"><a class="title" href="/2025/08/21/mybatis%E7%BC%93%E5%AD%98%E8%AF%A6%E8%A7%A3/" title="Mybatis缓存详解">Mybatis缓存详解</a><time datetime="2025-08-21T09:49:57.350Z" title="Created 2025-08-21 17:49:57">2025-08-21</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">78</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">37</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">25</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AMQP/" style="font-size: 0.88rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 0.88rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 0.88rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 0.88rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>6</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>6</sup></a><a href="/tags/Redisson/" style="font-size: 0.88rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 0.88rem;">Spring<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 0.88rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 0.88rem;">Swagger<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 0.88rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 0.88rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>7</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 0.88rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>7</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 0.88rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.88rem;">数据结构<sup>4</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 0.88rem;">权限校验<sup>4</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 0.88rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>5</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>4</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 0.88rem;">面试<sup>3</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
