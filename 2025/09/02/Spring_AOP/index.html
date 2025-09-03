@@ -1,0 +1,593 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>Spring AOP | Joie's Blog</title><meta name="keywords" content="Spring"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="Spring AOP"><meta name="application-name" content="Spring AOP"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="Spring AOP"><meta property="og:url" content="http://example.com/2025/09/02/Spring_AOP/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="什么是 AOP（面向切面编程） 核心目的: 将横切关注点（日志、鉴权、事务、监控、限流、审计等）从业务代码中解耦，集中在切面里统一管理。 关键术语: JoinPoint: 连接点，程序执行的某个点（方法调用、异常抛出等）。 Pointcut: 切点，匹配一组 JoinPoint 的表达式（如某包下所"><meta property="og:locale" content="en"><meta property="og:image" content="https://origin.picgo.net/2025/09/02/aopdac7323692bd4073.jpeg"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://origin.picgo.net/2025/09/02/aopdac7323692bd4073.jpeg"><meta name="description" content="什么是 AOP（面向切面编程） 核心目的: 将横切关注点（日志、鉴权、事务、监控、限流、审计等）从业务代码中解耦，集中在切面里统一管理。 关键术语: JoinPoint: 连接点，程序执行的某个点（方法调用、异常抛出等）。 Pointcut: 切点，匹配一组 JoinPoint 的表达式（如某包下所"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2025/09/02/Spring_AOP/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'Spring AOP',
+  postAI: '',
+  pageFillDescription: '什么是 AOP（面向切面编程）, Spring AOP 与 AspectJ, 快速上手：从简单到复杂, 1. 最简单：方法入参x2F返回日志, 2. 进阶：环绕通知统计耗时与统一异常转换, 3. 复杂：自定义注解 + 参数解析 + 权限控制（含 SpEL）, 切点表达式速查（execution 为主）, 常用 API 与技巧, 常见坑与最佳实践, 更多示例：统一返回包装切面, 常用方法x2F类清单（速查）, 最小可用 Demo 结构（参考）, FAQ什么是面向切面编程核心目的将横切关注点日志鉴权事务监控限流审计等从业务代码中解耦集中在切面里统一管理关键术语连接点程序执行的某个点方法调用异常抛出等切点匹配一组的表达式如某包下所有方法通知切入的动作切面的集合织入将切面应用到目标对象生成代理代理对象通过代理实现与运行时代理动态代理或覆盖方法级别切面常用于业务应用编译时加载时织入功能更强语法更丰富也支持注解风格但仍由运行时代理执行提示默认已由自动配置在非项目可手动开启非项目可显式开启需要自调用走代理时可开启快速上手从简单到复杂最简单方法入参返回日志切点匹配包及子包下的所有方法要点不可改变返回值可拿到返回值捕获异常无论成功失败都会执行进阶环绕通知统计耗时与统一异常转换将异常统一转换为业务异常参数错误要点独占执行链必须调用才会继续到目标方法可测量性能包装返回值统一异常复杂自定义注解参数解析权限控制含目标基于注解定义权限点支持从方法参数解析用户资源甚至支持表达式解析动态权限键失败则抛出定义注解静态权限例如支持例如需要的角色任一命中即可放行定义权限检查服务示例获取当前用户的简单上下文切面解析注解绑定参数名解析执行校验未登录角色校验可选任一命中则提前放行构造权限键通过从参数中计算动态部分需要设置或权限校验权限不足便捷变量使用方式需要角色或拥有权限键编辑逻辑当调用时切面会拼出权限键若用户是也可直接通过切点表达式速查为主按包类方法匹配包下所有类的所有方法匹配及子包所有方法匹配所有方法限定在该包类范围内按类型关系代理对象实现继承该类型目标对象是该类型按参数注解第一个参数是标注了注解的方法类上带注解目标类带注解按名称或逻辑组合常见组合示例常用与技巧方法实参数组强转为获取环绕通知放行获取注解方法类上下文顺序控制数值越小优先级越高切点复用在多个通知上复用常见坑与最佳实践自调用导致失效同类方法互调不会经过代理解决将被切方法拆到另一个或开启并用调用代理接口默认用若只在实现类上加注解且通过接口注入调用可能匹配不到可强制或手动配置方法无法被代理对也无能为力尽量避免事务与切面顺序与协同时注意需要先鉴权再开启事务可设鉴权切面更小的顺序值参数名丢失绑定参数名需编译参数名或使用更多示例统一返回包装切面常用方法类清单速查注解切点关键字核心类型表达式解析辅助最小可用结构参考能否拦截构造函数或字段访问只支持方法级别需要更强支持请用如何仅拦截某注解参数特定值使用注解属性或在切面中读取注解并自定义判断如何在切面中修改入参只能在中构造新参数数组调用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-03 13:55:44',
+  postMainColor: 'rgb(11, 32, 228)',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AMQP/" style="font-size: 1.05rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 1.05rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 1.05rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 1.05rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>7</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>6</sup></a><a href="/tags/Redisson/" style="font-size: 1.05rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 1.05rem;">Spring<sup>2</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 1.05rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 1.05rem;">Swagger<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 1.05rem;">业务<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 1.05rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 1.05rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>8</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 1.05rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>9</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 1.05rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.05rem;">数据结构<sup>5</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 1.05rem;">权限校验<sup>4</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.05rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>5</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>4</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 1.05rem;">面试<sup>3</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/09/"><span class="card-archive-list-date">September 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">46</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">28</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">8</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/Spring/" itemprop="url">Spring</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Spring/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Spring</span></a></span></div></div><h1 class="post-title" itemprop="name headline">Spring AOP</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2025-09-02T09:28:52.899Z" title="Created 2025-09-02 17:28:52">2025-09-02</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2025-09-03T05:55:44.605Z" title="Updated 2025-09-03 13:55:44">2025-09-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://origin.picgo.net/2025/09/02/aopdac7323692bd4073.jpeg"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2025/09/02/Spring_AOP/"><header><a class="post-meta-categories" href="/categories/Spring/" itemprop="url">Spring</a><a href="/tags/Spring/" tabindex="-1" itemprop="url">Spring</a><h1 id="CrawlerTitle" itemprop="name headline">Spring AOP</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2025-09-02T09:28:52.899Z" title="Created 2025-09-02 17:28:52">2025-09-02</time><time itemprop="dateCreated datePublished" datetime="2025-09-03T05:55:44.605Z" title="Updated 2025-09-03 13:55:44">2025-09-03</time></header><h3 id="什么是-AOP（面向切面编程）"><a href="#什么是-AOP（面向切面编程）" class="headerlink" title="什么是 AOP（面向切面编程）"></a>什么是 AOP（面向切面编程）</h3><ul>
+<li><strong>核心目的</strong>: 将横切关注点（日志、鉴权、事务、监控、限流、审计等）从业务代码中解耦，集中在切面里统一管理。</li>
+<li><strong>关键术语</strong>:<ul>
+<li><strong>JoinPoint</strong>: 连接点，程序执行的某个点（方法调用、异常抛出等）。</li>
+<li><strong>Pointcut</strong>: 切点，匹配一组 JoinPoint 的表达式（如某包下所有方法）。</li>
+<li><strong>Advice</strong>: 通知，切入的动作（Before&#x2F;Around&#x2F;After…）。</li>
+<li><strong>Aspect</strong>: 切面，Pointcut + Advice 的集合。</li>
+<li><strong>Weaving</strong>: 织入，将切面应用到目标对象生成代理。</li>
+<li><strong>Proxy</strong>: 代理对象。Spring AOP 通过代理实现（JDK&#x2F;CGLIB）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Spring-AOP-与-AspectJ"><a href="#Spring-AOP-与-AspectJ" class="headerlink" title="Spring AOP 与 AspectJ"></a>Spring AOP 与 AspectJ</h3><ul>
+<li><strong>Spring AOP</strong>: 运行时代理（JDK 动态代理或 CGLIB）。覆盖方法级别切面，常用于业务应用。</li>
+<li><strong>AspectJ</strong>: 编译时&#x2F;加载时织入，功能更强，语法更丰富。Spring 也支持 AspectJ 注解风格，但仍由 Spring AOP 运行时代理执行。</li>
+</ul>
+<p>提示：默认 <code>@EnableAspectJAutoProxy</code> 已由 Spring Boot 自动配置；在非 Boot 项目可手动开启。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 非 Spring Boot 项目可显式开启</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAspectJAutoProxy(exposeProxy = true)</span> <span class="comment">// 需要自调用走代理时可开启 exposeProxy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AopConfig</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="快速上手：从简单到复杂"><a href="#快速上手：从简单到复杂" class="headerlink" title="快速上手：从简单到复杂"></a>快速上手：从简单到复杂</h3><h4 id="1-最简单：方法入参-返回日志"><a href="#1-最简单：方法入参-返回日志" class="headerlink" title="1. 最简单：方法入参&#x2F;返回日志"></a>1. 最简单：方法入参&#x2F;返回日志</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LoggingAspect</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 切点：匹配 service 包及子包下的所有 public 方法</span></span><br><span class="line">  <span class="meta">@Pointcut(&quot;execution(public * com.example.service..*(..))&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">serviceMethods</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Before(&quot;serviceMethods()&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">beforeInvoke</span><span class="params">(JoinPoint joinPoint)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">method</span> <span class="operator">=</span> joinPoint.getSignature().toShortString();</span><br><span class="line">    Object[] args = joinPoint.getArgs();</span><br><span class="line">    System.out.println(<span class="string">&quot;[AOP] Before: &quot;</span> + method + <span class="string">&quot;, args=&quot;</span> + Arrays.toString(args));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@AfterReturning(pointcut = &quot;serviceMethods()&quot;, returning = &quot;result&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterReturn</span><span class="params">(JoinPoint joinPoint, Object result)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">method</span> <span class="operator">=</span> joinPoint.getSignature().toShortString();</span><br><span class="line">    System.out.println(<span class="string">&quot;[AOP] Return: &quot;</span> + method + <span class="string">&quot;, result=&quot;</span> + result);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@AfterThrowing(pointcut = &quot;serviceMethods()&quot;, throwing = &quot;ex&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterThrow</span><span class="params">(JoinPoint joinPoint, Throwable ex)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">method</span> <span class="operator">=</span> joinPoint.getSignature().toShortString();</span><br><span class="line">    System.err.println(<span class="string">&quot;[AOP] Throw: &quot;</span> + method + <span class="string">&quot;, ex=&quot;</span> + ex.getMessage());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要点：</p>
+<ul>
+<li><code>@Before</code> 不可改变返回值；<code>@AfterReturning</code> 可拿到返回值；<code>@AfterThrowing</code> 捕获异常；<code>@After</code> 无论成功&#x2F;失败都会执行。</li>
+</ul>
+<h4 id="2-进阶：环绕通知统计耗时与统一异常转换"><a href="#2-进阶：环绕通知统计耗时与统一异常转换" class="headerlink" title="2. 进阶：环绕通知统计耗时与统一异常转换"></a>2. 进阶：环绕通知统计耗时与统一异常转换</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProfilingAspect</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Around(&quot;execution(* com.example..controller..*(..))&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> Object <span class="title function_">around</span><span class="params">(ProceedingJoinPoint pjp)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.nanoTime();</span><br><span class="line">    <span class="type">String</span> <span class="variable">method</span> <span class="operator">=</span> pjp.getSignature().toShortString();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="type">Object</span> <span class="variable">ret</span> <span class="operator">=</span> pjp.proceed();</span><br><span class="line">      <span class="type">long</span> <span class="variable">costMs</span> <span class="operator">=</span> (System.nanoTime() - start) / <span class="number">1_000_000</span>;</span><br><span class="line">      System.out.println(<span class="string">&quot;[AOP] &quot;</span> + method + <span class="string">&quot; cost=&quot;</span> + costMs + <span class="string">&quot;ms&quot;</span>);</span><br><span class="line">      <span class="keyword">return</span> ret;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">      <span class="comment">// 将异常统一转换为业务异常</span></span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">BizException</span>(<span class="string">&quot;参数错误: &quot;</span> + e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要点：</p>
+<ul>
+<li><code>@Around</code> 独占执行链，必须调用 <code>pjp.proceed()</code> 才会继续到目标方法。</li>
+<li>可测量性能、包装返回值、统一异常。</li>
+</ul>
+<h4 id="3-复杂：自定义注解-参数解析-权限控制（含-SpEL）"><a href="#3-复杂：自定义注解-参数解析-权限控制（含-SpEL）" class="headerlink" title="3. 复杂：自定义注解 + 参数解析 + 权限控制（含 SpEL）"></a>3. 复杂：自定义注解 + 参数解析 + 权限控制（含 SpEL）</h4><p>目标：基于 <code>@RequirePermission</code> 注解定义权限点，支持从方法参数解析用户、资源 ID，甚至支持 SpEL 表达式解析动态权限键，失败则抛出 <code>AccessDeniedException</code>。</p>
+<ol>
+<li>定义注解</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> RequirePermission &#123;</span><br><span class="line">  <span class="comment">// 静态权限，例如 &quot;post:edit&quot;</span></span><br><span class="line">  String <span class="title function_">value</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 支持 SpEL，例如 &quot;post:edit:#&#123;#postId&#125;&quot;</span></span><br><span class="line">  String <span class="title function_">spel</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 需要的角色（任一命中即可放行）</span></span><br><span class="line">  String[] roles() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>定义权限检查服务（示例）</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">PermissionService</span> &#123;</span><br><span class="line">  <span class="type">boolean</span> <span class="title function_">hasPermission</span><span class="params">(String userId, String permissionKey)</span>;</span><br><span class="line">  <span class="type">boolean</span> <span class="title function_">hasAnyRole</span><span class="params">(String userId, Collection&lt;String&gt; roles)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InMemoryPermissionService</span> <span class="keyword">implements</span> <span class="title class_">PermissionService</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Set&lt;String&gt;&gt; userPerms = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Set&lt;String&gt;&gt; userRoles = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="meta">@PostConstruct</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">()</span> &#123;</span><br><span class="line">    userPerms.put(<span class="string">&quot;u1&quot;</span>, <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;(Arrays.asList(<span class="string">&quot;post:edit:1&quot;</span>, <span class="string">&quot;post:view&quot;</span>)));</span><br><span class="line">    userRoles.put(<span class="string">&quot;u1&quot;</span>, <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;(Arrays.asList(<span class="string">&quot;ADMIN&quot;</span>)));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasPermission</span><span class="params">(String userId, String permissionKey)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> userPerms.getOrDefault(userId, Collections.emptySet()).contains(permissionKey);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasAnyRole</span><span class="params">(String userId, Collection&lt;String&gt; roles)</span> &#123;</span><br><span class="line">    Set&lt;String&gt; r = userRoles.getOrDefault(userId, Collections.emptySet());</span><br><span class="line">    <span class="keyword">for</span> (String role : roles) <span class="keyword">if</span> (r.contains(role)) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>获取当前用户的简单上下文</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityContextHolderLite</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;String&gt; USER = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;&gt;();</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">setUserId</span><span class="params">(String userId)</span> &#123; USER.set(userId); &#125;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">getUserId</span><span class="params">()</span> &#123; <span class="keyword">return</span> USER.get(); &#125;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">clear</span><span class="params">()</span> &#123; USER.remove(); &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>切面：解析注解、绑定参数名、解析 SpEL、执行校验</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PermissionAspect</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> PermissionService permissionService;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">ExpressionParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SpelExpressionParser</span>();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">ParameterNameDiscoverer</span> <span class="variable">nameDiscoverer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultParameterNameDiscoverer</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="title function_">PermissionAspect</span><span class="params">(PermissionService permissionService)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.permissionService = permissionService;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Around(&quot;@annotation(requirePermission)&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> Object <span class="title function_">check</span><span class="params">(ProceedingJoinPoint pjp, RequirePermission requirePermission)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">    <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> ((MethodSignature) pjp.getSignature()).getMethod();</span><br><span class="line">    <span class="type">String</span> <span class="variable">userId</span> <span class="operator">=</span> Optional.ofNullable(SecurityContextHolderLite.getUserId())</span><br><span class="line">        .orElseThrow(() -&gt; <span class="keyword">new</span> <span class="title class_">AccessDeniedException</span>(<span class="string">&quot;未登录&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1) 角色校验（可选）：任一命中则提前放行</span></span><br><span class="line">    String[] roles = requirePermission.roles();</span><br><span class="line">    <span class="keyword">if</span> (roles.length &gt; <span class="number">0</span> &amp;&amp; permissionService.hasAnyRole(userId, Arrays.asList(roles))) &#123;</span><br><span class="line">      <span class="keyword">return</span> pjp.proceed();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2) 构造权限键</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> requirePermission.value();</span><br><span class="line">    <span class="type">String</span> <span class="variable">spel</span> <span class="operator">=</span> requirePermission.spel();</span><br><span class="line">    <span class="keyword">if</span> (!spel.isEmpty()) &#123;</span><br><span class="line">      <span class="comment">// 通过 SpEL 从参数中计算动态部分</span></span><br><span class="line">      <span class="type">EvaluationContext</span> <span class="variable">ctx</span> <span class="operator">=</span> buildEvalContext(method, pjp.getArgs());</span><br><span class="line">      <span class="type">String</span> <span class="variable">evaluated</span> <span class="operator">=</span> parser.parseExpression(spel).getValue(ctx, String.class);</span><br><span class="line">      key = key.isEmpty() ? evaluated : (key + <span class="string">&quot;:&quot;</span> + evaluated);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (key.isEmpty()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;@RequirePermission 需要设置 value 或 spel&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3) 权限校验</span></span><br><span class="line">    <span class="keyword">if</span> (!permissionService.hasPermission(userId, key)) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AccessDeniedException</span>(<span class="string">&quot;权限不足: &quot;</span> + key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pjp.proceed();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> EvaluationContext <span class="title function_">buildEvalContext</span><span class="params">(Method method, Object[] args)</span> &#123;</span><br><span class="line">    <span class="type">MethodBasedEvaluationContext</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MethodBasedEvaluationContext</span>(<span class="literal">null</span>, method, args, nameDiscoverer);</span><br><span class="line">    <span class="comment">// 便捷变量</span></span><br><span class="line">    ctx.setVariable(<span class="string">&quot;args&quot;</span>, args);</span><br><span class="line">    <span class="keyword">return</span> ctx;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>使用方式</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PostService</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 需要角色 ADMIN 或 拥有权限键 post:edit:&#123;postId&#125;</span></span><br><span class="line">  <span class="meta">@RequirePermission(value = &quot;post:edit&quot;, spel = &quot;#&#123;#postId&#125;&quot;, roles = &#123;&quot;ADMIN&quot;&#125;)</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">editPost</span><span class="params">(Long postId, String content)</span> &#123;</span><br><span class="line">    <span class="comment">// ... 编辑逻辑</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当调用 <code>editPost(1L, &quot;...&quot;)</code> 时，切面会拼出权限键 <code>post:edit:1</code>；若用户是 <code>ADMIN</code> 也可直接通过。</p>
+<h3 id="切点表达式速查（execution-为主）"><a href="#切点表达式速查（execution-为主）" class="headerlink" title="切点表达式速查（execution 为主）"></a>切点表达式速查（execution 为主）</h3><ul>
+<li><strong>按包&#x2F;类&#x2F;方法</strong><ul>
+<li><code>execution(* com.example.service.*.*(..))</code>：匹配 <code>service</code> 包下所有类的所有方法</li>
+<li><code>execution(* com.example..*(..))</code>：匹配 <code>com.example</code> 及子包所有方法</li>
+<li><code>execution(public * *(..))</code>：匹配所有 <code>public</code> 方法</li>
+<li><code>within(com.example.controller..*)</code>：限定在该包（类）范围内</li>
+</ul>
+</li>
+<li><strong>按类型关系</strong><ul>
+<li><code>this(com.example.FooService)</code>：代理对象实现&#x2F;继承该类型</li>
+<li><code>target(com.example.FooService)</code>：目标对象是该类型</li>
+</ul>
+</li>
+<li><strong>按参数&#x2F;注解</strong><ul>
+<li><code>args(java.lang.String, ..)</code>：第一个参数是 <code>String</code></li>
+<li><code>@annotation(com.example.Loggable)</code>：标注了注解的方法</li>
+<li><code>@within(org.springframework.stereotype.Service)</code>：类上带注解</li>
+<li><code>@target(...)</code>：目标类带注解</li>
+</ul>
+</li>
+<li><strong>按 Bean 名称</strong><ul>
+<li><code>bean(postService)</code> 或 <code>bean(*Service)</code></li>
+</ul>
+</li>
+<li><strong>逻辑组合</strong><ul>
+<li><code>and</code>、<code>or</code>、<code>not</code></li>
+</ul>
+</li>
+</ul>
+<p>常见组合示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">execution(* com.example..*(..)) and @annotation(org.springframework.transaction.annotation.Transactional)</span><br><span class="line">within(com.example.service..*) and not within(com.example.service.internal..*)</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用-API-与技巧"><a href="#常用-API-与技巧" class="headerlink" title="常用 API 与技巧"></a>常用 API 与技巧</h3><ul>
+<li><strong>JoinPoint &#x2F; ProceedingJoinPoint</strong><ul>
+<li><code>getArgs()</code>：方法实参数组</li>
+<li><code>getSignature()</code>：<code>Signature</code>，强转为 <code>MethodSignature</code> 获取 <code>Method</code></li>
+<li><code>proceed()</code>：环绕通知放行</li>
+</ul>
+</li>
+<li><strong>Signature &#x2F; MethodSignature</strong><ul>
+<li><code>getDeclaringTypeName()</code>、<code>getName()</code>、<code>toShortString()</code></li>
+<li><code>((MethodSignature) jp.getSignature()).getMethod()</code></li>
+</ul>
+</li>
+<li><strong>获取注解&#x2F;方法&#x2F;类</strong><ul>
+<li><code>Method method = ((MethodSignature) jp.getSignature()).getMethod()</code></li>
+<li><code>Annotation ann = method.getAnnotation(...)</code></li>
+</ul>
+</li>
+<li><strong>Web 上下文</strong><ul>
+<li><code>ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes()</code></li>
+<li><code>HttpServletRequest request = attrs.getRequest()</code></li>
+</ul>
+</li>
+<li><strong>顺序控制</strong><ul>
+<li><code>@Order(1)</code> 数值越小优先级越高</li>
+</ul>
+</li>
+<li><strong>切点复用</strong><ul>
+<li><code>@Pointcut(&quot;execution(..)&quot;) public void p() &#123;&#125;</code>，在多个通知上复用 <code>p()</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="常见坑与最佳实践"><a href="#常见坑与最佳实践" class="headerlink" title="常见坑与最佳实践"></a>常见坑与最佳实践</h3><ul>
+<li><strong>自调用导致 AOP 失效</strong>：同类方法互调不会经过代理。解决：<ul>
+<li>将被切方法拆到另一个 Bean；或</li>
+<li>开启 <code>@EnableAspectJAutoProxy(exposeProxy = true)</code> 并用 <code>((FooService) AopContext.currentProxy()).bar()</code> 调用。</li>
+</ul>
+</li>
+<li><strong>JDK 代理 vs CGLIB</strong>：接口默认用 JDK。若只在实现类上加注解，且通过接口注入调用，可能匹配不到。可强制 CGLIB：<ul>
+<li><code>spring.aop.proxy-target-class=true</code>（Boot）；或手动配置。</li>
+</ul>
+</li>
+<li><strong><code>final</code>&#x2F;<code>private</code> 方法无法被代理</strong>（CGLIB 对 private&#x2F;final 也无能为力），尽量避免。</li>
+<li><strong>事务与切面顺序</strong>：与 <code>@Transactional</code> 协同时注意 <code>@Order</code>，需要先鉴权再开启事务可设鉴权切面更小的顺序值。</li>
+<li><strong>参数名丢失</strong>：SpEL 绑定参数名需编译参数名（-parameters）或使用 <code>DefaultParameterNameDiscoverer</code>。</li>
+</ul>
+<h3 id="更多示例：统一返回包装切面"><a href="#更多示例：统一返回包装切面" class="headerlink" title="更多示例：统一返回包装切面"></a>更多示例：统一返回包装切面</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> WrapResponse &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiResult</span>&lt;T&gt; &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> code; <span class="keyword">private</span> String message; <span class="keyword">private</span> T data;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; ApiResult&lt;T&gt; <span class="title function_">ok</span><span class="params">(T data)</span> &#123; <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ApiResult</span>&lt;&gt;(<span class="number">0</span>, <span class="string">&quot;ok&quot;</span>, data); &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Order(10)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ResponseWrapAspect</span> &#123;</span><br><span class="line">  <span class="meta">@Around(&quot;@within(WrapResponse) || @annotation(WrapResponse)&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> Object <span class="title function_">wrap</span><span class="params">(ProceedingJoinPoint pjp)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">ret</span> <span class="operator">=</span> pjp.proceed();</span><br><span class="line">    <span class="keyword">if</span> (ret <span class="keyword">instanceof</span> ApiResult) <span class="keyword">return</span> ret;</span><br><span class="line">    <span class="keyword">return</span> ApiResult.ok(ret);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用方法-类清单（速查）"><a href="#常用方法-类清单（速查）" class="headerlink" title="常用方法&#x2F;类清单（速查）"></a>常用方法&#x2F;类清单（速查）</h3><ul>
+<li><strong>注解</strong>：<code>@Aspect</code>、<code>@Before</code>、<code>@Around</code>、<code>@After</code>、<code>@AfterReturning</code>、<code>@AfterThrowing</code>、<code>@Pointcut</code>、<code>@Order</code></li>
+<li><strong>切点关键字</strong>：<code>execution</code>、<code>within</code>、<code>this</code>、<code>target</code>、<code>args</code>、<code>@annotation</code>、<code>@within</code>、<code>@target</code>、<code>bean</code></li>
+<li><strong>核心类型</strong>：<code>JoinPoint</code>、<code>ProceedingJoinPoint</code>、<code>Signature</code>、<code>MethodSignature</code></li>
+<li><strong>表达式解析</strong>：<code>ExpressionParser</code>、<code>SpelExpressionParser</code>、<code>EvaluationContext</code>、<code>MethodBasedEvaluationContext</code>、<code>ParameterNameDiscoverer</code></li>
+<li><strong>辅助</strong>：<code>AopContext.currentProxy()</code>、<code>RequestContextHolder</code>、<code>AnnotationUtils</code></li>
+</ul>
+<h3 id="最小可用-Demo-结构（参考）"><a href="#最小可用-Demo-结构（参考）" class="headerlink" title="最小可用 Demo 结构（参考）"></a>最小可用 Demo 结构（参考）</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">com.example</span><br><span class="line">├─ config</span><br><span class="line">│  └─ AopConfig.java</span><br><span class="line">├─ aop</span><br><span class="line">│  ├─ LoggingAspect.java</span><br><span class="line">│  ├─ ProfilingAspect.java</span><br><span class="line">│  ├─ PermissionAspect.java</span><br><span class="line">│  └─ annotation</span><br><span class="line">│     └─ RequirePermission.java</span><br><span class="line">├─ security</span><br><span class="line">│  ├─ PermissionService.java</span><br><span class="line">│  ├─ InMemoryPermissionService.java</span><br><span class="line">│  └─ SecurityContextHolderLite.java</span><br><span class="line">└─ service</span><br><span class="line">   └─ PostService.java</span><br></pre></td></tr></table></figure>
+
+<h3 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h3><ul>
+<li><strong>能否拦截构造函数或字段访问？</strong> Spring AOP 只支持方法级别；需要更强支持请用 AspectJ LTW&#x2F;CTW。</li>
+<li><strong>如何仅拦截某注解参数特定值？</strong> 使用 SpEL + 注解属性；或在切面中读取注解并自定义判断。</li>
+<li><strong>如何在切面中修改入参？</strong> 只能在 <code>@Around</code> 中构造新参数数组调用 <code>proceed(newArgs)</code>。</li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2025/09/02/Spring_AOP/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2025/09/02/Spring_AOP/')">Spring AOP</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2025/09/02/Spring_AOP/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=Spring AOP&amp;url=http://example.com/2025/09/02/Spring_AOP/&amp;pic=https://origin.picgo.net/2025/09/02/aopdac7323692bd4073.jpeg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Spring/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Spring<span class="tagsPageCount">2</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://origin.picgo.net/2025/09/02/aopdac7323692bd4073.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2025/09/02/%E9%99%90%E6%B5%81_Ratelimit/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/09/03/limit5e11163d8ab173d1.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">限流_Ratelimit</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2025/08/19/Spring_IOC/" title="Spring IOC"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/21/Springca9e2519d2cfda6d.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2025-08-19</div><div class="title">Spring IOC</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img.picgo.net/2025/06/23/tom09183405464859c2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-AOP%EF%BC%88%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">什么是 AOP（面向切面编程）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-AOP-%E4%B8%8E-AspectJ"><span class="toc-number">2.</span> <span class="toc-text">Spring AOP 与 AspectJ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%EF%BC%9A%E4%BB%8E%E7%AE%80%E5%8D%95%E5%88%B0%E5%A4%8D%E6%9D%82"><span class="toc-number">3.</span> <span class="toc-text">快速上手：从简单到复杂</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%9C%80%E7%AE%80%E5%8D%95%EF%BC%9A%E6%96%B9%E6%B3%95%E5%85%A5%E5%8F%82-%E8%BF%94%E5%9B%9E%E6%97%A5%E5%BF%97"><span class="toc-number">3.1.</span> <span class="toc-text">1. 最简单：方法入参&#x2F;返回日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%BF%9B%E9%98%B6%EF%BC%9A%E7%8E%AF%E7%BB%95%E9%80%9A%E7%9F%A5%E7%BB%9F%E8%AE%A1%E8%80%97%E6%97%B6%E4%B8%8E%E7%BB%9F%E4%B8%80%E5%BC%82%E5%B8%B8%E8%BD%AC%E6%8D%A2"><span class="toc-number">3.2.</span> <span class="toc-text">2. 进阶：环绕通知统计耗时与统一异常转换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%A4%8D%E6%9D%82%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3-%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90-%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6%EF%BC%88%E5%90%AB-SpEL%EF%BC%89"><span class="toc-number">3.3.</span> <span class="toc-text">3. 复杂：自定义注解 + 参数解析 + 权限控制（含 SpEL）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%87%E7%82%B9%E8%A1%A8%E8%BE%BE%E5%BC%8F%E9%80%9F%E6%9F%A5%EF%BC%88execution-%E4%B8%BA%E4%B8%BB%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">切点表达式速查（execution 为主）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8-API-%E4%B8%8E%E6%8A%80%E5%B7%A7"><span class="toc-number">5.</span> <span class="toc-text">常用 API 与技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%9D%91%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">6.</span> <span class="toc-text">常见坑与最佳实践</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E7%A4%BA%E4%BE%8B%EF%BC%9A%E7%BB%9F%E4%B8%80%E8%BF%94%E5%9B%9E%E5%8C%85%E8%A3%85%E5%88%87%E9%9D%A2"><span class="toc-number">7.</span> <span class="toc-text">更多示例：统一返回包装切面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95-%E7%B1%BB%E6%B8%85%E5%8D%95%EF%BC%88%E9%80%9F%E6%9F%A5%EF%BC%89"><span class="toc-number">8.</span> <span class="toc-text">常用方法&#x2F;类清单（速查）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E5%8F%AF%E7%94%A8-Demo-%E7%BB%93%E6%9E%84%EF%BC%88%E5%8F%82%E8%80%83%EF%BC%89"><span class="toc-number">9.</span> <span class="toc-text">最小可用 Demo 结构（参考）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FAQ"><span class="toc-number">10.</span> <span class="toc-text">FAQ</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/09/02/Spring_AOP/" title="Spring AOP"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/09/02/aopdac7323692bd4073.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring AOP"/></a><div class="content"><a class="title" href="/2025/09/02/Spring_AOP/" title="Spring AOP">Spring AOP</a><time datetime="2025-09-02T09:28:52.899Z" title="Created 2025-09-02 17:28:52">2025-09-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/02/%E9%99%90%E6%B5%81_Ratelimit/" title="限流_Ratelimit"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/09/03/limit5e11163d8ab173d1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="限流_Ratelimit"/></a><div class="content"><a class="title" href="/2025/09/02/%E9%99%90%E6%B5%81_Ratelimit/" title="限流_Ratelimit">限流_Ratelimit</a><time datetime="2025-09-02T06:13:16.134Z" title="Created 2025-09-02 14:13:16">2025-09-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/31/Java_%E6%9E%9A%E4%B8%BE/" title="Java枚举的优雅使用"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/09/02/meiju61fc0442f4a00c39.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java枚举的优雅使用"/></a><div class="content"><a class="title" href="/2025/08/31/Java_%E6%9E%9A%E4%B8%BE/" title="Java枚举的优雅使用">Java枚举的优雅使用</a><time datetime="2025-08-31T08:03:01.752Z" title="Created 2025-08-31 16:03:01">2025-08-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/30/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84_%E6%A0%88_%E9%98%9F%E5%88%97/" title="数据结构_栈_队列"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/31/data_st36d19cecfce34426.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据结构_栈_队列"/></a><div class="content"><a class="title" href="/2025/08/30/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84_%E6%A0%88_%E9%98%9F%E5%88%97/" title="数据结构_栈_队列">数据结构_栈_队列</a><time datetime="2025-08-30T04:40:55.565Z" title="Created 2025-08-30 12:40:55">2025-08-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/08/29/%E5%88%86%E5%B1%82%E5%AF%BC%E5%85%A5_BFS%E5%BA%94%E7%94%A8/" title="分层导入：BFS 在分层导入中的实践"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://origin.picgo.net/2025/08/29/bfsd5599ff4a1cc3b7f.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分层导入：BFS 在分层导入中的实践"/></a><div class="content"><a class="title" href="/2025/08/29/%E5%88%86%E5%B1%82%E5%AF%BC%E5%85%A5_BFS%E5%BA%94%E7%94%A8/" title="分层导入：BFS 在分层导入中的实践">分层导入：BFS 在分层导入中的实践</a><time datetime="2025-08-29T08:50:58.233Z" title="Created 2025-08-29 16:50:58">2025-08-29</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">84</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">38</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">27</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AMQP/" style="font-size: 0.88rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 0.88rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 0.88rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 0.88rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>7</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>3</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>6</sup></a><a href="/tags/Redisson/" style="font-size: 0.88rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 0.88rem;">Spring<sup>2</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 0.88rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 0.88rem;">Swagger<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 0.88rem;">业务<sup>1</sup></a><a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 0.88rem;">云原生<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 0.88rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>10</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>8</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 0.88rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>9</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 0.88rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.88rem;">数据结构<sup>5</sup></a><a href="/tags/%E6%9D%83%E9%99%90%E6%A0%A1%E9%AA%8C/" style="font-size: 0.88rem;">权限校验<sup>4</sup></a><a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 0.88rem;">架构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>5</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>4</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>2</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 0.88rem;">面试<sup>3</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
