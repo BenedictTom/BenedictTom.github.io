@@ -1,0 +1,713 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>Sse &amp;&amp; Websocket | Joie's Blog</title><meta name="keywords" content="http"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="Sse &amp;&amp; Websocket"><meta name="application-name" content="Sse &amp;&amp; Websocket"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="Sse &amp;&amp; Websocket"><meta property="og:url" content="http://example.com/2026/04/25/SSE&amp;Webocket/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="SSE 与 WebSocket 完整指南目录 概述 Server-Sent Events (SSE) 底层原理 Java 实现   WebSocket 底层原理 Java 实现   对比分析 选择建议  概述在传统的 HTTP 协议中，客户端发起请求，服务器响应后连接即关闭。这种请求-响应模式无法满"><meta property="og:locale" content="en"><meta property="og:image" content="https://free.picui.cn/free/2026/03/28/69c74fc2598a0.png"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://free.picui.cn/free/2026/03/28/69c74fc2598a0.png"><meta name="description" content="SSE 与 WebSocket 完整指南目录 概述 Server-Sent Events (SSE) 底层原理 Java 实现   WebSocket 底层原理 Java 实现   对比分析 选择建议  概述在传统的 HTTP 协议中，客户端发起请求，服务器响应后连接即关闭。这种请求-响应模式无法满"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/2026/04/25/SSE&amp;Webocket/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'Sse && Websocket',
+  postAI: '',
+  pageFillDescription: 'SSE 与 WebSocket 完整指南, 目录, 概述, Server-Sent Events (SSE), SSE 底层原理, HTTP 协议基础, 数据传输格式, 连接建立过程, 心跳机制, 断线重连, SSE Java 实现, Spring Boot 实现, Maven 依赖, 控制器实现, 使用 SseEventSink（Spring 6+）, 客户端实现（JavaScript）, WebSocket, WebSocket 底层原理, 协议升级过程, 数据帧格式, 心跳机制（Pingx2FPong）, 连接关闭, WebSocket Java 实现, Spring Boot 实现, Maven 依赖, WebSocket 配置类, 消息控制器, 原生 WebSocket 实现（不使用 STOMP）, WebSocket 端点配置, 客户端实现（JavaScript）, 对比分析, 协议层面对比, 技术实现对比, 使用场景对比, SSE 适用场景, WebSocket 适用场景, 性能对比, 连接开销, 消息大小, 并发连接, 代码复杂度对比, SSE 代码示例, WebSocket 代码示例, 选择建议, 选择 SSE 的情况, 选择 WebSocket 的情况, 混合使用, 总结与完整指南目录概述底层原理实现底层原理实现对比分析选择建议概述在传统的协议中客户端发起请求服务器响应后连接即关闭这种请求响应模式无法满足实时双向通信的需求为了解决这个问题出现了两种主要的实时通信方案服务器向客户端推送数据全双工通信协议两者各有优势适用于不同的场景是一种允许服务器向客户端推送数据的技术它是基于的单向通信协议服务器可以主动向客户端发送数据底层原理协议基础基于标准的协议使用长连接机制关键在于以下几点必须设置为设置为防止缓存保持连接打开使用数据传输格式遵循规范数据传输格式使用纯文本格式传输数据每条消息格式如下字段说明事件类型可选消息可选用于断线重连实际数据必需可以多行空行分隔不同消息连接建立过程客户端发送请求服务器响应保持连接打开服务器持续发送数据客户端通过接收心跳机制为了保持连接活跃服务器会定期发送注释行以开头的行断线重连客户端使用字段实现断线重连服务器发送消息时带上客户端记录最后接收的断线重连时客户端通过请求头发送上次的服务器从该之后继续发送实现实现依赖控制器实现端点永不超时启动任务定期发送数据发送数据事件类型消息数据连接完成时的回调支持断线重连的如果有从该位置继续使用客户端实现创建连接监听默认事件监听自定义事件错误处理客户端会自动重连手动关闭连接是一种在单个连接上进行全双工通信的协议它允许服务器和客户端同时发送数据实现了真正的双向通信底层原理协议升级过程连接通过握手建立然后升级为协议客户端发送升级请求服务器响应升级连接升级完成开始数据传输数据帧格式使用帧格式传输数据每帧包含以下部分字段说明是否为最后一帧保留字段操作码文本二进制关闭是否掩码客户端必须设置服务器不设置负载长度掩码密钥如果实际数据心跳机制使用帧保持连接活跃帧服务器或客户端发送帧收到后必须回复连接关闭正常关闭流程一方发送关闭帧另一方收到后也发送关闭帧关闭连接关闭帧可包含关闭状态码和原因实现实现依赖配置类配置消息代理启用简单消息代理用于向客户端推送消息客户端订阅的地址前缀客户端向服务器发送消息的地址前缀用户目标前缀点对点消息注册端点允许跨域支持降级不适用的端点消息控制器接收客户端消息并广播服务器主动推送消息广播到点对点消息发送给特定用户原生实现不使用发送欢迎消息回显消息广播给所有连接的客户端广播消息给所有连接的客户端端点配置客户端实现使用原生使用需要引入库订阅广播消息发送消息对比分析协议层面对比特性协议基础独立协议基于通信方向单向服务器客户端双向连接方式长连接协议数据格式纯文本格式二进制或文本格式浏览器支持较好现代浏览器很好自动重连原生支持需要手动实现技术实现对比特性实现复杂度简单中等服务器资源每个连接占用一个连接每个连接占用一个连接消息大小理论上无限制但受缓冲区影响理论上无限制心跳机制注释行保持连接帧错误处理自动重连带需要手动处理使用场景对比适用场景服务器推送通知实时新闻推送系统通知日志流输出单向数据流股票价格更新进度条更新实时统计信息简单实现场景不需要双向通信需要自动重连防火墙友好适用场景双向实时通信聊天应用在线游戏协作编辑低延迟需求高频交易实时监控视频通话信令复杂交互需要客户端频繁发送数据需要双向流式传输性能对比连接开销基于每个连接保持一个连接开销相对较大升级后是轻量级协议帧头开销小字节消息大小适合小到中等大小的消息支持任意大小的消息支持二进制并发连接受限于连接数浏览器通常限制个同域连接不受连接数限制但受服务器资源限制代码复杂度对比代码示例服务器端客户端代码示例服务器端使用客户端选择建议选择的情况只需要服务器向客户端推送数据需要简单的实现不想处理复杂协议需要自动重连机制防火墙环境严格只允许数据量不大主要是文本数据需要利用现有的基础设施选择的情况需要双向实时通信需要低延迟和高性能需要传输二进制数据客户端需要频繁发送数据需要实现复杂的消息路由使用需要点对点通信混合使用在实际项目中可以同时使用两者用于服务器主动推送通知日志流等用于聊天实时协作等需要双向通信的场景总结更适合单向推送场景实现简单适合通知日志进度更新等更适合双向通信场景性能更好适合聊天游戏实时协作等选择时主要考虑通信方向单向双向实现复杂度要求性能要求浏览器兼容性防火墙限制根据具体业务需求选择最合适的技术方案',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-04-25 19:34:51',
+  postMainColor: '#1881a2ff',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://free.picui.cn/free/2026/03/28/69c770521e454.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>4</sup></a><a href="/tags/AMQP/" style="font-size: 1.05rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Claude-Code/" style="font-size: 1.05rem;">Claude Code<sup>3</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 1.05rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 1.05rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 1.05rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 1.05rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 1.05rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 1.05rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 1.05rem;">Swagger<sup>1</sup></a><a href="/tags/http/" style="font-size: 1.05rem;">http<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 1.05rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 1.05rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>9</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 1.05rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>10</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 1.05rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 1.05rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">效率工具<sup>3</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.05rem;">数据结构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">93</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">4</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/http/" itemprop="url">http</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/http/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>http</span></a></span></div></div><h1 class="post-title" itemprop="name headline">Sse &amp;&amp; Websocket</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-04-25T11:34:51.904Z" title="Created 2026-04-25 19:34:51">2026-04-25</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-04-25T11:34:51.904Z" title="Updated 2026-04-25 19:34:51">2026-04-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://free.picui.cn/free/2026/03/28/69c74fc2598a0.png"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2026/04/25/SSE&amp;Webocket/"><header><a class="post-meta-categories" href="/categories/http/" itemprop="url">http</a><a href="/tags/http/" tabindex="-1" itemprop="url">http</a><h1 id="CrawlerTitle" itemprop="name headline">Sse &amp;&amp; Websocket</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-04-25T11:34:51.904Z" title="Created 2026-04-25 19:34:51">2026-04-25</time><time itemprop="dateCreated datePublished" datetime="2026-04-25T11:34:51.904Z" title="Updated 2026-04-25 19:34:51">2026-04-25</time></header><h1 id="SSE-与-WebSocket-完整指南"><a href="#SSE-与-WebSocket-完整指南" class="headerlink" title="SSE 与 WebSocket 完整指南"></a>SSE 与 WebSocket 完整指南</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#%E6%A6%82%E8%BF%B0">概述</a></li>
+<li><a href="#server-sent-events-sse">Server-Sent Events (SSE)</a><ul>
+<li><a href="#sse-%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86">底层原理</a></li>
+<li><a href="#sse-java-%E5%AE%9E%E7%8E%B0">Java 实现</a></li>
+</ul>
+</li>
+<li><a href="#websocket">WebSocket</a><ul>
+<li><a href="#websocket-%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86">底层原理</a></li>
+<li><a href="#websocket-java-%E5%AE%9E%E7%8E%B0">Java 实现</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90">对比分析</a></li>
+<li><a href="#%E9%80%89%E6%8B%A9%E5%BB%BA%E8%AE%AE">选择建议</a></li>
+</ul>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在传统的 HTTP 协议中，客户端发起请求，服务器响应后连接即关闭。这种请求-响应模式无法满足实时双向通信的需求。为了解决这个问题，出现了两种主要的实时通信方案：</p>
+<ol>
+<li><strong>Server-Sent Events (SSE)</strong>：服务器向客户端推送数据</li>
+<li><strong>WebSocket</strong>：全双工通信协议</li>
+</ol>
+<p>两者各有优势，适用于不同的场景。</p>
+<hr>
+<h2 id="Server-Sent-Events-SSE"><a href="#Server-Sent-Events-SSE" class="headerlink" title="Server-Sent Events (SSE)"></a>Server-Sent Events (SSE)</h2><p>Server-Sent Events 是一种允许服务器向客户端推送数据的技术。它是基于 HTTP 的单向通信协议，服务器可以主动向客户端发送数据。</p>
+<h3 id="SSE-底层原理"><a href="#SSE-底层原理" class="headerlink" title="SSE 底层原理"></a>SSE 底层原理</h3><h4 id="HTTP-协议基础"><a href="#HTTP-协议基础" class="headerlink" title="HTTP 协议基础"></a>HTTP 协议基础</h4><p>SSE 基于标准的 HTTP 协议，使用 HTTP 长连接机制。关键在于以下几点：</p>
+<ol>
+<li><strong>Content-Type</strong>: 必须设置为 <code>text/event-stream</code></li>
+<li><strong>Cache-Control</strong>: 设置为 <code>no-cache</code>，防止缓存</li>
+<li><strong>Connection</strong>: 保持连接打开，使用 <code>keep-alive</code></li>
+<li><strong>数据传输格式</strong>: 遵循 EventSource 规范</li>
+</ol>
+<h4 id="数据传输格式"><a href="#数据传输格式" class="headerlink" title="数据传输格式"></a>数据传输格式</h4><p>SSE 使用纯文本格式传输数据，每条消息格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">event: messageType</span><br><span class="line">id: 12345</span><br><span class="line">data: &#123;&quot;key&quot;: &quot;value&quot;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>字段说明：</p>
+<ul>
+<li><code>event</code>: 事件类型（可选）</li>
+<li><code>id</code>: 消息ID（可选），用于断线重连</li>
+<li><code>data</code>: 实际数据（必需），可以多行</li>
+<li>空行：分隔不同消息</li>
+</ul>
+<h4 id="连接建立过程"><a href="#连接建立过程" class="headerlink" title="连接建立过程"></a>连接建立过程</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1. 客户端发送 HTTP GET 请求</span><br><span class="line">   GET /events HTTP/1.1</span><br><span class="line">   Accept: text/event-stream</span><br><span class="line">   Cache-Control: no-cache</span><br><span class="line"></span><br><span class="line">2. 服务器响应，保持连接打开</span><br><span class="line">   HTTP/1.1 200 OK</span><br><span class="line">   Content-Type: text/event-stream</span><br><span class="line">   Cache-Control: no-cache</span><br><span class="line">   Connection: keep-alive</span><br><span class="line"></span><br><span class="line">3. 服务器持续发送数据</span><br><span class="line">   data: message 1</span><br><span class="line"></span><br><span class="line">   data: message 2</span><br><span class="line"></span><br><span class="line">4. 客户端通过 EventSource API 接收</span><br></pre></td></tr></table></figure>
+
+<h4 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h4><p>为了保持连接活跃，服务器会定期发送注释行（以 <code>:</code> 开头的行）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">: keep-alive comment</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="断线重连"><a href="#断线重连" class="headerlink" title="断线重连"></a>断线重连</h4><p>客户端使用 <code>id</code> 字段实现断线重连：</p>
+<ol>
+<li>服务器发送消息时带上 <code>id</code></li>
+<li>客户端记录最后接收的 <code>id</code></li>
+<li>断线重连时，客户端通过 <code>Last-Event-ID</code> 请求头发送上次的 <code>id</code></li>
+<li>服务器从该 <code>id</code> 之后继续发送</li>
+</ol>
+<h3 id="SSE-Java-实现"><a href="#SSE-Java-实现" class="headerlink" title="SSE Java 实现"></a>SSE Java 实现</h3><h4 id="Spring-Boot-实现"><a href="#Spring-Boot-实现" class="headerlink" title="Spring Boot 实现"></a>Spring Boot 实现</h4><h5 id="Maven-依赖"><a href="#Maven-依赖" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="控制器实现"><a href="#控制器实现" class="headerlink" title="控制器实现"></a>控制器实现</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.mvc.method.annotation.SseEmitter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ScheduledExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SseController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">ScheduledExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newScheduledThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * SSE 端点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> SseEmitter</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(value = &quot;/events&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)</span></span><br><span class="line">    <span class="keyword">public</span> SseEmitter <span class="title function_">streamEvents</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">SseEmitter</span> <span class="variable">emitter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SseEmitter</span>(Long.MAX_VALUE); <span class="comment">// 永不超时</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 启动任务，定期发送数据</span></span><br><span class="line">        executor.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 发送数据</span></span><br><span class="line">                SseEmitter.<span class="type">SseEventBuilder</span> <span class="variable">event</span> <span class="operator">=</span> SseEmitter.event()</span><br><span class="line">                    .name(<span class="string">&quot;message&quot;</span>)  <span class="comment">// 事件类型</span></span><br><span class="line">                    .id(String.valueOf(System.currentTimeMillis()))  <span class="comment">// 消息ID</span></span><br><span class="line">                    .data(<span class="string">&quot;Hello from server - &quot;</span> + System.currentTimeMillis());  <span class="comment">// 数据</span></span><br><span class="line">                </span><br><span class="line">                emitter.send(event);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                emitter.completeWithError(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="number">0</span>, <span class="number">1</span>, TimeUnit.SECONDS);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 连接完成时的回调</span></span><br><span class="line">        emitter.onCompletion(() -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;SSE connection completed&quot;</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        emitter.onError((ex) -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;SSE error: &quot;</span> + ex.getMessage());</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        emitter.onTimeout(() -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;SSE timeout&quot;</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> emitter;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 支持断线重连的 SSE</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(value = &quot;/events/reconnect&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)</span></span><br><span class="line">    <span class="keyword">public</span> SseEmitter <span class="title function_">streamEventsWithReconnect</span><span class="params">(<span class="meta">@RequestParam(required = false)</span> String lastEventId)</span> &#123;</span><br><span class="line">        <span class="type">SseEmitter</span> <span class="variable">emitter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SseEmitter</span>(Long.MAX_VALUE);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 如果有 lastEventId，从该位置继续</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">startId</span> <span class="operator">=</span> lastEventId != <span class="literal">null</span> ? Long.parseLong(lastEventId) : <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">        executor.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="type">long</span> <span class="variable">currentId</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> (currentId &gt; startId) &#123;</span><br><span class="line">                    SseEmitter.<span class="type">SseEventBuilder</span> <span class="variable">event</span> <span class="operator">=</span> SseEmitter.event()</span><br><span class="line">                        .name(<span class="string">&quot;message&quot;</span>)</span><br><span class="line">                        .id(String.valueOf(currentId))</span><br><span class="line">                        .data(<span class="string">&quot;Data: &quot;</span> + currentId);</span><br><span class="line">                    </span><br><span class="line">                    emitter.send(event);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                emitter.completeWithError(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="number">0</span>, <span class="number">1</span>, TimeUnit.SECONDS);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> emitter;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用-SseEventSink（Spring-6-）"><a href="#使用-SseEventSink（Spring-6-）" class="headerlink" title="使用 SseEventSink（Spring 6+）"></a>使用 SseEventSink（Spring 6+）</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.mvc.method.annotation.SseEmitter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CompletableFuture;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SseEventSinkController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(value = &quot;/events/v2&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseBodyEmitter <span class="title function_">streamEventsV2</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ResponseBodyEmitter</span> <span class="variable">emitter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResponseBodyEmitter</span>(Long.MAX_VALUE);</span><br><span class="line">        </span><br><span class="line">        CompletableFuture.runAsync(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">                    emitter.send(SseEmitter.event()</span><br><span class="line">                        .name(<span class="string">&quot;message&quot;</span>)</span><br><span class="line">                        .data(<span class="string">&quot;Message &quot;</span> + i));</span><br><span class="line">                    </span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                emitter.complete();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                emitter.completeWithError(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> emitter;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="客户端实现（JavaScript）"><a href="#客户端实现（JavaScript）" class="headerlink" title="客户端实现（JavaScript）"></a>客户端实现（JavaScript）</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 EventSource 连接</span></span><br><span class="line"><span class="keyword">const</span> eventSource = <span class="keyword">new</span> <span class="title class_">EventSource</span>(<span class="string">&#x27;http://localhost:8080/events&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监听默认 message 事件</span></span><br><span class="line">eventSource.<span class="property">onmessage</span> = <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Received:&#x27;</span>, event.<span class="property">data</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Event ID:&#x27;</span>, event.<span class="property">lastEventId</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监听自定义事件</span></span><br><span class="line">eventSource.<span class="title function_">addEventListener</span>(<span class="string">&#x27;message&#x27;</span>, <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Custom event:&#x27;</span>, event.<span class="property">data</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误处理</span></span><br><span class="line">eventSource.<span class="property">onerror</span> = <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;SSE error:&#x27;</span>, event);</span><br><span class="line">    <span class="comment">// 客户端会自动重连</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 手动关闭连接</span></span><br><span class="line"><span class="comment">// eventSource.close();</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h2><p>WebSocket 是一种在单个 TCP 连接上进行全双工通信的协议。它允许服务器和客户端同时发送数据，实现了真正的双向通信。</p>
+<h3 id="WebSocket-底层原理"><a href="#WebSocket-底层原理" class="headerlink" title="WebSocket 底层原理"></a>WebSocket 底层原理</h3><h4 id="协议升级过程"><a href="#协议升级过程" class="headerlink" title="协议升级过程"></a>协议升级过程</h4><p>WebSocket 连接通过 HTTP 握手建立，然后升级为 WebSocket 协议：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">1. 客户端发送升级请求</span><br><span class="line">   GET /ws HTTP/1.1</span><br><span class="line">   Host: example.com</span><br><span class="line">   Upgrade: websocket</span><br><span class="line">   Connection: Upgrade</span><br><span class="line">   Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==</span><br><span class="line">   Sec-WebSocket-Version: 13</span><br><span class="line">   Origin: http://example.com</span><br><span class="line"></span><br><span class="line">2. 服务器响应升级</span><br><span class="line">   HTTP/1.1 101 Switching Protocols</span><br><span class="line">   Upgrade: websocket</span><br><span class="line">   Connection: Upgrade</span><br><span class="line">   Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</span><br><span class="line"></span><br><span class="line">3. 连接升级完成，开始 WebSocket 数据传输</span><br></pre></td></tr></table></figure>
+
+<h4 id="数据帧格式"><a href="#数据帧格式" class="headerlink" title="数据帧格式"></a>数据帧格式</h4><p>WebSocket 使用帧（Frame）格式传输数据，每帧包含以下部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> 0                   1                   2                   3</span><br><span class="line"> 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1</span><br><span class="line">+-+-+-+-+-------+-+-------------+-------------------------------+</span><br><span class="line">|F|R|R|R| opcode|M| Payload len |    Extended payload length    |</span><br><span class="line">|I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |</span><br><span class="line">|N|V|V|V|       |S|             |   (if payload len==126/127)   |</span><br><span class="line">| |1|2|3|       |K|             |                               |</span><br><span class="line">+-+-+-+-+-------+-+-------------+-------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>字段说明：</p>
+<ul>
+<li><strong>FIN</strong>: 是否为最后一帧</li>
+<li><strong>RSV</strong>: 保留字段</li>
+<li><strong>Opcode</strong>: 操作码（0x1&#x3D;文本，0x2&#x3D;二进制，0x8&#x3D;关闭，0x9&#x3D;Ping，0xA&#x3D;Pong）</li>
+<li><strong>MASK</strong>: 是否掩码（客户端必须设置，服务器不设置）</li>
+<li><strong>Payload len</strong>: 负载长度</li>
+<li><strong>Masking-key</strong>: 掩码密钥（如果 MASK&#x3D;1）</li>
+<li><strong>Payload data</strong>: 实际数据</li>
+</ul>
+<h4 id="心跳机制（Ping-Pong）"><a href="#心跳机制（Ping-Pong）" class="headerlink" title="心跳机制（Ping&#x2F;Pong）"></a>心跳机制（Ping&#x2F;Pong）</h4><p>WebSocket 使用 Ping&#x2F;Pong 帧保持连接活跃：</p>
+<ul>
+<li><strong>Ping 帧</strong>（opcode 0x9）：服务器或客户端发送</li>
+<li><strong>Pong 帧</strong>（opcode 0xA）：收到 Ping 后必须回复 Pong</li>
+</ul>
+<h4 id="连接关闭"><a href="#连接关闭" class="headerlink" title="连接关闭"></a>连接关闭</h4><p>正常关闭流程：</p>
+<ol>
+<li>一方发送关闭帧（opcode 0x8）</li>
+<li>另一方收到后也发送关闭帧</li>
+<li>关闭 TCP 连接</li>
+</ol>
+<p>关闭帧可包含关闭状态码和原因。</p>
+<h3 id="WebSocket-Java-实现"><a href="#WebSocket-Java-实现" class="headerlink" title="WebSocket Java 实现"></a>WebSocket Java 实现</h3><h4 id="Spring-Boot-实现-1"><a href="#Spring-Boot-实现-1" class="headerlink" title="Spring Boot 实现"></a>Spring Boot 实现</h4><h5 id="Maven-依赖-1"><a href="#Maven-依赖-1" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-websocket<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="WebSocket-配置类"><a href="#WebSocket-配置类" class="headerlink" title="WebSocket 配置类"></a>WebSocket 配置类</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.messaging.simp.config.MessageBrokerRegistry;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.config.annotation.StompEndpointRegistry;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebSocketMessageBroker</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebSocketConfig</span> <span class="keyword">implements</span> <span class="title class_">WebSocketMessageBrokerConfigurer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 配置消息代理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">configureMessageBroker</span><span class="params">(MessageBrokerRegistry config)</span> &#123;</span><br><span class="line">        <span class="comment">// 启用简单消息代理，用于向客户端推送消息</span></span><br><span class="line">        <span class="comment">// 客户端订阅的地址前缀</span></span><br><span class="line">        config.enableSimpleBroker(<span class="string">&quot;/topic&quot;</span>, <span class="string">&quot;/queue&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 客户端向服务器发送消息的地址前缀</span></span><br><span class="line">        config.setApplicationDestinationPrefixes(<span class="string">&quot;/app&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 用户目标前缀（点对点消息）</span></span><br><span class="line">        config.setUserDestinationPrefix(<span class="string">&quot;/user&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 注册 STOMP 端点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerStompEndpoints</span><span class="params">(StompEndpointRegistry registry)</span> &#123;</span><br><span class="line">        <span class="comment">// 允许跨域</span></span><br><span class="line">        registry.addEndpoint(<span class="string">&quot;/ws&quot;</span>)</span><br><span class="line">                .setAllowedOriginPatterns(<span class="string">&quot;*&quot;</span>)</span><br><span class="line">                .withSockJS();  <span class="comment">// 支持 SockJS 降级</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 不适用 SockJS 的端点</span></span><br><span class="line">        registry.addEndpoint(<span class="string">&quot;/ws-native&quot;</span>)</span><br><span class="line">                .setAllowedOriginPatterns(<span class="string">&quot;*&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="消息控制器"><a href="#消息控制器" class="headerlink" title="消息控制器"></a>消息控制器</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.messaging.handler.annotation.MessageMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.messaging.handler.annotation.SendTo;</span><br><span class="line"><span class="keyword">import</span> org.springframework.messaging.simp.SimpMessagingTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebSocketController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SimpMessagingTemplate messagingTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">WebSocketController</span><span class="params">(SimpMessagingTemplate messagingTemplate)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.messagingTemplate = messagingTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接收客户端消息并广播</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MessageMapping(&quot;/chat&quot;)</span></span><br><span class="line">    <span class="meta">@SendTo(&quot;/topic/messages&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ChatMessage <span class="title function_">handleMessage</span><span class="params">(ChatMessage message)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Received: &quot;</span> + message.getContent());</span><br><span class="line">        <span class="keyword">return</span> message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 服务器主动推送消息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/send&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendMessage</span><span class="params">(<span class="meta">@RequestParam</span> String content)</span> &#123;</span><br><span class="line">        <span class="type">ChatMessage</span> <span class="variable">message</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChatMessage</span>(<span class="string">&quot;Server&quot;</span>, content);</span><br><span class="line">        <span class="comment">// 广播到 /topic/messages</span></span><br><span class="line">        messagingTemplate.convertAndSend(<span class="string">&quot;/topic/messages&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 点对点消息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MessageMapping(&quot;/private&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendPrivateMessage</span><span class="params">(PrivateMessage message)</span> &#123;</span><br><span class="line">        <span class="comment">// 发送给特定用户</span></span><br><span class="line">        messagingTemplate.convertAndSendToUser(</span><br><span class="line">            message.getToUser(),</span><br><span class="line">            <span class="string">&quot;/queue/messages&quot;</span>,</span><br><span class="line">            message</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="原生-WebSocket-实现（不使用-STOMP）"><a href="#原生-WebSocket-实现（不使用-STOMP）" class="headerlink" title="原生 WebSocket 实现（不使用 STOMP）"></a>原生 WebSocket 实现（不使用 STOMP）</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.CloseStatus;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.TextMessage;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.WebSocketSession;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.handler.TextWebSocketHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ConcurrentHashMap;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomWebSocketHandler</span> <span class="keyword">extends</span> <span class="title class_">TextWebSocketHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ConcurrentHashMap&lt;String, WebSocketSession&gt; sessions = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterConnectionEstablished</span><span class="params">(WebSocketSession session)</span> &#123;</span><br><span class="line">        sessions.put(session.getId(), session);</span><br><span class="line">        System.out.println(<span class="string">&quot;WebSocket connection established: &quot;</span> + session.getId());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 发送欢迎消息</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            session.sendMessage(<span class="keyword">new</span> <span class="title class_">TextMessage</span>(<span class="string">&quot;Welcome! Your ID: &quot;</span> + session.getId()));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">handleTextMessage</span><span class="params">(WebSocketSession session, TextMessage message)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">payload</span> <span class="operator">=</span> message.getPayload();</span><br><span class="line">        System.out.println(<span class="string">&quot;Received from &quot;</span> + session.getId() + <span class="string">&quot;: &quot;</span> + payload);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 回显消息</span></span><br><span class="line">        session.sendMessage(<span class="keyword">new</span> <span class="title class_">TextMessage</span>(<span class="string">&quot;Echo: &quot;</span> + payload));</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 广播给所有连接的客户端</span></span><br><span class="line">        broadcast(<span class="string">&quot;User &quot;</span> + session.getId() + <span class="string">&quot; said: &quot;</span> + payload);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterConnectionClosed</span><span class="params">(WebSocketSession session, CloseStatus status)</span> &#123;</span><br><span class="line">        sessions.remove(session.getId());</span><br><span class="line">        System.out.println(<span class="string">&quot;WebSocket connection closed: &quot;</span> + session.getId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleTransportError</span><span class="params">(WebSocketSession session, Throwable exception)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;WebSocket error: &quot;</span> + exception.getMessage());</span><br><span class="line">        sessions.remove(session.getId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 广播消息给所有连接的客户端</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">broadcast</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        sessions.values().forEach(session -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                session.sendMessage(<span class="keyword">new</span> <span class="title class_">TextMessage</span>(message));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="WebSocket-端点配置"><a href="#WebSocket-端点配置" class="headerlink" title="WebSocket 端点配置"></a>WebSocket 端点配置</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.config.annotation.EnableWebSocket;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.config.annotation.WebSocketConfigurer;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebSocket</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebSocketConfig</span> <span class="keyword">implements</span> <span class="title class_">WebSocketConfigurer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CustomWebSocketHandler customWebSocketHandler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerWebSocketHandlers</span><span class="params">(WebSocketHandlerRegistry registry)</span> &#123;</span><br><span class="line">        registry.addHandler(customWebSocketHandler, <span class="string">&quot;/ws-custom&quot;</span>)</span><br><span class="line">                .setAllowedOriginPatterns(<span class="string">&quot;*&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="客户端实现（JavaScript）-1"><a href="#客户端实现（JavaScript）-1" class="headerlink" title="客户端实现（JavaScript）"></a>客户端实现（JavaScript）</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用原生 WebSocket</span></span><br><span class="line"><span class="keyword">const</span> ws = <span class="keyword">new</span> <span class="title class_">WebSocket</span>(<span class="string">&#x27;ws://localhost:8080/ws-custom&#x27;</span>);</span><br><span class="line"></span><br><span class="line">ws.<span class="property">onopen</span> = <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;WebSocket connection opened&#x27;</span>);</span><br><span class="line">    ws.<span class="title function_">send</span>(<span class="string">&#x27;Hello Server!&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ws.<span class="property">onmessage</span> = <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Received:&#x27;</span>, event.<span class="property">data</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ws.<span class="property">onerror</span> = <span class="keyword">function</span>(<span class="params">error</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;WebSocket error:&#x27;</span>, error);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ws.<span class="property">onclose</span> = <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;WebSocket connection closed&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 STOMP（需要引入 stomp.js 库）</span></span><br><span class="line"><span class="keyword">const</span> socket = <span class="keyword">new</span> <span class="title class_">SockJS</span>(<span class="string">&#x27;http://localhost:8080/ws&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> stompClient = <span class="title class_">Stomp</span>.<span class="title function_">over</span>(socket);</span><br><span class="line"></span><br><span class="line">stompClient.<span class="title function_">connect</span>(&#123;&#125;, <span class="keyword">function</span>(<span class="params">frame</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Connected: &#x27;</span> + frame);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 订阅广播消息</span></span><br><span class="line">    stompClient.<span class="title function_">subscribe</span>(<span class="string">&#x27;/topic/messages&#x27;</span>, <span class="keyword">function</span>(<span class="params">message</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Received:&#x27;</span>, <span class="title class_">JSON</span>.<span class="title function_">parse</span>(message.<span class="property">body</span>));</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 发送消息</span></span><br><span class="line">    stompClient.<span class="title function_">send</span>(<span class="string">&quot;/app/chat&quot;</span>, &#123;&#125;, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;</span><br><span class="line">        <span class="attr">from</span>: <span class="string">&#x27;User&#x27;</span>,</span><br><span class="line">        <span class="attr">content</span>: <span class="string">&#x27;Hello!&#x27;</span></span><br><span class="line">    &#125;));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">disconnect</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (stompClient !== <span class="literal">null</span>) &#123;</span><br><span class="line">        stompClient.<span class="title function_">disconnect</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="对比分析"><a href="#对比分析" class="headerlink" title="对比分析"></a>对比分析</h2><h3 id="协议层面对比"><a href="#协议层面对比" class="headerlink" title="协议层面对比"></a>协议层面对比</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>SSE</th>
+<th>WebSocket</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>协议基础</strong></td>
+<td>HTTP</td>
+<td>独立协议（基于 TCP）</td>
+</tr>
+<tr>
+<td><strong>通信方向</strong></td>
+<td>单向（服务器→客户端）</td>
+<td>双向</td>
+</tr>
+<tr>
+<td><strong>连接方式</strong></td>
+<td>HTTP 长连接</td>
+<td>WebSocket 协议</td>
+</tr>
+<tr>
+<td><strong>数据格式</strong></td>
+<td>纯文本（EventSource 格式）</td>
+<td>二进制或文本（Frame 格式）</td>
+</tr>
+<tr>
+<td><strong>浏览器支持</strong></td>
+<td>较好（现代浏览器）</td>
+<td>很好（IE10+）</td>
+</tr>
+<tr>
+<td><strong>自动重连</strong></td>
+<td>原生支持</td>
+<td>需要手动实现</td>
+</tr>
+</tbody></table>
+<h3 id="技术实现对比"><a href="#技术实现对比" class="headerlink" title="技术实现对比"></a>技术实现对比</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>SSE</th>
+<th>WebSocket</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>实现复杂度</strong></td>
+<td>简单</td>
+<td>中等</td>
+</tr>
+<tr>
+<td><strong>服务器资源</strong></td>
+<td>每个连接占用一个 HTTP 连接</td>
+<td>每个连接占用一个 TCP 连接</td>
+</tr>
+<tr>
+<td><strong>消息大小</strong></td>
+<td>理论上无限制，但受 HTTP 缓冲区影响</td>
+<td>理论上无限制</td>
+</tr>
+<tr>
+<td><strong>心跳机制</strong></td>
+<td>注释行保持连接</td>
+<td>Ping&#x2F;Pong 帧</td>
+</tr>
+<tr>
+<td><strong>错误处理</strong></td>
+<td>自动重连（带 lastEventId）</td>
+<td>需要手动处理</td>
+</tr>
+</tbody></table>
+<h3 id="使用场景对比"><a href="#使用场景对比" class="headerlink" title="使用场景对比"></a>使用场景对比</h3><h4 id="SSE-适用场景"><a href="#SSE-适用场景" class="headerlink" title="SSE 适用场景"></a>SSE 适用场景</h4><ol>
+<li><p><strong>服务器推送通知</strong></p>
+<ul>
+<li>实时新闻推送</li>
+<li>系统通知</li>
+<li>日志流输出</li>
+</ul>
+</li>
+<li><p><strong>单向数据流</strong></p>
+<ul>
+<li>股票价格更新</li>
+<li>进度条更新</li>
+<li>实时统计信息</li>
+</ul>
+</li>
+<li><p><strong>简单实现场景</strong></p>
+<ul>
+<li>不需要双向通信</li>
+<li>需要自动重连</li>
+<li>防火墙友好（HTTP）</li>
+</ul>
+</li>
+</ol>
+<h4 id="WebSocket-适用场景"><a href="#WebSocket-适用场景" class="headerlink" title="WebSocket 适用场景"></a>WebSocket 适用场景</h4><ol>
+<li><p><strong>双向实时通信</strong></p>
+<ul>
+<li>聊天应用</li>
+<li>在线游戏</li>
+<li>协作编辑</li>
+</ul>
+</li>
+<li><p><strong>低延迟需求</strong></p>
+<ul>
+<li>高频交易</li>
+<li>实时监控</li>
+<li>视频通话信令</li>
+</ul>
+</li>
+<li><p><strong>复杂交互</strong></p>
+<ul>
+<li>需要客户端频繁发送数据</li>
+<li>需要双向流式传输</li>
+</ul>
+</li>
+</ol>
+<h3 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h3><h4 id="连接开销"><a href="#连接开销" class="headerlink" title="连接开销"></a>连接开销</h4><ul>
+<li><strong>SSE</strong>: 基于 HTTP，每个连接保持一个 HTTP 连接，开销相对较大</li>
+<li><strong>WebSocket</strong>: 升级后是轻量级协议，帧头开销小（2-14 字节）</li>
+</ul>
+<h4 id="消息大小"><a href="#消息大小" class="headerlink" title="消息大小"></a>消息大小</h4><ul>
+<li><strong>SSE</strong>: 适合小到中等大小的消息</li>
+<li><strong>WebSocket</strong>: 支持任意大小的消息，支持二进制</li>
+</ul>
+<h4 id="并发连接"><a href="#并发连接" class="headerlink" title="并发连接"></a>并发连接</h4><ul>
+<li><strong>SSE</strong>: 受限于 HTTP 连接数（浏览器通常限制 6-10 个同域连接）</li>
+<li><strong>WebSocket</strong>: 不受 HTTP 连接数限制，但受服务器资源限制</li>
+</ul>
+<h3 id="代码复杂度对比"><a href="#代码复杂度对比" class="headerlink" title="代码复杂度对比"></a>代码复杂度对比</h3><h4 id="SSE-代码示例"><a href="#SSE-代码示例" class="headerlink" title="SSE 代码示例"></a>SSE 代码示例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 服务器端</span></span><br><span class="line"><span class="meta">@GetMapping(value = &quot;/events&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)</span></span><br><span class="line"><span class="keyword">public</span> SseEmitter <span class="title function_">streamEvents</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">SseEmitter</span> <span class="variable">emitter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SseEmitter</span>(Long.MAX_VALUE);</span><br><span class="line">    executor.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">        emitter.send(SseEmitter.event().data(<span class="string">&quot;Hello&quot;</span>));</span><br><span class="line">    &#125;, <span class="number">0</span>, <span class="number">1</span>, TimeUnit.SECONDS);</span><br><span class="line">    <span class="keyword">return</span> emitter;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端（JavaScript）</span></span><br><span class="line"><span class="type">const</span> <span class="variable">eventSource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">EventSource</span>(<span class="string">&#x27;/events&#x27;</span>);</span><br><span class="line">eventSource.onmessage = (e) =&gt; console.log(e.data);</span><br></pre></td></tr></table></figure>
+
+<h4 id="WebSocket-代码示例"><a href="#WebSocket-代码示例" class="headerlink" title="WebSocket 代码示例"></a>WebSocket 代码示例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 服务器端（使用 STOMP）</span></span><br><span class="line"><span class="meta">@MessageMapping(&quot;/chat&quot;)</span></span><br><span class="line"><span class="meta">@SendTo(&quot;/topic/messages&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Message <span class="title function_">handleMessage</span><span class="params">(Message msg)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> msg;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端（JavaScript）</span></span><br><span class="line"><span class="type">const</span> <span class="variable">stompClient</span> <span class="operator">=</span> Stomp.over(<span class="keyword">new</span> <span class="title class_">SockJS</span>(<span class="string">&#x27;/ws&#x27;</span>));</span><br><span class="line">stompClient.connect(&#123;&#125;, () =&gt; &#123;</span><br><span class="line">    stompClient.subscribe(<span class="string">&#x27;/topic/messages&#x27;</span>, (msg) =&gt; &#123;</span><br><span class="line">        console.log(msg.body);</span><br><span class="line">    &#125;);</span><br><span class="line">    stompClient.send(<span class="string">&#x27;/app/chat&#x27;</span>, &#123;&#125;, JSON.stringify(&#123;...&#125;));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="选择建议"><a href="#选择建议" class="headerlink" title="选择建议"></a>选择建议</h2><h3 id="选择-SSE-的情况"><a href="#选择-SSE-的情况" class="headerlink" title="选择 SSE 的情况"></a>选择 SSE 的情况</h3><ol>
+<li>✅ 只需要服务器向客户端推送数据</li>
+<li>✅ 需要简单的实现，不想处理复杂协议</li>
+<li>✅ 需要自动重连机制</li>
+<li>✅ 防火墙环境严格（只允许 HTTP）</li>
+<li>✅ 数据量不大，主要是文本数据</li>
+<li>✅ 需要利用现有的 HTTP 基础设施</li>
+</ol>
+<h3 id="选择-WebSocket-的情况"><a href="#选择-WebSocket-的情况" class="headerlink" title="选择 WebSocket 的情况"></a>选择 WebSocket 的情况</h3><ol>
+<li>✅ 需要双向实时通信</li>
+<li>✅ 需要低延迟和高性能</li>
+<li>✅ 需要传输二进制数据</li>
+<li>✅ 客户端需要频繁发送数据</li>
+<li>✅ 需要实现复杂的消息路由（使用 STOMP）</li>
+<li>✅ 需要点对点通信</li>
+</ol>
+<h3 id="混合使用"><a href="#混合使用" class="headerlink" title="混合使用"></a>混合使用</h3><p>在实际项目中，可以同时使用两者：</p>
+<ul>
+<li><strong>SSE</strong>: 用于服务器主动推送通知、日志流等</li>
+<li><strong>WebSocket</strong>: 用于聊天、实时协作等需要双向通信的场景</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><strong>SSE</strong> 更适合单向推送场景，实现简单，适合通知、日志、进度更新等</li>
+<li><strong>WebSocket</strong> 更适合双向通信场景，性能更好，适合聊天、游戏、实时协作等</li>
+</ul>
+<p>选择时主要考虑：</p>
+<ol>
+<li>通信方向（单向 vs 双向）</li>
+<li>实现复杂度要求</li>
+<li>性能要求</li>
+<li>浏览器兼容性</li>
+<li>防火墙限制</li>
+</ol>
+<p>根据具体业务需求选择最合适的技术方案。</p>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c770455ffd5.png" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c770455ffd5.png" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2026/04/25/SSE&amp;Webocket/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2026/04/25/SSE&amp;Webocket/')">Sse &amp;&amp; Websocket</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2026/04/25/SSE&amp;Webocket/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=Sse &amp;&amp; Websocket&amp;url=http://example.com/2026/04/25/SSE&amp;Webocket/&amp;pic=https://free.picui.cn/free/2026/03/28/69c74fc2598a0.png" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/http/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>http<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://free.picui.cn/free/2026/03/28/69c74d5a9ef14.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2026/04/25/SpringAMQP/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c74d6c92bf8.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Spring AMQP 完整指南</div></div></a></div><div class="next-post pull-right"><a href="/2026/04/25/Rpc_gRpc/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c74e01965e4.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Rpc_gRpc</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c770455ffd5.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSE-%E4%B8%8E-WebSocket-%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97"><span class="toc-number">1.</span> <span class="toc-text">SSE 与 WebSocket 完整指南</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.2.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Server-Sent-Events-SSE"><span class="toc-number">1.3.</span> <span class="toc-text">Server-Sent Events (SSE)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSE-%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">SSE 底层原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP-%E5%8D%8F%E8%AE%AE%E5%9F%BA%E7%A1%80"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">HTTP 协议基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">数据传输格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">连接建立过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">心跳机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%AD%E7%BA%BF%E9%87%8D%E8%BF%9E"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">断线重连</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSE-Java-%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.2.</span> <span class="toc-text">SSE Java 实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring-Boot-%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">Spring Boot 实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Maven-%E4%BE%9D%E8%B5%96"><span class="toc-number">1.3.2.1.1.</span> <span class="toc-text">Maven 依赖</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.2.1.2.</span> <span class="toc-text">控制器实现</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-SseEventSink%EF%BC%88Spring-6-%EF%BC%89"><span class="toc-number">1.3.2.1.3.</span> <span class="toc-text">使用 SseEventSink（Spring 6+）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%9E%E7%8E%B0%EF%BC%88JavaScript%EF%BC%89"><span class="toc-number">1.3.2.1.4.</span> <span class="toc-text">客户端实现（JavaScript）</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WebSocket"><span class="toc-number">1.4.</span> <span class="toc-text">WebSocket</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WebSocket-%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">WebSocket 底层原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%8D%87%E7%BA%A7%E8%BF%87%E7%A8%8B"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">协议升级过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">数据帧格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6%EF%BC%88Ping-Pong%EF%BC%89"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">心跳机制（Ping&#x2F;Pong）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">连接关闭</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WebSocket-Java-%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.2.</span> <span class="toc-text">WebSocket Java 实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring-Boot-%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">Spring Boot 实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Maven-%E4%BE%9D%E8%B5%96-1"><span class="toc-number">1.4.2.1.1.</span> <span class="toc-text">Maven 依赖</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WebSocket-%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="toc-number">1.4.2.1.2.</span> <span class="toc-text">WebSocket 配置类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-number">1.4.2.1.3.</span> <span class="toc-text">消息控制器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E7%94%9F-WebSocket-%E5%AE%9E%E7%8E%B0%EF%BC%88%E4%B8%8D%E4%BD%BF%E7%94%A8-STOMP%EF%BC%89"><span class="toc-number">1.4.2.1.4.</span> <span class="toc-text">原生 WebSocket 实现（不使用 STOMP）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WebSocket-%E7%AB%AF%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.2.1.5.</span> <span class="toc-text">WebSocket 端点配置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%9E%E7%8E%B0%EF%BC%88JavaScript%EF%BC%89-1"><span class="toc-number">1.4.2.1.6.</span> <span class="toc-text">客户端实现（JavaScript）</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90"><span class="toc-number">1.5.</span> <span class="toc-text">对比分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%B1%82%E9%9D%A2%E5%AF%B9%E6%AF%94"><span class="toc-number">1.5.1.</span> <span class="toc-text">协议层面对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%AF%B9%E6%AF%94"><span class="toc-number">1.5.2.</span> <span class="toc-text">技术实现对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%AF%B9%E6%AF%94"><span class="toc-number">1.5.3.</span> <span class="toc-text">使用场景对比</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SSE-%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.5.3.1.</span> <span class="toc-text">SSE 适用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WebSocket-%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.5.3.2.</span> <span class="toc-text">WebSocket 适用场景</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-number">1.5.4.</span> <span class="toc-text">性能对比</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%BC%80%E9%94%80"><span class="toc-number">1.5.4.1.</span> <span class="toc-text">连接开销</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E5%A4%A7%E5%B0%8F"><span class="toc-number">1.5.4.2.</span> <span class="toc-text">消息大小</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.5.4.3.</span> <span class="toc-text">并发连接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%AF%B9%E6%AF%94"><span class="toc-number">1.5.5.</span> <span class="toc-text">代码复杂度对比</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SSE-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.5.5.1.</span> <span class="toc-text">SSE 代码示例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WebSocket-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.5.5.2.</span> <span class="toc-text">WebSocket 代码示例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.6.</span> <span class="toc-text">选择建议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9-SSE-%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-number">1.6.1.</span> <span class="toc-text">选择 SSE 的情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9-WebSocket-%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-number">1.6.2.</span> <span class="toc-text">选择 WebSocket 的情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E4%BD%BF%E7%94%A8"><span class="toc-number">1.6.3.</span> <span class="toc-text">混合使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_6_27/" title="面试记录_2025_6_27"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c74d5a9ef14.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试记录_2025_6_27"/></a><div class="content"><a class="title" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_6_27/" title="面试记录_2025_6_27">面试记录_2025_6_27</a><time datetime="2026-04-25T11:34:51.912Z" title="Created 2026-04-25 19:34:51">2026-04-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2020_9_23/" title="面试记录_2025_6_27"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c74d5a9ef14.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试记录_2025_6_27"/></a><div class="content"><a class="title" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2020_9_23/" title="面试记录_2025_6_27">面试记录_2025_6_27</a><time datetime="2026-04-25T11:34:51.912Z" title="Created 2026-04-25 19:34:51">2026-04-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/25/%E9%9D%A2%E8%AF%95_%E9%AB%98%E5%BE%B7/" title="面试_高德"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c74d5a9ef14.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试_高德"/></a><div class="content"><a class="title" href="/2026/04/25/%E9%9D%A2%E8%AF%95_%E9%AB%98%E5%BE%B7/" title="面试_高德">面试_高德</a><time datetime="2026-04-25T11:34:51.912Z" title="Created 2026-04-25 19:34:51">2026-04-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_8_07/" title="面试记录_2025_8_07"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c74d5a9ef14.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试记录_2025_8_07"/></a><div class="content"><a class="title" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_8_07/" title="面试记录_2025_8_07">面试记录_2025_8_07</a><time datetime="2026-04-25T11:34:51.912Z" title="Created 2026-04-25 19:34:51">2026-04-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_8_06/" title="面试记录_2025_8_06"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c74d5a9ef14.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试记录_2025_8_06"/></a><div class="content"><a class="title" href="/2026/04/25/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95_2025_8_06/" title="面试记录_2025_8_06">面试记录_2025_8_06</a><time datetime="2026-04-25T11:34:51.912Z" title="Created 2026-04-25 19:34:51">2026-04-25</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">99</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">44</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">32</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>4</sup></a><a href="/tags/AMQP/" style="font-size: 0.88rem;">AMQP<sup>1</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Claude-Code/" style="font-size: 0.88rem;">Claude Code<sup>3</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Hexo/" style="font-size: 0.88rem;">Hexo<sup>1</sup></a><a href="/tags/Http/" style="font-size: 0.88rem;">Http<sup>2</sup></a><a href="/tags/I-O/" style="font-size: 0.88rem;">I/O<sup>2</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>3</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 0.88rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Spring/" style="font-size: 0.88rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 0.88rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 0.88rem;">Swagger<sup>1</sup></a><a href="/tags/http/" style="font-size: 0.88rem;">http<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 0.88rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 0.88rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>9</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 0.88rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>10</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 0.88rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%8E%A8%E8%8D%90/" style="font-size: 0.88rem;">推荐<sup>1</sup></a><a href="/tags/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">效率工具<sup>3</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.88rem;">数据结构<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
