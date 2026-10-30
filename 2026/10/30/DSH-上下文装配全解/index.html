@@ -1,0 +1,1136 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>DSH 上下文装配全解：一次模型请求到底是怎么拼出来的 | Joie's Blog</title><meta name="keywords" content="Agent,DeepSeek,Context,DSH"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"><meta name="application-name" content="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"><meta property="og:url" content="https://benedicttom.github.io/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="上一篇《DSH 会话压缩（Compaction）策略详解》把”上下文快满了怎么办”讲透了。但它留下一个更前置的问题：  压缩改写的那个”上下文”，一开始到底是怎么拼出来的？  这篇就来拆装配（assembly）。所有结论都不是从文档抄的——我把装好的 app.asar 拆开，读了 dsh-agent"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png"><meta name="description" content="上一篇《DSH 会话压缩（Compaction）策略详解》把”上下文快满了怎么办”讲透了。但它留下一个更前置的问题：  压缩改写的那个”上下文”，一开始到底是怎么拼出来的？  这篇就来拆装配（assembly）。所有结论都不是从文档抄的——我把装好的 app.asar 拆开，读了 dsh-agent"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'DSH 上下文装配全解：一次模型请求到底是怎么拼出来的',
+  postAI: '',
+  pageFillDescription: '0. 一句话概括, 1. 三个流传很广的误解, 误解一：context/* 在装配上下文, 误解二：系统提示词是一段常量字符串, 误解三：请求头里包含系统提示词, 2. 装配主链路：preStep 的五步, 3. 系统提示词是一张带段位的注册表, 4. 三条硬规则和一条文档没写的例外, 规则一：空段直接丢不占空行, 规则二：插值失败就炸绝不静默, 规则三：complete true 的段只能有一个, 例外：required true 的上下文能穿过 suppress, 5. 动态上下文为什么是额外一条 user 消息, 6. 请求头：三个字段与四种 reason, 7. 工具 schema 也是装配物, 8. surface：模型看得见的那一版日志, 9. token 是怎么算的：一个拒绝一切配置的计量器, 10. 压缩只是改写装配的输入, 11. 自己动手验证, 12. 设计取舍：为什么装配要长成这样上一篇会话压缩策略详解把上下文快满了怎么办讲透了但它留下一个更前置的问题压缩改写的那个上下文一开始到底是怎么拼出来的这篇就来拆装配所有结论都不是从文档抄的我把装好的拆开读了这几个包的实际产物下面引用的每一行代码每一个错误字符串都可以复现一句话概括一次请求的正文不是一个消息数组而是五样东西在里被拼成一个信封按段位序号排序的系统提示词注册表作为额外一条消息插入的动态上下文自注册且显式排序的工具只含三个字段的请求头以及从只追加日志投影出来的消息序列这五样东西的名字和归属就是这篇要讲的全部拼装件谁产出进到哪长什么样系统提示词表面里的若干段按升序拼接动态上下文额外一条消息工作目录沙箱策略审批策略工具请求头有序数组顺序即身份请求头事件消息序列投影深冻结先交代我读的源码清单体积是解包后的真实大小便于你定位包文件大小三个流传很广的误解先破后立这三个说法我都见过源码里都不成立误解一在装配上下文听起来天经地义但这些包时间上下文文件引用会话引用里没有一个在做装配它们的全部工作是在上挂一个瀑布它们只是再塞一句话的扩展点真正的装配入口在里只有一行方法内装配的主体是是它的输入提供者不是它误解二系统提示词是一段常量字符串很多人以为它是启动时拼好的一个大字符串然后每次请求原样塞进去实际它是一个按段位序号排序的注册表身份在人格后缀在中间夹着二十多个工具说明段谁激活谁不激活是每个请求现场算的误解三请求头里包含系统提示词也不是请求头只有三个字段系统提示词根本不在里面它是作为一条进入会话表面的这条规则在源码里是硬校验为什么要这么分因为头是这次请求的技术参数而系统提示词是模型看到的内容前者要能便宜地比较和去重后者要能进表面参与缓存与压缩混在一起两件事都做不好装配主链路的五步一个开始时做的事可以拆成五步源码取本轮新消息装配提示词段动态上下文工具变量过瀑布默认实现把渲染成文本并插入组装请求信封头消息工具第步和第步是这篇的主角第步里有个容易被忽略的细节是追加不是替换动态上下文不是改写某条消息而是在消息列表末尾再挂一条消息瀑布日志取本轮消息排序收集排工具默认实现投影出注意这里消息是分两条路走的新消息来自历史消息来自投影两者拼接成最终任何一条都不是上一轮的请求原样复用系统提示词是一张带段位的注册表这是整个装配里最精妙的一层把提示词切成段每段有自己的装配时按升序拼源码里那张表是这样的我按原值抄的段位干什么你是一个部署方人格前缀计划模式规则团队协作规则仅程序化调用模式文件引用约定工具说明工具说明工具说明后台任务交互式终端联网搜索抓取网页语言服务查询历史会话长目标工作流编排循环子代理回报电脑操作服务器清单用法长文产物引用结构化输出契约框架源码附录界面事实部署方人格后缀为什么是这个顺序几条能读出来的设计意图身份必须是负数它要排在所有东西之前包括部署方的人格前缀人格是部署方在此之上加的修饰不是覆盖身份工具说明集中在而且顺序就是模型的工作流顺序先动手再改文件再找东西再联网再查历史再开子代理模型读提示词是顺序读的越靠前的工具越默认会想到文档被放到远在工具说明之后它是查手册性质的内容不该抢日常工具的注意力在在这类约束性附录性内容压到最后既保证模型结尾还看到硬约束又不干扰前半段的角色设定人格后缀收尾跟开头的前缀把整段包起来动态上下文另有自己的一张表编号小得多因为它们是每次请求重新算的一小段上下文段内容当前工作目录文件沙箱策略审批策略子代理委派说明团队身份框架源码位置界面事实排序规则本身也有讲究里先相同的时候用按码点比较不是用码点而不是本地化排序结果跟语言环境无关这条看着吹毛求疵其实是可复现性的地基同一份配置在任何机器任何下拼出来的提示词必须逐字节相同否则会莫名其妙失效也没法审身份人格前缀策略引用约定本地文件工具联网历史目标工作流子代理服务器长文产物引用结构化输出源码附录事实人格后缀三条硬规则和一条文档没写的例外的实现不长但每条规则都很硬规则一空段直接丢不占空行没激活的工具说明段会被整个丢掉而不是留个空段落否则每关一个工具提示词里就多一堆空行白花规则二插值失败就炸绝不静默的解析是严格模式四种情况全部情况报错原文变量没注册注册了但这次没值括号残缺变量名不合法大多数模板引擎遇到未定义变量会渲染成空字符串让请求照发这里反过来宁可让这个失败理由是提示词里少一个变量名模型可能整段行为都跑偏而这种偏差在输出里看不出来比直接报错昂贵得多规则三的段只能有一个而且在过完瀑布之后这个段会被恢复成唯一的也就是说不是一个特殊段而是一种整段替换的语义谁标了它谁的文本就是全部提示词这是给自定义完全接管人格留的口子替换而不是叠加例外的上下文能穿过文档说会关掉动态上下文源码里的过滤条件是标了的段在下依然保留末尾还有一道同样的过滤兜底为什么因为有些上下文不是锦上添花而是不给就会误操作沙箱范围和审批策略就属于这类用户说别给我塞动态上下文时他的意思通常是不想看到工作目录的碎碎念而不是允许无视沙箱动态上下文为什么是额外一条消息回到第步的瀑布默认实现三个设计后果全都能在行为里观察到系统提示词保持稳定它只由激活了哪些段决定跟工作目录时间文件列表无关这些每天变几十次的东西不会污染提示词前缀才有意义动态内容一遍遍重复每个都插一条新的上下文消息所以长会话里工作目录是沙箱是会出现很多次这是有意的模型对最近的消息更敏感靠得近的约束更管用插件可以整步拦截瀑布的返回若为这个直接不进入上层这就是之外很多先别发请求能力的实现方式稳定前缀稳定前缀可缓存注册表拼出来的提示词每次都变每次都新算不可缓存工作目录沙箱审批工作目录沙箱审批第个的第个的请求头三个字段与四种先把头规范化再决定这次要不要记一条新的做三件事全是为了能便宜地比较空折叠成缺省字段否则空数组和不存在永远不相等只在或时才保留其余原样比较函数也很朴素用逐字段比按顺序逐条相等顺序也算身份因为顺序就是提示词里工具说明的顺序换个顺序模型看到的东西就变了不能算同一个头然后是四种决定这次请求算不算新纪元触发条件影响会话第一次请求没有基线无缓存可用有基线但之前没记过头从头建立头与基线不等换模型换工具集失效头相等但显式开新系列不失效的判定是这一段的精华两种情况会开新系列调用方显式要求或者表面换了一代变了典型场景就是压缩头一个字没改但消息序列已经被折叠过了此时再拿旧缓存就是错的可头的技术参数又确实没变不该记成让下游去重建一切就是这个中间态无基線无基線首次请求头变了换模型工具集变了头没变但表面换代又换代头仍没变头变了继续变头稳住但表面换代有日志无基线重放接管另外有个事件只在四个字段任一变化时才追加就是系统提示词变了但变化记录在历史里而不是头里正好呼应第节那个误解三工具也是装配物工具不是注册了就完事它同时影响三处提示词里的说明段请求头的数组以及表面里的工具增删记录呈现方式由挂载声明是把工具当普通函数调用暴露是程序化调用模型写一段程序去编排工具源码里这两个分支的实现差别不小还得先再工具集变了怎么办不推翻会话而是往表面里追加一条或这条消息的作用是告诉模型你的工具清单变了这是新增移除的而不是让模型自己从系统提示词的差异里猜而只在有新增时带移除不需要指认来源事件新增需要顺带一个校验必须配角色否则模型看得见的那一版日志到了这里必须澄清一个容易混淆的点日志和表面不是一回事日志的事件流是发生过什么的唯一真相表面是模型这次能看见什么的投影所有事件都进日志但只有的类型能进表面而且必须显式声明自己是追加还是替换这条规则由硬校验起违反情形报错原文不可入表面的类型带了不可入表面的类型带了可入表面却没标记形状不合法不合法还有一条更隐蔽的约束它必须配一个影子价也就是你替换掉的这段原来值多少否则会拒绝为什么要这么严因为一旦允许无价替换上下文压力的账就永远算不平被遮蔽的内容既不在可见表面里也不在计费里计量会凭空变小压缩阈值就失效了投影本身是增量的用两个游标做缓存表面没换代就只追加新节点换代了就整个重算返回的是新数组但里面的是共享且深冻结的里还有一道兜底跑一次请求不能顺手改掉历史日志只追加真相表面模型可见原样可见摘要遮蔽被遮蔽不进表面被遮蔽被遮蔽是怎么算的一个拒绝一切配置的计量器的计价口径是固定启发式只有一行常量按类型分别估文本是工具调用对和各自整体再加固定开销它就是一句话个字符算个最有意思的是它的配置校验任何配置项都会抛错一个都不接受这不是没做完是有意的如果允许按部署调系数那我的上下文用了这句话就失去了跨部署意义机器的和机器的不是同一个东西固定字符配合回来的真实用量做锚点才能让阈值第节那个在任何环境里都说得通对外它给三个投影投影回答什么问题这次请求用了多少离上限还有多远压缩靠它触发这些花在什么上哪个工具结果最贵压力值不是每次重新估而是样本自采样以来表面增减的启发式重计价拿到一次真实就校准一次两次采样之间用字符增量推算这样既不会每步都多花一次真实测量又不会让估算漂太远压缩只是改写装配的输入把上面九节连起来看压缩的定位就很清楚了它不是装配的一个阶段而是对装配输入的一次改写把一段旧消息折叠成一条摘要让下次投影出来的表面变短阈值和保留比例是两个默认值压力到触发尾部逐字保留实际阈值还要跟预算取小也就是窗口的和除掉预留后的可用额度谁小听谁的不然给模型留了完成空间却把它算进压缩阈值永远压不下来摘要调用本身有个很漂亮的细节源码注释直接说明了目的即不复用一次全新请求而是把整段要被压缩的对话原样重放一遍末尾追加一条总结它的用户消息这样提供方那边的还能命中摘要成本从重新读一遍全部降到只算新加的那条指令摘要的格式是硬编码的八段模板外面包标签配套的里有几条很值得抄进自己的工程习惯保留精确的文件路径命令错误字符串标识符数值和函数签名忠实记录用户反馈尤其是纠正不要提压缩这件事只输出文本不调工具若已有块那就是上一版别照抄保留仍为真的事实丢掉过时的合并成单一摘要写入后还要包一层前导语压缩之外还有一道更便宜的工序确定性剪裁它对超长工具结果做首尾保留中间挖掉标记是固定字符串默认阈值保头保尾且是硬校验不然剪裁反而会变长最后一条边界规则压缩区间不能切开一次工具调用的请求结果配对模型的训练推理假设里和是成对出现的切开之后模型会看到一个调用但没有结果行为立刻跑偏所以压缩从哪切到哪停都受这个约束钳制压缩的完整流水线三入口事务写入落盘重放恢复在上一篇里这里不再重复自己动手验证上面所有引用都可以复现装好的应用里源码就在中解出来不难但有个坑的头部是的格式前字节是四个大小大小字节长度真正可靠的边界只有最后一个字段唯一可信的长度文件内容起点我自己第一次是拿大括号配对去扫找边界直接抛错还把整段原文吐进两次每次十几改成读一次就对这个格式的边界只能信长度字段不能靠内容扫描猜拿到索引后按路径把读出来就行判断谁在装配最快的办法不是读文档而是谁调用了装配结果怎么进请求的表面里到底有什么第二个可做的验证是改一个再看输出把的从改成重建后看提示词里工具说明的位置它能直接证明段位表就是真实排序依据而不是某种约定俗成的写法在会话日志里搜你还能看到从一路变成的完整轨迹那是最省事的实证设计取舍为什么装配要长成这样拆完这一遍我最想记下来的不是那张段位表而是几个贯穿始终的取舍一宁可炸也不静默降级插值找不到变量就抛错表面事件少个就抛错替换没有影子价就抛错两个段就抛错这四处都在做同一件事把配置错了从模型表现奇怪里剥离出来前者十分钟能修后者能查一天二替换而不是叠加段不是再加一段而是整段就是它人格模式这类东西如果允许叠加最终会拼出一个谁都没设计过的人格允许替换语义就清楚了谁声明谁负责三把记下的和看见的分开日志只追加表面靠投影压缩只遮蔽不删除这三条让撤销一次压缩变成可能重新投影也让这次请求到底看了什么变成可审计的问题代价是所有读日志的人都得先理解这一层但换来的是可重放可对比可回滚四稳定的往前放易变的往后放一次性的事不进系统提示词段位表把身份和工具说明固定在前把工作目录这类每步都变的东西做成额外一条消息这条纪律直接决定了的命中率也决定了长会话的成本曲线五分散是模块化的代价装配横跨编排段注册表面投影计量四个包没有一个看看就懂的入口唯一的对冲办法是真去读一遍产物代码把那条链自己在纸上画一遍画完这张链路图我对上下文这个词的理解变了它不是一份文档而是一条每次请求都重新走一遍的流水线注册表决定骨架扩展点决定此刻的事实投影决定模型能看见多少历史计量器决定这条流水线什么时候需要瘦身相关阅读会话压缩策略详解讲这条流水线什么时候需要瘦身怎么瘦身瘦完怎么落盘与重放',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-10-30 21:10:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://free.picui.cn/free/2026/03/28/69c770521e454.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>2</sup></a><a href="/tags/AMQP/" style="font-size: 1.05rem;">AMQP<sup>1</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>9</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>2</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>1</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>3</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>1</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 1.05rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>1</sup></a><a href="/tags/Spring/" style="font-size: 1.05rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 1.05rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 1.05rem;">Swagger<sup>1</sup></a><a href="/tags/http/" style="font-size: 1.05rem;">http<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 1.05rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 1.05rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>9</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 1.05rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>10</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 1.05rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">June 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Agent/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Agent</span></a><a class="article-meta__tags" href="/tags/DeepSeek/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>DeepSeek</span></a><a class="article-meta__tags" href="/tags/Context/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Context</span></a><a class="article-meta__tags" href="/tags/DSH/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>DSH</span></a></span></div></div><h1 class="post-title" itemprop="name headline">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-10-30T13:10:00.000Z" title="Created 2026-10-30 21:10:00">2026-10-30</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-10-30T13:10:00.000Z" title="Updated 2026-10-30 21:10:00">2026-10-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/"><header><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a><a href="/tags/Agent/" tabindex="-1" itemprop="url">Agent</a><a href="/tags/DeepSeek/" tabindex="-1" itemprop="url">DeepSeek</a><a href="/tags/Context/" tabindex="-1" itemprop="url">Context</a><a href="/tags/DSH/" tabindex="-1" itemprop="url">DSH</a><h1 id="CrawlerTitle" itemprop="name headline">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-10-30T13:10:00.000Z" title="Created 2026-10-30 21:10:00">2026-10-30</time><time itemprop="dateCreated datePublished" datetime="2026-10-30T13:10:00.000Z" title="Updated 2026-10-30 21:10:00">2026-10-30</time></header><p>上一篇《<a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">DSH 会话压缩（Compaction）策略详解</a>》把”上下文快满了怎么办”讲透了。但它留下一个更前置的问题：</p>
+<blockquote>
+<p>压缩改写的那个”上下文”，一开始到底是怎么拼出来的？</p>
+</blockquote>
+<p>这篇就来拆装配（assembly）。所有结论都不是从文档抄的——我把装好的 <code>app.asar</code> 拆开，读了 <code>dsh-agent-loop</code>、<code>dsh-system-prompt</code>、<code>dsh-session</code>、<code>dsh-token-meter</code>、<code>dsh-compaction-basic</code> 这几个包的实际产物，下面引用的每一行代码、每一个错误字符串都可以复现。</p>
+<h2 id="0-一句话概括"><a href="#0-一句话概括" class="headerlink" title="0. 一句话概括"></a>0. 一句话概括</h2><blockquote>
+<p><strong>一次请求的正文不是”一个消息数组”，而是五样东西在 agent-loop 里被拼成一个信封：按段位序号排序的系统提示词注册表、作为额外一条 user 消息插入的动态上下文、自注册且显式排序的工具 schema、只含 <code>config</code>&#x2F;<code>adapterDefaults</code>&#x2F;<code>tools</code> 三个字段的请求头，以及从只追加日志投影出来的消息序列。</strong></p>
+</blockquote>
+<p>这五样东西的名字和归属，就是这篇要讲的全部：</p>
+<table>
+<thead>
+<tr>
+<th>拼装件</th>
+<th>谁产出</th>
+<th>进到哪</th>
+<th>长什么样</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>系统提示词</td>
+<td><code>systemPrompt.assemble()</code></td>
+<td>表面里的 <code>system/message</code></td>
+<td>若干段按 <code>order</code> 升序拼接</td>
+</tr>
+<tr>
+<td>动态上下文</td>
+<td><code>assembly.contexts</code></td>
+<td><strong>额外一条 user-role 消息</strong></td>
+<td>工作目录、沙箱策略、审批策略……</td>
+</tr>
+<tr>
+<td>工具 schema</td>
+<td><code>toolProviders</code> + <code>toolOrder</code></td>
+<td>请求头 <code>tools</code></td>
+<td>有序数组，顺序即身份</td>
+</tr>
+<tr>
+<td>请求头</td>
+<td><code>canonicalHeader()</code></td>
+<td><code>request/header</code> 事件</td>
+<td><code>&#123;config, adapterDefaults?, tools?&#125;</code></td>
+</tr>
+<tr>
+<td>消息序列</td>
+<td><code>session.deriveMessages()</code></td>
+<td><code>request.messages</code></td>
+<td>surface 投影，深冻结</td>
+</tr>
+</tbody></table>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/hero.png" alt="一次请求的完整装配链路" title="六个步骤与四块细节面板"></p>
+<p>先交代我读的源码清单（体积是解包后的真实大小，便于你定位）：</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>文件</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@deepseek-ai/dsh-agent-loop</code></td>
+<td><code>lib/index.js</code></td>
+<td>74,599 B</td>
+</tr>
+<tr>
+<td><code>@deepseek-ai/dsh-system-prompt</code></td>
+<td><code>lib/index.js</code></td>
+<td>19,817 B</td>
+</tr>
+<tr>
+<td><code>@deepseek-ai/dsh-session</code></td>
+<td><code>lib/index.js</code></td>
+<td>94,982 B</td>
+</tr>
+<tr>
+<td><code>@deepseek-ai/dsh-session</code></td>
+<td><code>lib/types/surface.js</code></td>
+<td>26,100 B</td>
+</tr>
+<tr>
+<td><code>@deepseek-ai/dsh-token-meter</code></td>
+<td><code>lib/index.js</code></td>
+<td>35,095 B</td>
+</tr>
+<tr>
+<td><code>@deepseek-ai/dsh-compaction-basic</code></td>
+<td><code>lib/index.js</code></td>
+<td>49,452 B</td>
+</tr>
+<tr>
+<td><code>@deepseek-ai/dsh-compaction-tool-result-pruner</code></td>
+<td><code>lib/index.js</code></td>
+<td>7,570 B</td>
+</tr>
+</tbody></table>
+<h2 id="1-三个流传很广的误解"><a href="#1-三个流传很广的误解" class="headerlink" title="1. 三个流传很广的误解"></a>1. 三个流传很广的误解</h2><p>先破后立。这三个说法我都见过，源码里都不成立。</p>
+<h3 id="误解一：context-在装配上下文"><a href="#误解一：context-在装配上下文" class="headerlink" title="误解一：context/* 在装配上下文"></a>误解一：<code>context/*</code> 在装配上下文</h3><p>听起来天经地义，但 <code>context/*</code> 这些包（时间上下文、文件引用、会话引用）里没有一个在做装配。它们的全部工作是在 <code>agent/pre-step</code> 上挂一个瀑布：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-session-reference/lib/types/index.js:112</span></span><br><span class="line">ctx.<span class="title function_">on</span>(<span class="string">&#x27;agent/pre-step&#x27;</span>, <span class="title function_">async</span> (&#123; agent, signal &#125;, next) =&gt; &#123; <span class="comment">/* … */</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>它们只是”再塞一句话”的扩展点。真正的装配入口在 agent-loop 里，只有一行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-agent-loop/lib/index.js:907（preStep 方法内）</span></span><br><span class="line"><span class="keyword">const</span> assembly = <span class="keyword">await</span> <span class="variable language_">this</span>.<span class="property">loopCtx</span>.<span class="property">systemPrompt</span>.<span class="title function_">assemble</span>(<span class="title function_">assembleContextFor</span>(<span class="variable language_">this</span>, signal));</span><br></pre></td></tr></table></figure>
+
+<p>装配的主体是 <strong>agent-loop</strong>。<code>context/*</code> 是它的输入提供者，不是它。</p>
+<h3 id="误解二：系统提示词是一段常量字符串"><a href="#误解二：系统提示词是一段常量字符串" class="headerlink" title="误解二：系统提示词是一段常量字符串"></a>误解二：系统提示词是一段常量字符串</h3><p>很多人以为它是启动时拼好的一个大字符串，然后每次请求原样塞进去。实际它是一个<strong>按段位序号排序的注册表</strong>：身份在 <code>-1000</code>，人格后缀在 <code>10200</code>，中间夹着二十多个工具说明段。谁激活、谁不激活，是每个请求现场算的。</p>
+<h3 id="误解三：请求头里包含系统提示词"><a href="#误解三：请求头里包含系统提示词" class="headerlink" title="误解三：请求头里包含系统提示词"></a>误解三：请求头里包含系统提示词</h3><p>也不是。请求头只有三个字段，系统提示词根本不在里面——它是作为一条 <code>system/message</code> 进入会话表面的。这条规则在源码里是硬校验：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-session/lib/types/surface.js:158</span></span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">`<span class="subst">$&#123;subject&#125;</span> must omit header.system; use system/message`</span>);</span><br></pre></td></tr></table></figure>
+
+<p>为什么要这么分？因为头是”这次请求的技术参数”，而系统提示词是”模型看到的内容”。前者要能便宜地比较和去重，后者要能进表面参与缓存与压缩。混在一起，两件事都做不好。</p>
+<h2 id="2-装配主链路：preStep-的五步"><a href="#2-装配主链路：preStep-的五步" class="headerlink" title="2. 装配主链路：preStep 的五步"></a>2. 装配主链路：preStep 的五步</h2><p>一个 step 开始时，<code>preStep()</code> 做的事可以拆成五步（源码 <code>dsh-agent-loop/lib/index.js:902-927</code>、<code>:1214</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 取本轮新消息</span></span><br><span class="line"><span class="keyword">const</span> claimed = <span class="variable language_">this</span>.<span class="property">inbox</span>.<span class="title function_">claim</span>(target, position.<span class="property">turn</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 装配：提示词段 + 动态上下文 + 工具 schema + 变量</span></span><br><span class="line"><span class="keyword">const</span> assembly = <span class="keyword">await</span> <span class="variable language_">this</span>.<span class="property">loopCtx</span>.<span class="property">systemPrompt</span>.<span class="title function_">assemble</span>(<span class="title function_">assembleContextFor</span>(<span class="variable language_">this</span>, signal));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 过瀑布，默认实现把 contexts 渲染成文本并插入</span></span><br><span class="line"><span class="keyword">const</span> decision = <span class="keyword">await</span> <span class="variable language_">this</span>.<span class="property">dispatch</span>.<span class="title function_">waterfall</span>(<span class="string">&quot;agent/pre-step&quot;</span>, &#123;</span><br><span class="line">  <span class="attr">messages</span>: claimed, ...position, signal</span><br><span class="line">&#125;, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> sections  = <span class="title function_">renderContextSections</span>(assembly);</span><br><span class="line">  <span class="keyword">const</span> context   = <span class="variable language_">this</span>.<span class="property">runtimeContext</span>.<span class="title function_">project</span>(<span class="title function_">joinContextSections</span>(sections), sections);</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">resolve</span>(&#123;</span><br><span class="line">    <span class="attr">kind</span>: <span class="string">&quot;enter&quot;</span>,</span><br><span class="line">    <span class="attr">messages</span>: context === <span class="keyword">void</span> <span class="number">0</span> ? claimed : [...claimed, context]</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 组装请求信封（头 + 消息 + 工具）</span></span><br><span class="line"><span class="keyword">const</span> request = <span class="variable language_">this</span>.<span class="title function_">buildRequest</span>(config, preparedCall, assembly.<span class="property">tools</span>, &#123;...&#125;, startsRequestSeries, signal);</span><br></pre></td></tr></table></figure>
+
+<p>第 2 步和第 4 步是这篇的主角。第 3 步里有个容易被忽略的细节：<code>messages: [...claimed, context]</code> 是<strong>追加</strong>，不是替换。动态上下文不是”改写某条消息”，而是”在消息列表末尾再挂一条 user-role 消息”。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  sequenceDiagram
+    autonumber
+    participant L as agent-loop
+    participant SP as systemPrompt
+    participant W as 瀑布 agent&#x2F;pre-step
+    participant S as Session（日志）
+    participant P as Provider
+
+    L-&gt;&gt;L: inbox.claim() 取本轮消息
+    L-&gt;&gt;SP: assemble(assembleContextFor(agent, signal))
+    SP-&gt;&gt;SP: 排序 sections &#x2F; 收集 contexts &#x2F; 排工具
+    SP--&gt;&gt;L: assembly {sections, contexts, tools, variables}
+    L-&gt;&gt;W: waterfall(&quot;agent&#x2F;pre-step&quot;, {messages: claimed})
+    W-&gt;&gt;W: 默认实现：renderContextSections → project
+    W--&gt;&gt;L: {kind:&quot;enter&quot;, messages:[...claimed, context]}
+    L-&gt;&gt;S: append request&#x2F;header（reason: initial|resume|change|series）
+    L-&gt;&gt;S: deriveMessages() 投影出 messages
+    L-&gt;&gt;P: request {config, messages, tools}
+  </pre></div>
+
+<p>注意这里消息是分两条路走的：<strong>新消息来自 inbox，历史消息来自 surface 投影</strong>。两者拼接成最终 <code>messages</code>，任何一条都不是”上一轮的请求原样复用”。</p>
+<h2 id="3-系统提示词是一张带段位的注册表"><a href="#3-系统提示词是一张带段位的注册表" class="headerlink" title="3. 系统提示词是一张带段位的注册表"></a>3. 系统提示词是一张带段位的注册表</h2><p>这是整个装配里最精妙的一层。<code>dsh-system-prompt</code> 把提示词切成”段（section）”，每段有自己的 <code>order</code>，装配时按 <code>order</code> 升序拼。源码里那张表是这样的（<code>lib/index.js:10-43</code>，我按原值抄的）：</p>
+<table>
+<thead>
+<tr>
+<th>段位</th>
+<th>order</th>
+<th>干什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HARNESS_IDENTITY</code></td>
+<td>-1000</td>
+<td>你是一个 AI agent</td>
+</tr>
+<tr>
+<td><code>DEPLOYMENT_PERSONA_PREFIX</code></td>
+<td>0</td>
+<td>部署方人格前缀</td>
+</tr>
+<tr>
+<td><code>PLAN_POLICY</code></td>
+<td>500</td>
+<td>计划模式规则</td>
+</tr>
+<tr>
+<td><code>TEAM_POLICY</code></td>
+<td>600</td>
+<td>团队协作规则</td>
+</tr>
+<tr>
+<td><code>PTC_ONLY</code></td>
+<td>800</td>
+<td>仅程序化调用模式</td>
+</tr>
+<tr>
+<td><code>FILE_REFERENCE</code></td>
+<td>900</td>
+<td>文件引用约定</td>
+</tr>
+<tr>
+<td><code>TOOL_BASH</code></td>
+<td>1000</td>
+<td>bash 工具说明</td>
+</tr>
+<tr>
+<td><code>TOOL_PWSH</code></td>
+<td>1010</td>
+<td>PowerShell 工具说明</td>
+</tr>
+<tr>
+<td><code>TOOL_READ</code></td>
+<td>1100</td>
+<td>read 工具说明</td>
+</tr>
+<tr>
+<td><code>TOOL_WRITE</code></td>
+<td>1200</td>
+<td>write</td>
+</tr>
+<tr>
+<td><code>TOOL_EDIT</code></td>
+<td>1300</td>
+<td>edit</td>
+</tr>
+<tr>
+<td><code>TOOL_GLOB</code></td>
+<td>1400</td>
+<td>glob</td>
+</tr>
+<tr>
+<td><code>TOOL_GREP</code></td>
+<td>1500</td>
+<td>grep</td>
+</tr>
+<tr>
+<td><code>TOOL_JOBS</code></td>
+<td>1600</td>
+<td>后台任务</td>
+</tr>
+<tr>
+<td><code>TOOL_PTY</code></td>
+<td>1700</td>
+<td>交互式终端</td>
+</tr>
+<tr>
+<td><code>TOOL_WEB_SEARCH</code></td>
+<td>2000</td>
+<td>联网搜索</td>
+</tr>
+<tr>
+<td><code>TOOL_WEB_FETCH</code></td>
+<td>2100</td>
+<td>抓取网页</td>
+</tr>
+<tr>
+<td><code>TOOL_LSP</code></td>
+<td>2200</td>
+<td>语言服务</td>
+</tr>
+<tr>
+<td><code>TOOL_SESSION_QUERY</code></td>
+<td>2300</td>
+<td>查询历史会话</td>
+</tr>
+<tr>
+<td><code>TOOL_GOAL</code></td>
+<td>2400</td>
+<td>长目标</td>
+</tr>
+<tr>
+<td><code>TOOL_WORKFLOW</code></td>
+<td>2600</td>
+<td>工作流编排</td>
+</tr>
+<tr>
+<td><code>TOOL_RALPH</code></td>
+<td>2700</td>
+<td>Ralph 循环</td>
+</tr>
+<tr>
+<td><code>TOOL_SUBAGENT</code></td>
+<td>2800</td>
+<td>子代理</td>
+</tr>
+<tr>
+<td><code>TOOL_REPORT</code></td>
+<td>2900</td>
+<td>回报</td>
+</tr>
+<tr>
+<td><code>TOOL_COMPUTER_USE</code></td>
+<td>3000</td>
+<td>电脑操作</td>
+</tr>
+<tr>
+<td><code>MCP_SERVERS</code></td>
+<td>3100</td>
+<td>MCP 服务器清单</td>
+</tr>
+<tr>
+<td><code>TOOLS_SDK</code></td>
+<td>5000</td>
+<td>SDK 用法长文</td>
+</tr>
+<tr>
+<td><code>DELIVERABLE_FILE_REFERENCES</code></td>
+<td>9000</td>
+<td>产物引用</td>
+</tr>
+<tr>
+<td><code>STRUCTURED_OUTPUT</code></td>
+<td>9900</td>
+<td>结构化输出契约</td>
+</tr>
+<tr>
+<td><code>HARNESS_SOURCE</code></td>
+<td>10000</td>
+<td>框架源码附录</td>
+</tr>
+<tr>
+<td><code>WEB_SURFACE</code></td>
+<td>10100</td>
+<td>Web 界面事实</td>
+</tr>
+<tr>
+<td><code>DEPLOYMENT_PERSONA_SUFFIX</code></td>
+<td>10200</td>
+<td>部署方人格后缀</td>
+</tr>
+</tbody></table>
+<p>为什么是这个顺序？几条能读出来的设计意图：</p>
+<ul>
+<li><strong>身份必须是负数</strong>。它要排在所有东西之前，包括部署方的人格前缀（<code>0</code>）。人格是”部署方在此之上加的修饰”，不是”覆盖身份”。</li>
+<li><strong>工具说明集中在 1000–3000</strong>，而且顺序就是模型的工作流顺序：先 bash（动手），再 read&#x2F;write&#x2F;edit（改文件），再 glob&#x2F;grep（找东西），再联网、再查历史、再开子代理。模型读提示词是顺序读的，越靠前的工具越”默认会想到”。</li>
+<li><strong>SDK 文档被放到 5000</strong>，远在工具说明之后。它是”查手册”性质的内容，不该抢日常工具的注意力。</li>
+<li><strong><code>STRUCTURED_OUTPUT</code> 在 9900、<code>HARNESS_SOURCE</code> 在 10000</strong>：这类”约束性&#x2F;附录性”内容压到最后，既保证模型结尾还看到硬约束，又不干扰前半段的角色设定。</li>
+<li><strong>人格后缀 <code>10200</code> 收尾</strong>，跟开头的 <code>0</code> 前缀把整段包起来。</li>
+</ul>
+<p>动态上下文另有自己的一张表（<code>CONTEXT_ORDERS</code>，<code>lib/index.js:44-52</code>），编号小得多，因为它们是”每次请求重新算的一小段”：</p>
+<table>
+<thead>
+<tr>
+<th>上下文段</th>
+<th>order</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>WORKING_DIRECTORY</code></td>
+<td>100</td>
+<td>当前工作目录</td>
+</tr>
+<tr>
+<td><code>SANDBOX_POLICY</code></td>
+<td>110</td>
+<td>文件沙箱策略</td>
+</tr>
+<tr>
+<td><code>APPROVAL_POLICY</code></td>
+<td>115</td>
+<td>审批策略</td>
+</tr>
+<tr>
+<td><code>SUBAGENT_DELEGATION</code></td>
+<td>120</td>
+<td>子代理委派说明</td>
+</tr>
+<tr>
+<td><code>TEAM_IDENTITY</code></td>
+<td>125</td>
+<td>团队身份</td>
+</tr>
+<tr>
+<td><code>HARNESS_SOURCE</code></td>
+<td>200</td>
+<td>框架源码位置</td>
+</tr>
+<tr>
+<td><code>WEB_SURFACE</code></td>
+<td>210</td>
+<td>Web 界面事实</td>
+</tr>
+</tbody></table>
+<p>排序规则本身也有讲究。<code>assemble()</code> 里先 <code>sectionDefinitions.sort(comparePromptSections)</code>，<code>order</code> 相同的时候用 <code>compareNames</code> 按 Unicode 码点比较——不是 <code>localeCompare</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用码点而不是本地化排序，结果跟语言环境无关</span></span><br><span class="line">sectionDefinitions.<span class="title function_">sort</span>(comparePromptSections);</span><br></pre></td></tr></table></figure>
+
+<p>这条看着吹毛求疵，其实是可复现性的地基：同一份配置在任何机器、任何 locale 下拼出来的提示词必须逐字节相同，否则 prefix cache 会莫名其妙失效，diff 也没法审。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TB
+    A[&quot;-1000 身份&lt;br&#x2F;&gt;You are an AI agent…&quot;] --&gt; B[&quot;0 人格前缀&quot;]
+    B --&gt; C[&quot;500–900 策略 &#x2F; 引用约定&quot;]
+    C --&gt; D[&quot;1000–1700&lt;br&#x2F;&gt;本地文件工具&lt;br&#x2F;&gt;bash → read → write → edit → glob → grep&quot;]
+    D --&gt; E[&quot;2000–2900&lt;br&#x2F;&gt;联网 &#x2F; 历史 &#x2F; 目标 &#x2F; 工作流 &#x2F; 子代理&quot;]
+    E --&gt; F[&quot;3100 MCP 服务器&quot;]
+    F --&gt; G[&quot;5000 SDK 长文&quot;]
+    G --&gt; H[&quot;9000–9900&lt;br&#x2F;&gt;产物引用 &#x2F; 结构化输出&quot;]
+    H --&gt; I[&quot;10000–10100&lt;br&#x2F;&gt;源码附录 &#x2F; Web 事实&quot;]
+    I --&gt; J[&quot;10200 人格后缀&quot;]
+  </pre></div>
+
+<h2 id="4-三条硬规则，和一条文档没写的例外"><a href="#4-三条硬规则，和一条文档没写的例外" class="headerlink" title="4. 三条硬规则，和一条文档没写的例外"></a>4. 三条硬规则，和一条文档没写的例外</h2><p><code>assemble()</code> 的实现（<code>lib/index.js:356-410</code>）不长，但每条规则都很硬。</p>
+<h3 id="规则一：空段直接丢，不占空行"><a href="#规则一：空段直接丢，不占空行" class="headerlink" title="规则一：空段直接丢，不占空行"></a>规则一：空段直接丢，不占空行</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lib/index.js:19</span></span><br><span class="line">assembly.<span class="property">sections</span></span><br><span class="line">  .<span class="title function_">map</span>(<span class="function"><span class="params">section</span> =&gt;</span> section.<span class="property">interpolate</span> === <span class="literal">false</span> ? section.<span class="property">text</span> : <span class="title function_">interpolate</span>(...))</span><br><span class="line">  .<span class="title function_">filter</span>(<span class="function"><span class="params">text</span> =&gt;</span> text.<span class="property">length</span> &gt; <span class="number">0</span>)</span><br><span class="line">  .<span class="title function_">join</span>(<span class="string">&quot;\n\n&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>没激活的工具说明段会被整个丢掉，而不是留个空段落。否则每关一个工具，提示词里就多一堆空行，白花 token。</p>
+<h3 id="规则二：插值失败就炸，绝不静默"><a href="#规则二：插值失败就炸，绝不静默" class="headerlink" title="规则二：插值失败就炸，绝不静默"></a>规则二：插值失败就炸，绝不静默</h3><p><code>&#123;&#123;variable&#125;&#125;</code> 的解析是严格模式，四种情况全部 <code>throw</code>：</p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>报错原文</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>变量没注册</td>
+<td><code>unknown prompt variable &quot;&#123;&#123;name&#125;&#125;&quot; in $&#123;kind&#125; &quot;$&#123;input.name&#125;&quot;; registered variables: …</code></td>
+</tr>
+<tr>
+<td>注册了但这次没值</td>
+<td><code>prompt variable &quot;&#123;&#123;name&#125;&#125;&quot; has no value for this assembly ($&#123;kind&#125; &quot;$&#123;input.name&#125;&quot;)</code></td>
+</tr>
+<tr>
+<td>括号残缺</td>
+<td><code>malformed prompt variable reference at &quot;…&quot; in $&#123;kind&#125; &quot;$&#123;input.name&#125;&quot; (references are complete simple &#123;&#123;name&#125;&#125; groups)</code></td>
+</tr>
+<tr>
+<td>变量名不合法</td>
+<td><code>malformed prompt variable reference &quot;&#123;&#123;…&#125;&#125;&quot; in $&#123;kind&#125; &quot;$&#123;input.name&#125;&quot; (variable names match …)</code></td>
+</tr>
+</tbody></table>
+<p>大多数模板引擎遇到未定义变量会渲染成空字符串，让请求照发。这里反过来：宁可让这个 step 失败。理由是——提示词里少一个变量名，模型可能整段行为都跑偏，而这种偏差在输出里看不出来，比直接报错昂贵得多。</p>
+<h3 id="规则三：complete-true-的段只能有一个"><a href="#规则三：complete-true-的段只能有一个" class="headerlink" title="规则三：complete: true 的段只能有一个"></a>规则三：<code>complete: true</code> 的段只能有一个</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lib/index.js:381-382</span></span><br><span class="line"><span class="keyword">const</span> completeSections = sectionDefinitions.<span class="title function_">filter</span>(<span class="function"><span class="params">s</span> =&gt;</span> s.<span class="property">complete</span> === <span class="literal">true</span>);</span><br><span class="line"><span class="keyword">if</span> (completeSections.<span class="property">length</span> &gt; <span class="number">1</span>)</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">`multiple complete prompt sections are active: <span class="subst">$&#123;...&#125;</span>`</span>);</span><br></pre></td></tr></table></figure>
+
+<p>而且在过完 <code>system-prompt/assemble</code> 瀑布之后，这个段会被<strong>恢复成唯一的 sections</strong>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> &#123; ...transformed,</span><br><span class="line">  <span class="attr">sections</span>: completeSection === <span class="keyword">void</span> <span class="number">0</span> ? transformed.<span class="property">sections</span> : [completeSection],</span><br><span class="line">  ... &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>也就是说 <code>complete</code> 不是一个”特殊段”，而是一种”整段替换”的语义：谁标了它，谁的文本就是全部提示词。这是给”自定义 agent 完全接管人格”留的口子——替换，而不是叠加。</p>
+<h3 id="例外：required-true-的上下文能穿过-suppress"><a href="#例外：required-true-的上下文能穿过-suppress" class="headerlink" title="例外：required: true 的上下文能穿过 suppress"></a>例外：<code>required: true</code> 的上下文能穿过 suppress</h3><p>文档说 <code>suppressRuntimeContext</code> 会关掉动态上下文。源码里的过滤条件是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">contexts</span>: [...contextByName.<span class="title function_">values</span>()]</span><br><span class="line">  .<span class="title function_">filter</span>(<span class="function"><span class="params">entry</span> =&gt;</span> !runtimeContextSuppressed || entry.<span class="property">required</span> === <span class="literal">true</span>)</span><br><span class="line">  .<span class="title function_">sort</span>(<span class="function">(<span class="params">a, b</span>) =&gt;</span> a.<span class="property">order</span> - b.<span class="property">order</span>)</span><br></pre></td></tr></table></figure>
+
+<p>标了 <code>required: true</code> 的段在 suppress 下<strong>依然保留</strong>，末尾还有一道同样的过滤兜底：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">contexts</span>: runtimeContextSuppressed</span><br><span class="line">  ? transformed.<span class="property">contexts</span>.<span class="title function_">filter</span>(<span class="function"><span class="params">entry</span> =&gt;</span> requiredContexts.<span class="title function_">has</span>(entry.<span class="property">name</span>))</span><br><span class="line">  : transformed.<span class="property">contexts</span></span><br></pre></td></tr></table></figure>
+
+<p>为什么？因为有些上下文不是”锦上添花”，而是”不给就会误操作”——沙箱范围和审批策略就属于这类。用户说”别给我塞动态上下文”时，他的意思通常是不想看到工作目录的碎碎念，而不是允许 agent 无视沙箱。</p>
+<h2 id="5-动态上下文为什么是”额外一条-user-消息”"><a href="#5-动态上下文为什么是”额外一条-user-消息”" class="headerlink" title="5. 动态上下文为什么是”额外一条 user 消息”"></a>5. 动态上下文为什么是”额外一条 user 消息”</h2><p>回到第 2 步的瀑布默认实现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sections = <span class="title function_">renderContextSections</span>(assembly);</span><br><span class="line"><span class="keyword">const</span> context  = <span class="variable language_">this</span>.<span class="property">runtimeContext</span>.<span class="title function_">project</span>(<span class="title function_">joinContextSections</span>(sections), sections);</span><br><span class="line"><span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">resolve</span>(&#123; <span class="attr">kind</span>: <span class="string">&quot;enter&quot;</span>,</span><br><span class="line">  <span class="attr">messages</span>: context === <span class="keyword">void</span> <span class="number">0</span> ? claimed : [...claimed, context] &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>三个设计后果，全都能在行为里观察到：</p>
+<ol>
+<li><strong>系统提示词保持稳定</strong>。它只由”激活了哪些段”决定，跟工作目录、时间、文件列表无关。这些每天变几十次的东西不会污染提示词前缀——prefix cache 才有意义。</li>
+<li><strong>动态内容一遍遍重复</strong>。每个 step 都插一条新的上下文消息，所以长会话里”工作目录是 X、沙箱是 Y”会出现很多次。这是有意的：模型对最近的消息更敏感，靠得近的约束更管用。</li>
+<li><strong>插件可以整步拦截</strong>。瀑布的返回若为 <code>&#123;kind: &quot;reject&quot;&#125;</code>，这个 step 直接不进入：</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (decision.<span class="property">kind</span> === <span class="string">&quot;reject&quot;</span>) <span class="keyword">return</span> decision;  <span class="comment">// :922</span></span><br><span class="line"><span class="comment">// 上层：turnEnds = &#123; kind: &quot;blocked&quot; &#125;; return false;</span></span><br></pre></td></tr></table></figure>
+
+<p>这就是 <code>/compact</code> 之外很多”先别发请求”能力的实现方式。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+    subgraph 稳定前缀[&quot;稳定前缀（可缓存）&quot;]
+        SP[&quot;system&#x2F;message&lt;br&#x2F;&gt;注册表拼出来的提示词&quot;]
+    end
+    subgraph 每次都变[&quot;每次都新算（不可缓存）&quot;]
+        C1[&quot;user: 工作目录 &#x2F; 沙箱 &#x2F; 审批&quot;]
+        C2[&quot;user: 工作目录 &#x2F; 沙箱 &#x2F; 审批&quot;]
+    end
+    SP --&gt; M1[&quot;第 1 个 step 的 messages&quot;]
+    C1 --&gt; M1
+    SP --&gt; M2[&quot;第 2 个 step 的 messages&quot;]
+    C1 --&gt; M2
+    C2 --&gt; M2
+  </pre></div>
+
+<h2 id="6-请求头：三个字段与四种-reason"><a href="#6-请求头：三个字段与四种-reason" class="headerlink" title="6. 请求头：三个字段与四种 reason"></a>6. 请求头：三个字段与四种 reason</h2><p><code>buildRequest</code>（<code>:1214-1288</code>）先把头规范化，再决定这次要不要记一条新的 <code>request/header</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> header = <span class="title function_">canonicalHeader</span>(&#123;</span><br><span class="line">  config,</span><br><span class="line">  ...preparedCall?.<span class="property">adapterDefaults</span>,</span><br><span class="line">  ...(tools.<span class="property">length</span> &gt; <span class="number">0</span> ? &#123; tools &#125; : &#123;&#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><code>canonicalHeader</code>（<code>dsh-session/lib/types/request-header.js</code>）做三件事，全是为了”能便宜地比较”：</p>
+<ul>
+<li>空 <code>tools: []</code> 折叠成<strong>缺省字段</strong>（否则空数组和不存在永远不相等）；</li>
+<li><code>adapterDefaults</code> 只在 <code>reasoningEffort === true</code> 或 <code>maxTokens === true</code> 时才保留；</li>
+<li>其余原样。</li>
+</ul>
+<p>比较函数也很朴素——config 用 <code>callConfigEquals</code>，adapterDefaults 逐字段比，tools <strong>按顺序</strong>逐条 <code>JSON.stringify</code> 相等：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> at.<span class="property">length</span> === bt.<span class="property">length</span> &amp;&amp; at.<span class="title function_">every</span>(<span class="function">(<span class="params">tool, i</span>) =&gt;</span> <span class="title function_">sameSchema</span>(tool, bt[i]));</span><br></pre></td></tr></table></figure>
+
+<p>顺序也算身份，因为顺序就是提示词里工具说明的顺序。换个顺序，模型看到的东西就变了，不能算”同一个头”。</p>
+<p>然后是四种 reason，决定这次请求”算不算新纪元”：</p>
+<table>
+<thead>
+<tr>
+<th>reason</th>
+<th>触发条件</th>
+<th>prefix cache 影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>initial</code></td>
+<td>会话第一次请求，没有基线</td>
+<td>无缓存可用</td>
+</tr>
+<tr>
+<td><code>resume</code></td>
+<td>有基线但之前没记过头</td>
+<td>从头建立</td>
+</tr>
+<tr>
+<td><code>change</code></td>
+<td>头与基线不等（换模型、换工具集）</td>
+<td>失效</td>
+</tr>
+<tr>
+<td><code>series</code></td>
+<td>头相等，但<strong>显式开新系列</strong></td>
+<td>不失效</td>
+</tr>
+</tbody></table>
+<p><code>series</code> 的判定是这一段的精华：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> startsSeries = startsRequestSeries || <span class="variable language_">this</span>.<span class="property">requestSurfaceGeneration</span> !== surfaceGeneration;</span><br></pre></td></tr></table></figure>
+
+<p>两种情况会开新系列：调用方显式要求，或者<strong>表面换了一代</strong>（<code>surface.contentGeneration</code> 变了）。典型场景就是压缩——头一个字没改，但消息序列已经被折叠过了，此时再拿旧缓存就是错的；可头的技术参数又确实没变，不该记成 <code>change</code> 让下游去重建一切。<code>series</code> 就是这个中间态。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  stateDiagram-v2
+    [*] --&gt; 无基線
+    无基線 --&gt; initial: 首次请求
+    initial --&gt; change: 头变了（换模型 &#x2F; 工具集变了）
+    initial --&gt; series: 头没变，但表面换代
+    series --&gt; series: 又换代，头仍没变
+    series --&gt; change: 头变了
+    change --&gt; change: 继续变
+    change --&gt; series: 头稳住但表面换代
+    initial --&gt; resume: 有日志无基线（重放&#x2F;接管）
+  </pre></div>
+
+<p>另外有个 <code>request/context</code> 事件，只在四个字段任一变化时才追加：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">provider · model · contextWindow · systemPromptUpdate</span><br></pre></td></tr></table></figure>
+
+<p><code>systemPromptUpdate: &#39;in-history&#39;</code> 就是”系统提示词变了，但变化记录在历史里而不是头里”——正好呼应第 1 节那个误解三。</p>
+<h2 id="7-工具-schema-也是装配物"><a href="#7-工具-schema-也是装配物" class="headerlink" title="7. 工具 schema 也是装配物"></a>7. 工具 schema 也是装配物</h2><p>工具不是”注册了就完事”，它同时影响三处：提示词里的说明段、请求头的 <code>tools</code> 数组、以及表面里的工具增删记录。</p>
+<p><strong>呈现方式</strong>由挂载 scope 声明（<code>dsh-agent-tool-presentation/lib/index.js:31</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Config</span> = z.<span class="title function_">object</span>(&#123; <span class="attr">mode</span>: z.<span class="title function_">union</span>([<span class="string">&quot;native&quot;</span>, <span class="string">&quot;ptc&quot;</span>]).<span class="title function_">required</span>() &#125;);</span><br></pre></td></tr></table></figure>
+
+<p><code>native</code> 是把工具当普通函数调用暴露；<code>ptc</code> 是程序化调用（模型写一段程序去编排工具）。源码里这两个分支的实现差别不小——<code>ptc</code> 还得先 <code>inject([&quot;ptcRuntime&quot;])</code> 再 <code>presentAs(mode)</code>。</p>
+<p><strong>工具集变了怎么办</strong>？不推翻会话，而是往表面里追加一条 <code>developer/message</code>（<code>:1241-1259</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">session.<span class="title function_">append</span>(<span class="string">&#x27;developer/message&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">message</span>: &#123;</span><br><span class="line">    <span class="attr">role</span>: <span class="string">&#x27;developer&#x27;</span>,</span><br><span class="line">    <span class="attr">content</span>: [&#123; <span class="attr">type</span>: <span class="string">&#x27;tool-addition&#x27;</span>, toolName &#125;]   <span class="comment">// 或 tool-removal</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">source</span>: &#123; <span class="attr">kind</span>: <span class="string">&#x27;tool-registry&#x27;</span> &#125;,</span><br><span class="line">  ...(additions.<span class="property">length</span> &gt; <span class="number">0</span> ? &#123; headerSeq &#125; : &#123;&#125;)</span><br><span class="line">&#125;, &#123; <span class="attr">surfaceOp</span>: <span class="string">&#x27;append&#x27;</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这条消息的作用是告诉模型”你的工具清单变了，这是新增&#x2F;移除的”，而不是让模型自己从系统提示词的差异里猜。而 <code>headerSeq</code> 只在有新增时带——移除不需要指认来源事件，新增需要。</p>
+<p>顺带一个校验：<code>developer/message</code> 必须配 <code>developer</code> 角色，否则：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">`<span class="subst">$&#123;subject&#125;</span> developer/message and developer role must occur together`</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-surface：模型看得见的那一版日志"><a href="#8-surface：模型看得见的那一版日志" class="headerlink" title="8. surface：模型看得见的那一版日志"></a>8. surface：模型看得见的那一版日志</h2><p>到了这里必须澄清一个容易混淆的点：<strong>日志和表面不是一回事</strong>。</p>
+<ul>
+<li>日志（<code>session</code> 的 append-only 事件流）是”发生过什么”的唯一真相；</li>
+<li>表面（surface）是”模型这次能看见什么”的投影。</li>
+</ul>
+<p>所有事件都进日志，但只有 surface-eligible 的类型能进表面，而且必须显式声明自己是追加还是替换。这条规则由 <code>surfaceOpOf()</code> 硬校验（<code>surface.js:201</code> 起）：</p>
+<table>
+<thead>
+<tr>
+<th>违反情形</th>
+<th>报错原文</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>不可入表面的类型带了 <code>surfaceOp</code></td>
+<td><code>session event &quot;$&#123;type&#125;&quot; is not surface-eligible and cannot carry surfaceOp</code></td>
+</tr>
+<tr>
+<td>不可入表面的类型带了 <code>sourceEventSeqs</code></td>
+<td><code>… cannot carry sourceEventSeqs</code></td>
+</tr>
+<tr>
+<td>可入表面却没标记</td>
+<td><code>session event &quot;$&#123;type&#125;&quot; is surface-eligible and requires a surfaceOp marker</code></td>
+</tr>
+<tr>
+<td>op 形状不合法</td>
+<td><code>… carries an invalid surfaceOp</code></td>
+</tr>
+<tr>
+<td>replace 不合法</td>
+<td><code>… carries an invalid replace surfaceOp</code></td>
+</tr>
+</tbody></table>
+<p><code>replace</code> 还有一条更隐蔽的约束：它必须配一个”影子价”（shadow price）claim，也就是”你替换掉的这段原来值多少 token”，否则 token-meter 会拒绝：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">replace at seq 812 over range 640-811 has no adjacent shadow price (armed claim covers 700-811)</span><br></pre></td></tr></table></figure>
+
+<p>为什么要这么严？因为一旦允许”无价替换”，上下文压力的账就永远算不平——被遮蔽的内容既不在可见表面里，也不在计费里，token 计量会凭空变小，压缩阈值就失效了。</p>
+<p>投影本身是增量的（<code>dsh-session/lib/index.js:1672</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (generation !== <span class="variable language_">this</span>.<span class="property">derivedGeneration</span>) &#123; <span class="variable language_">this</span>.<span class="property">derived</span> = []; <span class="variable language_">this</span>.<span class="property">derivedNodes</span> = <span class="number">0</span>; ... &#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> seq <span class="keyword">of</span> nodes.<span class="title function_">slice</span>(<span class="variable language_">this</span>.<span class="property">derivedNodes</span>)) &#123;</span><br><span class="line">  <span class="keyword">const</span> msg = <span class="variable language_">this</span>.<span class="title function_">deriveEventMessage</span>(<span class="variable language_">this</span>.<span class="property">log</span>[seq]);</span><br><span class="line">  <span class="keyword">if</span> (msg) <span class="variable language_">this</span>.<span class="property">derived</span>.<span class="title function_">push</span>(msg);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> [...<span class="variable language_">this</span>.<span class="property">derived</span>];</span><br></pre></td></tr></table></figure>
+
+<p>用 <code>contentGeneration</code> + <code>derivedNodes</code> 两个游标做缓存：表面没换代就只追加新节点，换代了就整个重算。返回的是新数组，但里面的 <code>Message</code> 是<strong>共享且深冻结</strong>的——<code>buildRequest</code> 里还有一道 <code>deepFreeze</code> 兜底。跑一次请求不能顺手改掉历史。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+    subgraph LOG[&quot;日志（只追加，真相）&quot;]
+        direction TB
+        E1[&quot;1 · user&#x2F;message&quot;] ~~~ E2[&quot;2 · assistant&#x2F;message&quot;] ~~~ E3[&quot;3 · tool&#x2F;result&quot;] ~~~ E4[&quot;4 · user&#x2F;message&quot;] ~~~ E5[&quot;5 · compaction&#x2F;summary&lt;br&#x2F;&gt;replace 1-3&quot;]
+    end
+    subgraph SURF[&quot;表面（模型可见）&quot;]
+        direction TB
+        V4[&quot;原样可见&quot;] ~~~ V5[&quot;摘要（遮蔽 1-3）&quot;]
+    end
+    E1 -.-&gt;|被遮蔽| X[&quot;不进表面&quot;]
+    E2 -.-&gt;|被遮蔽| X
+    E3 -.-&gt;|被遮蔽| X
+    E4 --&gt; V4
+    E5 --&gt; V5
+  </pre></div>
+
+<h2 id="9-token-是怎么算的：一个拒绝一切配置的计量器"><a href="#9-token-是怎么算的：一个拒绝一切配置的计量器" class="headerlink" title="9. token 是怎么算的：一个拒绝一切配置的计量器"></a>9. token 是怎么算的：一个拒绝一切配置的计量器</h2><p><code>dsh-token-meter</code> 的计价口径是固定启发式，只有一行常量（<code>:16</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">CHARS_PER_TOKEN</span> = <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+
+<p>按 block 类型分别估：文本是 <code>Math.ceil(block.text.length / 4) + BLOCK_OVERHEAD</code>，工具调用对 name 和 arguments 各自 <code>/4</code>，整体再加固定开销。它就是一句话：<strong>4 个字符算 1 个 token</strong>。</p>
+<p>最有意思的是它的配置校验（<code>:683-684</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">validateConfigKeys</span>(<span class="params">config</span>) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">of</span> <span class="title class_">Object</span>.<span class="title function_">keys</span>(config))</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">`TokenMeterConfig: unknown key &quot;<span class="subst">$&#123;key&#125;</span>&quot; (no settings are supported)`</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>任何配置项都会抛错，一个都不接受。这不是没做完，是有意的：如果允许按部署调系数，那”我的上下文用了 60%”这句话就失去了跨部署意义——A 机器的 60% 和 B 机器的 60% 不是同一个东西。固定 4 字符&#x2F;token，配合 provider 回来的真实用量做锚点，才能让阈值（第 10 节那个 0.8）在任何环境里都说得通。</p>
+<p>对外它给三个投影（projection）：</p>
+<table>
+<thead>
+<tr>
+<th>投影</th>
+<th>回答什么问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tokenUsage</code></td>
+<td>这次请求用了多少 token</td>
+</tr>
+<tr>
+<td><code>contextPressure</code></td>
+<td>离上限还有多远（压缩靠它触发）</td>
+</tr>
+<tr>
+<td><code>contextBreakdown</code></td>
+<td>这些 token 花在什么上（哪个工具结果最贵）</td>
+</tr>
+</tbody></table>
+<p>压力值不是每次重新估，而是”provider 样本 + 自采样以来表面增减的启发式重计价”：拿到一次真实 usage 就校准一次，两次采样之间用 4 字符&#x2F;token 增量推算。这样既不会每步都多花一次真实测量，又不会让估算漂太远。</p>
+<h2 id="10-压缩只是”改写装配的输入”"><a href="#10-压缩只是”改写装配的输入”" class="headerlink" title="10. 压缩只是”改写装配的输入”"></a>10. 压缩只是”改写装配的输入”</h2><p>把上面九节连起来看，压缩的定位就很清楚了：它不是装配的一个阶段，而是<strong>对装配输入的一次改写</strong>——把一段旧消息折叠成一条摘要，让 <code>deriveMessages()</code> 下次投影出来的表面变短。</p>
+<p>阈值和保留比例是两个默认值（<code>compaction-basic/lib/index.js:15-17</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">DEFAULT_THRESHOLD_RATIO</span> = <span class="number">0.8</span>;   <span class="comment">// 压力到 80% 触发</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">DEFAULT_RETAIN_RATIO</span>   = <span class="number">0.16</span>;   <span class="comment">// 尾部 16% 逐字保留</span></span><br></pre></td></tr></table></figure>
+
+<p>实际阈值还要跟预算取小：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">thresholdTokens = <span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">min</span>(</span><br><span class="line">  contextWindow * thresholdRatio,</span><br><span class="line">  messageBudgetTokens - headroomTokens</span><br><span class="line">));</span><br></pre></td></tr></table></figure>
+
+<p>也就是”窗口的 80%”和”除掉预留后的可用额度”谁小听谁的——不然给模型留了完成空间，却把它算进压缩阈值，永远压不下来。</p>
+<p>摘要调用本身有个很漂亮的细节，源码注释直接说明了目的（<code>:292</code>）：</p>
+<blockquote>
+<p>replay the conversation prefix, then append the compaction instruction as the final user message <strong>so the provider’s warm prefix cache is reused</strong></p>
+</blockquote>
+<p>即：不复用一次全新请求，而是把整段要被压缩的对话原样重放一遍，末尾追加一条”总结它”的用户消息。这样提供方那边的 warm prefix cache 还能命中，摘要成本从”重新读一遍全部”降到”只算新加的那条指令”。</p>
+<p>摘要的格式是硬编码的八段模板（<code>:247-278</code>），外面包 <code>&lt;compacted-summary&gt;</code> 标签：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">## Primary Request and Intent</span><br><span class="line">## Key Technical Concepts</span><br><span class="line">## Files and Code</span><br><span class="line">## Errors and Fixes</span><br><span class="line">## Pending Jobs</span><br><span class="line">## Current Work</span><br><span class="line">## Next Step</span><br><span class="line">## Critical Context</span><br></pre></td></tr></table></figure>
+
+<p>配套的 Rules 里有几条很值得抄进自己的工程习惯：保留精确的文件路径、命令、错误字符串、标识符、数值和函数签名；忠实记录用户反馈，尤其是纠正；<strong>不要提”压缩”这件事</strong>；只输出 checkpoint 文本，不调工具；若已有 <code>&lt;compacted-summary&gt;</code> 块那就是上一版，别照抄，保留仍为真的事实、丢掉过时的、合并成单一摘要。</p>
+<p>写入后还要包一层前导语（<code>:280</code>）：</p>
+<blockquote>
+<p>This is an automatically generated checkpoint condensing an earlier span of the conversation to free up context. Treat the captured context as established background and build on it without restating it. Continue the task directly from the messages that follow, without acknowledging this checkpoint.</p>
+</blockquote>
+<p>压缩之外还有一道更便宜的工序：确定性剪裁（pruner）。它对超长工具结果做首尾保留、中间挖掉，标记是固定字符串（<code>compaction-tool-result-pruner/lib/index.js:9</code>）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">PRUNE_MARKER</span> = <span class="string">&quot;\n\n[... tool result middle pruned ...]\n\n&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>默认 8192 阈值、保头 4096、保尾 1024，且 <code>headChars + marker + tailChars ≤ thresholdChars</code> 是硬校验——不然”剪裁”反而会变长。</p>
+<p>最后一条边界规则：压缩区间不能切开一次工具调用的”请求&#x2F;结果”配对。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compactRegion: start seq 640 is not a balanced boundary (would split a step&#x27;s tool-call/result pair)</span><br></pre></td></tr></table></figure>
+
+<p>模型的训练&#x2F;推理假设里，tool call 和 tool result 是成对出现的。切开之后，模型会看到”一个调用但没有结果”，行为立刻跑偏。所以压缩从哪切、到哪停，都受这个约束钳制。</p>
+<p>压缩的完整流水线（三入口、事务写入、JSONL 落盘、重放恢复）在<a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">上一篇</a>里，这里不再重复。</p>
+<h2 id="11-自己动手验证"><a href="#11-自己动手验证" class="headerlink" title="11. 自己动手验证"></a>11. 自己动手验证</h2><p>上面所有引用都可以复现。装好的应用里源码就在 <code>app.asar</code> 中，解出来不难，但有个坑。</p>
+<p><code>app.asar</code> 的头部是 Chromium 的 Pickle 格式，前 16 字节是四个 u32：<code>4</code>、header pickle 大小、<code>header pickle 大小 - 4</code>、<strong>JSON 字节长度</strong>。真正可靠的边界只有最后一个字段：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fd  = fs.<span class="title function_">openSync</span>(asar, <span class="string">&#x27;r&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> buf = <span class="title class_">Buffer</span>.<span class="title function_">alloc</span>(<span class="number">16</span>); fs.<span class="title function_">readSync</span>(fd, buf, <span class="number">0</span>, <span class="number">16</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">const</span> jsonLen = buf.<span class="title function_">readUInt32LE</span>(<span class="number">12</span>);          <span class="comment">// ← 唯一可信的长度</span></span><br><span class="line"><span class="keyword">const</span> dataBase = <span class="number">8</span> + buf.<span class="title function_">readUInt32LE</span>(<span class="number">4</span>);      <span class="comment">// ← 文件内容起点</span></span><br><span class="line"><span class="keyword">const</span> index = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="title function_">scan</span>(fd, <span class="number">16</span>, jsonLen).<span class="title function_">toString</span>(<span class="string">&#x27;utf8&#x27;</span>)).<span class="property">files</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我自己第一次是拿大括号配对去扫 header 找 JSON 边界，<code>JSON.parse</code> 直接抛错，还把整段原文吐进 stderr（两次、每次十几 KB）。改成读 <code>u32@12</code> 一次就对。<strong>这个格式的边界只能信长度字段，不能靠内容扫描猜。</strong></p>
+<p>拿到索引后，按路径把 <code>lib/*.js</code> 读出来就行。判断”谁在装配”最快的办法不是读文档，而是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 谁调用了 assemble？</span></span><br><span class="line">grep -rn <span class="string">&quot;systemPrompt.assemble&quot;</span> lib/</span><br><span class="line"><span class="comment"># 2. 装配结果怎么进请求的？</span></span><br><span class="line">grep -n <span class="string">&quot;buildRequest&quot;</span> lib/index.js</span><br><span class="line"><span class="comment"># 3. 表面里到底有什么？</span></span><br><span class="line">grep -n <span class="string">&quot;surfaceOp&quot;</span> lib/types/surface.js</span><br></pre></td></tr></table></figure>
+
+<p>第二个可做的验证是改一个 <code>order</code> 再看输出。把 <code>TOOL_GREP</code> 的 <code>order</code> 从 1500 改成 999，重建后看提示词里工具说明的位置——它能直接证明”段位表就是真实排序依据”，而不是某种约定俗成的写法。</p>
+<p>在会话日志里搜 <code>request/header</code>，你还能看到 <code>reason</code> 从 <code>initial</code> 一路变成 <code>series</code> 的完整轨迹——那是最省事的实证。</p>
+<h2 id="12-设计取舍：为什么装配要长成这样"><a href="#12-设计取舍：为什么装配要长成这样" class="headerlink" title="12. 设计取舍：为什么装配要长成这样"></a>12. 设计取舍：为什么装配要长成这样</h2><p>拆完这一遍，我最想记下来的不是那张段位表，而是几个贯穿始终的取舍。</p>
+<p><strong>一、宁可炸，也不静默降级。</strong> 插值找不到变量就抛错，表面事件少个 <code>surfaceOp</code> 就抛错，替换没有影子价就抛错，两个 <code>complete</code> 段就抛错。这四处都在做同一件事：把”配置错了”从”模型表现奇怪”里剥离出来。前者十分钟能修，后者能查一天。</p>
+<p><strong>二、替换，而不是叠加。</strong> <code>complete: true</code> 段不是”再加一段”，而是”整段就是它”。人格、模式这类东西如果允许叠加，最终会拼出一个谁都没设计过的人格；允许替换，语义就清楚了——谁声明，谁负责。</p>
+<p><strong>三、把”记下的”和”看见的”分开。</strong> 日志只追加、表面靠投影、压缩只遮蔽不删除。这三条让”撤销一次压缩”变成可能（重新投影），也让”这次请求到底看了什么”变成可审计的问题。代价是所有读日志的人都得先理解 surface 这一层——但换来的是可重放、可对比、可回滚。</p>
+<p><strong>四、稳定的往前放，易变的往后放，一次性的事不进系统提示词。</strong> 段位表把身份和工具说明固定在前，把工作目录这类每步都变的东西做成”额外一条消息”。这条纪律直接决定了 prefix cache 的命中率，也决定了长会话的成本曲线。</p>
+<p><strong>五、分散是模块化的代价。</strong> 装配横跨 agent-loop（编排）、system-prompt（段注册）、session（表面投影）、token-meter（计量）四个包，没有一个”看看就懂”的入口。唯一的对冲办法是——真去读一遍产物代码，把那条链自己在纸上画一遍。</p>
+<p>画完这张链路图，我对”上下文”这个词的理解变了：它不是一份文档，而是一条<strong>每次请求都重新走一遍的流水线</strong>——注册表决定骨架，扩展点决定此刻的事实，投影决定模型能看见多少历史，计量器决定这条流水线什么时候需要瘦身。</p>
+<hr>
+<p><strong>相关阅读</strong>：<a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">DSH 会话压缩（Compaction）策略详解</a>——讲这条流水线什么时候需要瘦身、怎么瘦身、瘦完怎么落盘与重放。</p>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c770455ffd5.png" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c770455ffd5.png" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/')">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=DSH 上下文装配全解：一次模型请求到底是怎么拼出来的&amp;url=https://benedicttom.github.io/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/&amp;pic=/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Agent/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Agent<span class="tagsPageCount">9</span></a><a class="post-meta__box__tags" href="/tags/DeepSeek/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>DeepSeek<span class="tagsPageCount">2</span></a><a class="post-meta__box__tags" href="/tags/Context/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Context<span class="tagsPageCount">2</span></a><a class="post-meta__box__tags" href="/tags/DSH/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>DSH<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/cover.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-10-30</div><div class="title">DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘</div></div></a></div><div><a href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-11</div><div class="title">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</div></div></a></div><div><a href="/2026/04/25/AI_MCP/" title="FunctionCall、Agent、Mcp"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/AI_MCP/cover.webp" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">FunctionCall、Agent、Mcp</div></div></a></div><div><a href="/2026/04/25/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/" title="Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory</div></div></a></div><div><a href="/2026/04/28/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/" title="Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-28</div><div class="title">Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境</div></div></a></div><div><a href="/2026/03/29/Claude-Code-Skill-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/" title="Claude Code Skill 开发指南"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Claude-Code-Skill-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-03-29</div><div class="title">Claude Code Skill 开发指南</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://free.picui.cn/free/2026/03/28/69c770455ffd5.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%A6%82%E6%8B%AC"><span class="toc-number">1.</span> <span class="toc-text">0. 一句话概括</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%89%E4%B8%AA%E6%B5%81%E4%BC%A0%E5%BE%88%E5%B9%BF%E7%9A%84%E8%AF%AF%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">1. 三个流传很广的误解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%80%EF%BC%9Acontext-%E5%9C%A8%E8%A3%85%E9%85%8D%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">2.1.</span> <span class="toc-text">误解一：context&#x2F;* 在装配上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%BA%8C%EF%BC%9A%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%98%AF%E4%B8%80%E6%AE%B5%E5%B8%B8%E9%87%8F%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">2.2.</span> <span class="toc-text">误解二：系统提示词是一段常量字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%89%EF%BC%9A%E8%AF%B7%E6%B1%82%E5%A4%B4%E9%87%8C%E5%8C%85%E5%90%AB%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA%E8%AF%8D"><span class="toc-number">2.3.</span> <span class="toc-text">误解三：请求头里包含系统提示词</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%A3%85%E9%85%8D%E4%B8%BB%E9%93%BE%E8%B7%AF%EF%BC%9ApreStep-%E7%9A%84%E4%BA%94%E6%AD%A5"><span class="toc-number">3.</span> <span class="toc-text">2. 装配主链路：preStep 的五步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%98%AF%E4%B8%80%E5%BC%A0%E5%B8%A6%E6%AE%B5%E4%BD%8D%E7%9A%84%E6%B3%A8%E5%86%8C%E8%A1%A8"><span class="toc-number">4.</span> <span class="toc-text">3. 系统提示词是一张带段位的注册表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%89%E6%9D%A1%E7%A1%AC%E8%A7%84%E5%88%99%EF%BC%8C%E5%92%8C%E4%B8%80%E6%9D%A1%E6%96%87%E6%A1%A3%E6%B2%A1%E5%86%99%E7%9A%84%E4%BE%8B%E5%A4%96"><span class="toc-number">5.</span> <span class="toc-text">4. 三条硬规则，和一条文档没写的例外</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E5%88%99%E4%B8%80%EF%BC%9A%E7%A9%BA%E6%AE%B5%E7%9B%B4%E6%8E%A5%E4%B8%A2%EF%BC%8C%E4%B8%8D%E5%8D%A0%E7%A9%BA%E8%A1%8C"><span class="toc-number">5.1.</span> <span class="toc-text">规则一：空段直接丢，不占空行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E5%88%99%E4%BA%8C%EF%BC%9A%E6%8F%92%E5%80%BC%E5%A4%B1%E8%B4%A5%E5%B0%B1%E7%82%B8%EF%BC%8C%E7%BB%9D%E4%B8%8D%E9%9D%99%E9%BB%98"><span class="toc-number">5.2.</span> <span class="toc-text">规则二：插值失败就炸，绝不静默</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E5%88%99%E4%B8%89%EF%BC%9Acomplete-true-%E7%9A%84%E6%AE%B5%E5%8F%AA%E8%83%BD%E6%9C%89%E4%B8%80%E4%B8%AA"><span class="toc-number">5.3.</span> <span class="toc-text">规则三：complete: true 的段只能有一个</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E5%A4%96%EF%BC%9Arequired-true-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E8%83%BD%E7%A9%BF%E8%BF%87-suppress"><span class="toc-number">5.4.</span> <span class="toc-text">例外：required: true 的上下文能穿过 suppress</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%8A%A8%E6%80%81%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E2%80%9D%E9%A2%9D%E5%A4%96%E4%B8%80%E6%9D%A1-user-%E6%B6%88%E6%81%AF%E2%80%9D"><span class="toc-number">6.</span> <span class="toc-text">5. 动态上下文为什么是”额外一条 user 消息”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AF%B7%E6%B1%82%E5%A4%B4%EF%BC%9A%E4%B8%89%E4%B8%AA%E5%AD%97%E6%AE%B5%E4%B8%8E%E5%9B%9B%E7%A7%8D-reason"><span class="toc-number">7.</span> <span class="toc-text">6. 请求头：三个字段与四种 reason</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%B7%A5%E5%85%B7-schema-%E4%B9%9F%E6%98%AF%E8%A3%85%E9%85%8D%E7%89%A9"><span class="toc-number">8.</span> <span class="toc-text">7. 工具 schema 也是装配物</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-surface%EF%BC%9A%E6%A8%A1%E5%9E%8B%E7%9C%8B%E5%BE%97%E8%A7%81%E7%9A%84%E9%82%A3%E4%B8%80%E7%89%88%E6%97%A5%E5%BF%97"><span class="toc-number">9.</span> <span class="toc-text">8. surface：模型看得见的那一版日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-token-%E6%98%AF%E6%80%8E%E4%B9%88%E7%AE%97%E7%9A%84%EF%BC%9A%E4%B8%80%E4%B8%AA%E6%8B%92%E7%BB%9D%E4%B8%80%E5%88%87%E9%85%8D%E7%BD%AE%E7%9A%84%E8%AE%A1%E9%87%8F%E5%99%A8"><span class="toc-number">10.</span> <span class="toc-text">9. token 是怎么算的：一个拒绝一切配置的计量器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%8E%8B%E7%BC%A9%E5%8F%AA%E6%98%AF%E2%80%9D%E6%94%B9%E5%86%99%E8%A3%85%E9%85%8D%E7%9A%84%E8%BE%93%E5%85%A5%E2%80%9D"><span class="toc-number">11.</span> <span class="toc-text">10. 压缩只是”改写装配的输入”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E9%AA%8C%E8%AF%81"><span class="toc-number">12.</span> <span class="toc-text">11. 自己动手验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E8%AE%BE%E8%AE%A1%E5%8F%96%E8%88%8D%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A3%85%E9%85%8D%E8%A6%81%E9%95%BF%E6%88%90%E8%BF%99%E6%A0%B7"><span class="toc-number">13.</span> <span class="toc-text">12. 设计取舍：为什么装配要长成这样</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/" title="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/" title="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</a><time datetime="2026-10-30T13:10:00.000Z" title="Created 2026-10-30 21:10:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘">DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘</a><time datetime="2026-10-30T08:30:00.000Z" title="Created 2026-10-30 16:30:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"/></a><div class="content"><a class="title" href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</a><time datetime="2026-05-11T06:00:00.000Z" title="Created 2026-05-11 14:00:00">2026-05-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/28/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/" title="Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境"/></a><div class="content"><a class="title" href="/2026/04/28/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/" title="Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境">Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境</a><time datetime="2026-04-28T04:00:00.000Z" title="Created 2026-04-28 12:00:00">2026-04-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/25/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/" title="Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory"/></a><div class="content"><a class="title" href="/2026/04/25/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/" title="Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory">Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory</a><time datetime="2026-04-25T12:30:00.000Z" title="Created 2026-04-25 20:30:00">2026-04-25</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@2.1.5/img/badge/Frame-Hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.9/img/Theme-AnZhiYu-2E67D3.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">104</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">49</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">31</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>2</sup></a><a href="/tags/AMQP/" style="font-size: 0.88rem;">AMQP<sup>1</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>9</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>2</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>1</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>3</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>1</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 0.88rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>1</sup></a><a href="/tags/Spring/" style="font-size: 0.88rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 0.88rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 0.88rem;">Swagger<sup>1</sup></a><a href="/tags/http/" style="font-size: 0.88rem;">http<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 0.88rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 0.88rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>9</sup></a><a href="/tags/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 0.88rem;">定时任务<sup>3</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>10</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 0.88rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
