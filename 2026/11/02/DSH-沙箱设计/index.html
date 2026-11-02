@@ -1,0 +1,967 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>DSH 沙箱设计：一次 bash 调用，到底被关进了什么 | Joie's Blog</title><meta name="keywords" content="Agent,DeepSeek,DSH,sandbox"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"><meta name="application-name" content="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"><meta property="og:url" content="https://benedicttom.github.io/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="前面三篇讲的是 DSH 的”软”的部分：上下文怎么装配、压缩怎么发生、主循环怎么转。这一篇讲”硬”的那一半——当模型说”我跑一下这条命令”的时候，是谁在替你把手指按在闸刀上。 我最初的问题很朴素，可能和你想的一样：  执行 bash 的时候，是不是启动一个沙箱，把文件挂载进去，再在里面跑 bash？"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg"><meta name="description" content="前面三篇讲的是 DSH 的”软”的部分：上下文怎么装配、压缩怎么发生、主循环怎么转。这一篇讲”硬”的那一半——当模型说”我跑一下这条命令”的时候，是谁在替你把手指按在闸刀上。 我最初的问题很朴素，可能和你想的一样：  执行 bash 的时候，是不是启动一个沙箱，把文件挂载进去，再在里面跑 bash？"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'DSH 沙箱设计：一次 bash 调用，到底被关进了什么',
+  postAI: '',
+  pageFillDescription: '0. 一句话概括, 1. 先纠正一个直觉, 2. 为什么非要沙箱, 3. 沙箱的四种流派, 4. 三条缝：沙箱不是一个包, 5. 什么时候会被关进去, 6. 关进去之后能看见什么, 本机实测, 7. 被拒绝了会怎样, 8. 写文件那条路：栅栏不是边界, 9. 四个后端四种方言, 10. 另一条路：E2B 把整个世界换掉, 11. 它明确不做什么, 12. 自己动手验证, 小结前面三篇讲的是的软的部分上下文怎么装配压缩怎么发生主循环怎么转这一篇讲硬的那一半当模型说我跑一下这条命令的时候是谁在替你把手指按在闸刀上我最初的问题很朴素可能和你想的一样执行的时候是不是启动一个沙箱把文件挂载进去再在里面跑答案有点反直觉的本地沙箱里没有启动这个动作也没有把文件挂载进去这件事它做的是在这个命令的前面插一段参数让内核在真正之前先把进程丢进一个被裁剪过的视野里这篇文章就把这件事从头拆到尾为什么要有它它到底在哪一步生效关进去之后能看见什么被拦下来之后又会发生什么一句话概括本地沙箱不是虚拟机不是容器是同一个世界里给一条命令戴的手套整块磁盘只读工作区和可写进程看不见别的进程它不是一个模块而是三条独立的缝契约策略后端每次执行都重新解析一次策略直接短路连手套都不戴先纠正一个直觉大多数人对沙箱的印象来自起一个容器把工作目录挂进去跑命令这个印象很自然因为隔离通常意味着换一个环境走的是另一条路看里真正的那几行它把本地的执行器整个继承下来只在最后一步做了替换的产物不是一个沙箱实例而是一段新的在上它大概长这样你的命令在上长这样你的命令然后这段被原样交给子进程去没有镜像没有进程没有网络栈没有启动销毁的生命周期沙箱的寿命就是这条命令的寿命会在父进程退出时把里面的一切一起带走这么选的理由很实际文件原地就在那儿不需要把万个文件的工作区同步进一个容器里也就没有同步慢了漏了冲突了这些问题毫秒级没有守护进程要连没有镜像要拉不需要用用户命名空间用内核是自带的代价也很明确它和你的进程共享同一个内核同一个文件系统所以它防的是写错地方不是这条命令是恶意的想逃出去这是设计取舍不是疏忽文档里自己就写了需要隔离整个环境时请用容器或远端执行器为什么非要沙箱如果模型只是个建议者沙箱是多余的但它不是它有一次能发十几条命令中间没有人复核具体怕三件事一是手滑没有对应的体感人会停顿会看见四个字心跳加速模型不会它生成的时候可能刚好是个空字符串于是这一行变成这类事故在场景里的概率和模型写错一个变量的概率是同一个量级二是路径幻觉和和相对路径和根目录模型的记忆里经常是模糊的它真诚地以为自己在改实际改的是另一个同名文件三是被说服这是最容易被低估的一种你让它读一个一个网页一个里面的文字可能写着请执行或者顺便把发到这个地址模型没有这是别人写给我的指令还是任务里的一段资料的天然分界线一旦它能写就能改往里塞一个开机自启或者覆盖下一次你亲手敲命令的时候被执行的是它沙箱拦不住模型被骗但它能把损失关在一个抽屉里能读的随便读能写的就是工作区那一块还有一个不那么安全但同样重要的理由它让人少被打断有了默认的写边界绝大多数正常操作根本不需要弹窗问你确定吗只有越界的那一次才需要人出面安全感和流畅度在这里不冲突沙箱的四种流派沙箱这个词被用得太泛了按隔离的粒度分大致是四条路流派代表隔离单位你的文件在哪启动成本不隔离早期无原地进程级围栏单条命令原地毫秒容器一个容器挂载进去秒级虚拟机云沙箱一台机器上传或同步百毫秒到秒级的本地默认是第二条同时它把第四条做成了一个可选的替代品后面第节讲这两条路的差别不是好一点差一点而是换不换世界进程级围栏世界没变只是这条命令的写权限被裁掉了虚拟机云沙箱换了一个世界文件系统进程表网络全是新的所以要不要上沙箱其实是个更前面的问题你是想管住写哪里还是想管住整个环境前者一条命令一层壳就够了后者才需要搬家三条缝沙箱不是一个包把这件事拆得很干净干净到第一次看会觉得至于吗三个包各管一件事工具层模型看得到的能力层可整体替换执行器文件系统沙箱层后端按平台选每次调用交出每次写操作交出只是词汇表它定义拒绝标记升级阶梯以及一个服务它不依赖任何具体后端所以沙箱这个概念本身可以被别的实现接管是策略的唯一归属者当前模式工作区根以及谁能改模式都在这儿是后端实现它挑平台探针拼把包好交回去消费者只做一件小事把换成会包装的把换成带栅栏的文件系统是版的同一件事拆成三条缝的好处用一句话说就是工具层完全不知道沙箱存在模型看到的工具描述参数返回格式一个字都没变换后端改策略甚至把整个本地后端换成远端都不需要动工具反过来模型也不会因为有个沙箱就以为每条命令都必然被关着它看到的是可能被关着以及被关时的具体提示什么时候会被关进去这里最容易误解没有进入沙箱模式这种开关每一次调用都独立解析一次策略模型发起调用解析参数得到短路不包装直接该平台有可用没有抛拒绝裸跑有返回包装后的子进程退出码命中拒绝方言返回拒绝标记命中致命签名抛命令根本没跑正常返回从哪来三级从强到弱本次调用显式批准的更宽模式模型申请人点了允许一次本会话最后一次事件你在界面上切了权限档部署默认值组合里没设就是源码里就一行注意的取值跟着会话的走没有会话才退回到配置里的根这就是可写范围的边界不是当前目录而是这个会话认领的工作区还有个细节很有意思模型自己也能看到当前策略每次请求装配时这一段会被拼进系统提示词的上下文区不是稳定的系统提示词本体所以不影响缓存前缀三句话按档位不同那句会把工作区路径直接写进去那句则明说不限制为什么要告诉模型因为它得知道自己会被拦而且被拦了不该自己放弃第二句就是防止模型看到只读就回你一句我改不了你自己动手吧关进去之后能看见什么这是全文最实的部分以的为例就是下面这行逐条翻译参数含义效果把宿主根目录只读绑定到同一位置全世界都能看谁都改不了挂一个最小的有这类设备没有宿主的其他设备私有命名空间看不见宿主的进程在私有命名空间里挂只能看到自己这一支的进程父进程死子进程跟着死没有孤儿进程在后台偷偷干活全新的空临时文件可以写但只在这个进程活着的时候存在工作区读写绑定唯一持久可写的地方和这一对值得多说一句它们不只是为了看不见别的进程是个后门这类魔术链接指向的是文件系统里真实的位置如果你把宿主的挂进去一条就能绕开你精心布置的挂载所以私有命名空间自己挂的是成对出现的缺一个就漏了没有命名空间用的是另一套的策略语言默认全允许然后把所有写禁掉再按白名单一个个开回来读和写在这里被彻底分开了这就是为什么只读模式几乎是零成本的是个共享函数只读模式返回空数组返回工作区系统临时目录而且会先再去重因为上其实是的软链不解析就会白名单和实际路径对不上本机实测光看代码不算数我这台机器是正好是后端直接打三条命令工作区的上一级读随便读四行输出把模型解释得很清楚整块盘可读随便看可写工作区可写工作区的父目录不可写边界正好落在会话认领的那个目录上这也顺带解释了很多人第一次用时会碰到的那句话它不是出错了是策略生效了被拒绝了会怎样一条命令被拦下来故事没结束反而才刚开始在这里设计了一条很克制的链路标记提示申请审批一次放宽模型人包装后的报拒绝标记看到了升级提示审批请求允许一次短路不包装成功第一步是结构化的事实不是一句自然语言结果对象里带着工具层据此在输出里贴标记同一个标记后面还会跟一句提示措辞是固定的和是两个刻意的约束只准往宽了走不准顺带改命令因为如果模型能借一次升级把命令也换了那审批就形同虚设你批的是写执行的可能是别的东西升级阶梯是个闭表当前模式可申请到无已经最宽审批本身走返回四种结果之一三种不是允许的情况都不等于自动放宽意思是这个组合里根本没有审批通道那就老老实实失败还有两个小规矩同一个模式的申请直接放行不再打扰人往窄了申请直接报错值得单独说的是失败和命令被拒必须分开沙箱进程自己起不来比如没装拒绝加载策略和命令因为越界被内核拒绝在里可能只差一行字前者如果被误判成后者模型会以为我只是权限不够然后去申请升级而真正该做的是修环境所以每个后端都带一份致命签名表后端致命标志退出码约束开头只认签名开头必须开头只认签名开头必须命中就抛并明确告诉模型命令没有执行这是沙箱的问题不是命令失败写文件那条路栅栏不是边界是被内核关起来的那这两个工具呢它们不走走的是自己的文件系统服务这里有一个非常清醒的注释翻译成人话这条路上跑什么代码是可信的是我们自己的不可信的只有路径这个字符串所以不需要内核边界把路径校验到位就够了具体做法是而且刻意多走半步两个细节返回的是不是原来的检查用的那个路径和真正被写的那个路径是同一个对象这样就不存在检查写的问题在委托之前重新一次因为从检查到真正落盘之间攻击者可能把某一级祖先目录换成软链重新解析能把窗口缩到最小剩下的残余风险被明确写进注释并接受了因为威胁模型是模型写错路径不是本地有恶意进程和我赛跑本身也值得一提先走廉价的字符串比较词法上不在根下面时再沿着目标路径往上找已存在的祖先用比对文件身份这是为了兜住的短名和大小写不敏感这类拼写不同其实是同一个文件的情况纯字符串比较在这里会漏所以两条路的分工是清楚的跑的是谁的代码模型写的任意代码自己的边界性质内核边界可信代码里的策略检查不可信的东西整个进程只有目标路径拒绝形态内核结构化读放行放行四个后端四种方言同一份策略落到不同平台上说法不一样这是和几张表拼起来的事实平台选择链机制拒绝方言用户命名空间挂载内核不需要老可能受限令牌等三条规则值记住一先按平台选再做探针有两个候选所以会在第一次需要时功能性地试一遍真的跑一次退出码才算可用结果缓存在生命周期里只有一个候选根本不探没有备选的时候探针没有意义只会增加启动延迟这条探针只用来仲裁不用来复核唯一选择的取舍代码注释里写得很直白二是报告的事实不是承诺每个包装返回值都带的方案是它管不住硬链接管不住未受限进程的读也管不住的边界老版本同理需要绝对边界的调用方可以直接拒绝三失败要失败得响平台没有链或者链上每个探针都失败不是算了裸跑吧而是抛错这句话是整个设计的地基宁可失败也不悄悄降级因为悄悄降级是安全的反面用户以为有保护实际没有而且永远不会知道另一条路把整个世界换掉前面说的都是同世界围栏如果确实需要另一个世界比如要跑一段来源不明的代码要限制网络要让文件系统从零开始那就不是换个后端能解决的得换掉能力本身就是这样一套东西把它做成了三个包包替换了什么职责新增沙箱的生命周期所有者构造即创建销毁即删除替换所有文件操作打到远端沙箱替换所有子进程在远端跑字节流回传注意它不是的后端它压根不走这条缝这是两个层次的替换本地沙箱是给命令戴手套是把工作台整个搬走几个实际参数默认必须是绝对路径它是解析约定不是里面的程序照样能寻址别的路径默认到点删沙箱只配给宿主侧的从不装进沙箱不搬过去的东西进程本身状态会话日志请求技能这些全留在本地而且它是实验性的的任何出厂组合都不默认挂载要用得自己在里声明三个插件而且必须排在之后加载所以选型其实很简单要隔离的是什么写错地方本地沙箱整个环境网络依赖不可信代码替换同内核同文件系统毫秒级无需独立沙箱远程状态短暂它明确不做什么一份诚实的设计说明得把边界写清楚的本地沙箱只管文件写不管网络命令照样能出去不管进程数量内存没有配额不管和内核攻击面共享内核只是换了挂载视图不管设备只是最小集合不是白名单不管凭据它不会替你清掉环境变量里的读永远放行所以钥匙串只要进程知道路径就能读再加几条工程上的限制一个只能有一个拒绝的分类靠方言推断内核不给结构化通道只有知道这些之后沙箱这个词就不该被理解成安全了而应该理解成默认把破坏半径压到最小真正的隔离要么上容器虚拟机要么在它外面再加一层网络和凭据的边界自己动手验证三步都能在你自己的机器上复现第一步看这个组合到底挂了哪些沙箱包正常情况下你会看到以及某个执行器或看不到是对的它默认不挂第二步看默认策略没设就是组合里的默认值第三步直接撞一次边界可以写不该看到这一行读是不设防的如果你看到说明在工作看到那是则是三种方言一个意思最后如果你想知道为什么模型总说自己的权限不够翻回第节它每次请求都会收到一句那是它对自己处境的唯一知情来源小结把这篇的骨架压缩成五句话沙箱防的是写错地方不是恶意逃逸所以它选了最轻的那条路给命令戴手套而不是搬家没有启动沙箱这一步只有把包一层沙箱的寿命等于命令的寿命三条缝各管一件事契约能不能包策略包成什么样后端用谁包每次调用重新解析策略三级优先短路失败宁可报错也不裸跑被拦下不是一个终点而是一条固定链路标记提示只准变宽的申请人工审批下一篇想聊工具系统一个工具描述为什么能写那么长或者子代理与团队看完有想深挖的点直接说相关阅读上下文装配全解一次模型请求到底是怎么拼出来的会话压缩策略详解上下文快满了怎么办主循环一条用户消息的完整旅程为什么需要一个安全的执行环境偏概念的入门版可以对照着看',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-11-02 14:20:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="/images/theme/loading-avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/images/theme/reward-wechat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-wechat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/theme/reward-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>2</sup></a><a href="/tags/AMQP/" style="font-size: 1.05rem;">AMQP<sup>1</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>11</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>2</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>4</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>3</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>1</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 1.05rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>1</sup></a><a href="/tags/Spring/" style="font-size: 1.05rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 1.05rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 1.05rem;">Swagger<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 1.05rem;">agent-loop<sup>1</sup></a><a href="/tags/http/" style="font-size: 1.05rem;">http<sup>1</sup></a><a href="/tags/sandbox/" style="font-size: 1.05rem;">sandbox<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 1.05rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 1.05rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>9</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 1.05rem;">并发<sup>10</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 1.05rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.05rem;">算法<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/11/"><span class="card-archive-list-date">November 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Agent/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Agent</span></a><a class="article-meta__tags" href="/tags/DeepSeek/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>DeepSeek</span></a><a class="article-meta__tags" href="/tags/DSH/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>DSH</span></a><a class="article-meta__tags" href="/tags/sandbox/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>sandbox</span></a></span></div></div><h1 class="post-title" itemprop="name headline">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-11-02T06:20:00.000Z" title="Created 2026-11-02 14:20:00">2026-11-02</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-11-02T06:20:00.000Z" title="Updated 2026-11-02 14:20:00">2026-11-02</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/"><header><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a><a href="/tags/Agent/" tabindex="-1" itemprop="url">Agent</a><a href="/tags/DeepSeek/" tabindex="-1" itemprop="url">DeepSeek</a><a href="/tags/DSH/" tabindex="-1" itemprop="url">DSH</a><a href="/tags/sandbox/" tabindex="-1" itemprop="url">sandbox</a><h1 id="CrawlerTitle" itemprop="name headline">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-11-02T06:20:00.000Z" title="Created 2026-11-02 14:20:00">2026-11-02</time><time itemprop="dateCreated datePublished" datetime="2026-11-02T06:20:00.000Z" title="Updated 2026-11-02 14:20:00">2026-11-02</time></header><p>前面三篇讲的是 DSH 的”软”的部分：<a href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/">上下文怎么装配</a>、<a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">压缩怎么发生</a>、<a href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/">主循环怎么转</a>。这一篇讲”硬”的那一半——当模型说”我跑一下这条命令”的时候，是谁在替你把手指按在闸刀上。</p>
+<p>我最初的问题很朴素，可能和你想的一样：</p>
+<blockquote>
+<p>执行 bash 的时候，是不是启动一个沙箱，把文件挂载进去，再在里面跑 bash？</p>
+</blockquote>
+<p>答案有点反直觉：<strong>DSH 的本地沙箱里，没有”启动”这个动作，也没有”把文件挂载进去”这件事。<strong>它做的是在 <code>bash -c &quot;...&quot;</code> 这个命令的</strong>前面插一段参数</strong>，让内核在真正 exec 之前，先把进程丢进一个被裁剪过的视野里。</p>
+<p>这篇文章就把这件事从头拆到尾：为什么要有它、它到底在哪一步生效、关进去之后能看见什么、被拦下来之后又会发生什么。</p>
+<h2 id="0-一句话概括"><a href="#0-一句话概括" class="headerlink" title="0. 一句话概括"></a>0. 一句话概括</h2><blockquote>
+<p>本地沙箱不是虚拟机、不是容器，是<strong>同一个世界里给一条命令戴的手套</strong>：整块磁盘只读、工作区和 <code>/tmp</code> 可写、进程看不见别的进程。</p>
+<p>它不是一个”模块”，而是三条独立的缝：<strong>契约</strong>（<code>ctx.sandbox</code>）、<strong>策略</strong>（<code>ctx.sandboxPolicy</code>）、<strong>后端</strong>（<code>sandbox-local</code>）。</p>
+<p>每次执行都重新解析一次策略；<code>danger-full-access</code> 直接短路，连手套都不戴。</p>
+</blockquote>
+<h2 id="1-先纠正一个直觉"><a href="#1-先纠正一个直觉" class="headerlink" title="1. 先纠正一个直觉"></a>1. 先纠正一个直觉</h2><p>大多数人对”沙箱”的印象来自 Docker：起一个容器，把工作目录 <code>-v</code> 挂进去，<code>docker exec</code> 跑命令。这个印象很自然，因为”隔离”通常意味着”换一个环境”。</p>
+<p>DSH 走的是另一条路。看 <code>dsh-bash-sandbox</code> 里真正的那几行——它把本地 bash 的执行器整个继承下来，只在最后一步做了替换：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-bash-sandbox/lib/index.js:161-167</span></span><br><span class="line"><span class="title function_">confine</span>(<span class="params">command, policy, signal</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">ctx</span>.<span class="property">sandbox</span>.<span class="title function_">confine</span>([</span><br><span class="line">    <span class="string">&quot;bash&quot;</span>,</span><br><span class="line">    <span class="string">&quot;-c&quot;</span>,</span><br><span class="line">    command</span><br><span class="line">  ], policy, signal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>confine</code> 的产物不是”一个沙箱实例”，而是<strong>一段新的 argv</strong>。在 macOS 上，它大概长这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sandbox-exec -p &#x27;(version 1) (allow default) (deny file-write*) ...&#x27; -- bash -c &quot;你的命令&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在 Linux 上长这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bwrap --ro-bind / / --dev /dev --unshare-pid --proc /proc --die-with-parent \</span><br><span class="line">      --tmpfs /tmp --bind /path/to/workspace /path/to/workspace \</span><br><span class="line">      -- bash -c &quot;你的命令&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后这段 argv 被原样交给子进程去 spawn。**没有镜像、没有 init 进程、没有网络栈、没有”启动&#x2F;销毁”的生命周期。**沙箱的寿命就是这条命令的寿命——<code>--die-with-parent</code> 会在 bwrap 父进程退出时把里面的一切一起带走。</p>
+<p>这么选的理由很实际：</p>
+<ul>
+<li>**文件”原地”就在那儿。**不需要把 30 万个文件的工作区同步进一个容器里，也就没有”同步慢了&#x2F;漏了&#x2F;冲突了”这些问题。</li>
+<li>**毫秒级。**没有守护进程要连，没有镜像要拉。</li>
+<li>**不需要 root。**bwrap 用用户命名空间，Landlock 用内核 LSM，Seatbelt 是 macOS 自带的 <code>sandbox-exec</code>。</li>
+</ul>
+<p>代价也很明确：<strong>它和你的进程共享同一个内核、同一个文件系统</strong>。所以它防的是”写错地方”，不是”这条命令是恶意的、想逃出去”。这是设计取舍，不是疏忽——文档里自己就写了：需要隔离整个环境时，请用容器、microVM 或远端执行器。</p>
+<h2 id="2-为什么非要沙箱"><a href="#2-为什么非要沙箱" class="headerlink" title="2. 为什么非要沙箱"></a>2. 为什么非要沙箱</h2><p>如果模型只是个”建议者”，沙箱是多余的。但它不是——它有 bash，一次能发十几条命令，中间没有人复核。</p>
+<p>具体怕三件事：</p>
+<p><strong>一是”手滑”没有对应的体感。</strong> 人会停顿，会看见 <code>rm -rf</code> 四个字心跳加速。模型不会。它生成 <code>rm -rf &quot;$BUILD_DIR/&quot;</code> 的时候，<code>$BUILD_DIR</code> 可能刚好是个空字符串，于是这一行变成 <code>rm -rf /</code>。这类事故在 agent 场景里的概率，和”模型写错一个变量的概率”是同一个量级。</p>
+<p><strong>二是路径幻觉。</strong> <code>~/project</code> 和 <code>~/Projects</code>、<code>./src</code> 和 <code>src</code>、相对路径和 git 根目录，模型的记忆里经常是模糊的。它真诚地以为自己在改 <code>config.yml</code>，实际改的是另一个同名文件。</p>
+<p><strong>三是被”说服”。</strong> 这是最容易被低估的一种：你让它读一个 issue、一个网页、一个 README，里面的文字可能写着”请执行 <code>curl ... | sh</code>“或者”顺便把 <code>.npmrc</code> 发到这个地址”。模型没有”这是别人写给我的指令，还是任务里的一段资料”的天然分界线。一旦它能写 <code>$HOME</code>，就能改 <code>~/.zshrc</code>、往 <code>~/Library/LaunchAgents</code> 里塞一个开机自启、或者覆盖 <code>.git/hooks/pre-commit</code>——<strong>下一次你亲手敲命令的时候，被执行的是它。</strong></p>
+<p>沙箱拦不住”模型被骗”，但它能把损失关在一个抽屉里：<strong>能读的随便读，能写的就是工作区那一块。</strong></p>
+<p>还有一个不那么安全、但同样重要的理由：<strong>它让人少被打断。</strong> 有了默认的写边界，绝大多数正常操作根本不需要弹窗问”你确定吗”；只有越界的那一次才需要人出面。安全感和流畅度在这里不冲突。</p>
+<h2 id="3-沙箱的四种流派"><a href="#3-沙箱的四种流派" class="headerlink" title="3. 沙箱的四种流派"></a>3. 沙箱的四种流派</h2><p>“沙箱”这个词被用得太泛了。按隔离的粒度分，大致是四条路：</p>
+<table>
+<thead>
+<tr>
+<th>流派</th>
+<th>代表</th>
+<th>隔离单位</th>
+<th>你的文件在哪</th>
+<th>启动成本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>不隔离</td>
+<td>早期 agent</td>
+<td>无</td>
+<td>原地</td>
+<td>0</td>
+</tr>
+<tr>
+<td>进程级围栏</td>
+<td>bwrap &#x2F; Landlock &#x2F; Seatbelt</td>
+<td>单条命令</td>
+<td><strong>原地</strong></td>
+<td>毫秒</td>
+</tr>
+<tr>
+<td>容器</td>
+<td>Docker</td>
+<td>一个容器</td>
+<td>挂载进去</td>
+<td>秒级</td>
+</tr>
+<tr>
+<td>虚拟机 &#x2F; 云沙箱</td>
+<td>Firecracker &#x2F; E2B</td>
+<td>一台机器</td>
+<td>上传或同步</td>
+<td>百毫秒到秒级</td>
+</tr>
+</tbody></table>
+<p>DSH 的本地默认是<strong>第二条</strong>，同时它把<strong>第四条</strong>做成了一个可选的替代品（E2B，后面第 10 节讲）。这两条路的差别不是”好一点&#x2F;差一点”，而是<strong>换不换世界</strong>：</p>
+<ul>
+<li>进程级围栏：世界没变，只是这条命令的写权限被裁掉了。</li>
+<li>虚拟机&#x2F;云沙箱：换了一个世界，文件系统、进程表、网络全是新的。</li>
+</ul>
+<p>所以”要不要上沙箱”其实是个更前面的问题：<strong>你是想管住”写哪里”，还是想管住”整个环境”？</strong> 前者一条命令一层壳就够了，后者才需要搬家。</p>
+<h2 id="4-三条缝：沙箱不是一个包"><a href="#4-三条缝：沙箱不是一个包" class="headerlink" title="4. 三条缝：沙箱不是一个包"></a>4. 三条缝：沙箱不是一个包</h2><p>DSH 把这件事拆得很干净，干净到第一次看会觉得”至于吗”。三个包各管一件事：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  subgraph TOOL[&quot;工具层（模型看得到的）&quot;]
+    T1[&quot;tool-bash&quot;]
+    T2[&quot;tool-fs&quot;]
+    T3[&quot;tool-pwsh&quot;]
+  end
+  subgraph CAP[&quot;能力层（可整体替换）&quot;]
+    S1[&quot;ctx.shell&lt;br&#x2F;&gt;执行器&quot;]
+    S2[&quot;ctx.fs&lt;br&#x2F;&gt;文件系统&quot;]
+  end
+  subgraph SB[&quot;沙箱层&quot;]
+    C[&quot;ctx.sandbox&lt;br&#x2F;&gt;confine(argv, policy)&quot;]
+    P[&quot;ctx.sandboxPolicy&lt;br&#x2F;&gt;mode + workspaceRoot&quot;]
+  end
+  subgraph BE[&quot;后端（按平台选）&quot;]
+    B1[&quot;bwrap&quot;]
+    B2[&quot;landlock&quot;]
+    B3[&quot;sandbox-exec&quot;]
+    B4[&quot;windows-acl&quot;]
+  end
+  T1 --&gt; S1
+  T3 --&gt; S1
+  T2 --&gt; S2
+  S1 --&gt; C
+  S2 --&gt; P
+  C --&gt; B1
+  C --&gt; B2
+  C --&gt; B3
+  C --&gt; B4
+  P -.-&gt;|&quot;每次调用交出 policy&quot;| C
+  P -.-&gt;|&quot;每次写操作交出 policy&quot;| S2
+  </pre></div>
+
+<ul>
+<li><strong><code>dsh-sandbox</code> 只是词汇表。</strong> 它定义 <code>SandboxMode</code>、<code>ConfinedArgv</code>、拒绝标记、升级阶梯，以及一个 <code>SandboxProvider</code> 服务；<strong>它不依赖任何具体后端</strong>。所以”沙箱”这个概念本身可以被别的实现接管。</li>
+<li><strong><code>dsh-sandbox-policy</code> 是策略的唯一归属者。</strong> 当前模式、工作区根、以及”谁能改模式”都在这儿。</li>
+<li><strong><code>dsh-sandbox-local</code> 是后端实现。</strong> 它挑平台、探针、拼 profile，把 argv 包好交回去。</li>
+<li><strong>消费者只做一件小事。</strong> <code>dsh-bash-sandbox</code> 把 <code>ctx.shell</code> 换成”会包装的 bash”，<code>dsh-fs-sandbox</code> 把 <code>ctx.fs</code> 换成”带栅栏的文件系统”，<code>dsh-pwsh-sandbox</code> 是 PowerShell 版的同一件事。</li>
+</ul>
+<p>拆成三条缝的好处，用一句话说就是：<strong>工具层完全不知道沙箱存在。</strong> 模型看到的 <code>bash</code> 工具描述、参数、返回格式，一个字都没变；换后端、改策略、甚至把整个本地后端换成远端，都不需要动工具。反过来，模型也<strong>不会</strong>因为”有个沙箱”就以为每条命令都必然被关着——它看到的是”可能被关着”，以及被关时的具体提示。</p>
+<h2 id="5-什么时候会被关进去"><a href="#5-什么时候会被关进去" class="headerlink" title="5. 什么时候会被关进去"></a>5. 什么时候会被关进去</h2><p>这里最容易误解：没有”进入沙箱模式”这种开关，<strong>每一次调用都独立解析一次策略</strong>。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+  A[&quot;模型发起 bash 调用&quot;] --&gt; B[&quot;tool-bash 解析参数&lt;br&#x2F;&gt;command &#x2F; workdir &#x2F; sandbox_permissions&quot;]
+  B --&gt; C{&quot;resolve() 得到 mode&quot;}
+  C --&gt;|&quot;danger-full-access&quot;| D[&quot;短路：不包装&lt;br&#x2F;&gt;直接 spawn&quot;]
+  C --&gt;|&quot;read-only &#x2F; workspace-write&quot;| E[&quot;ctx.sandbox.confine(argv, policy)&quot;]
+  E --&gt; F{&quot;该平台有可用 runner？&quot;}
+  F --&gt;|&quot;没有&quot;| G[&quot;抛 SANDBOX_UNAVAILABLE&lt;br&#x2F;&gt;拒绝裸跑&quot;]
+  F --&gt;|&quot;有&quot;| H[&quot;返回包装后的 argv&quot;]
+  H --&gt; I[&quot;spawn 子进程&quot;]
+  I --&gt; J{&quot;退出码 + stderr&quot;}
+  J --&gt;|&quot;命中拒绝方言&quot;| K[&quot;sandbox.denied &#x3D; true&lt;br&#x2F;&gt;返回拒绝标记&quot;]
+  J --&gt;|&quot;命中 runner 致命签名&quot;| L[&quot;抛 SANDBOX_UNAVAILABLE&lt;br&#x2F;&gt;命令根本没跑&quot;]
+  J --&gt;|&quot;正常&quot;| M[&quot;返回 stdout &#x2F; stderr&quot;]
+  </pre></div>
+
+<p><code>mode</code> 从哪来？三级，从强到弱：</p>
+<ol>
+<li><strong>本次调用显式批准的更宽模式</strong>（模型申请、人点了”允许一次”）；</li>
+<li><strong>本会话最后一次 <code>sandbox/mode</code> 事件</strong>（你在界面上切了权限档）；</li>
+<li><strong>部署默认值</strong>：<code>$DSH_PERMISSION_MODE</code>，base 组合里没设就是 <code>workspace-write</code>。</li>
+</ol>
+<p>源码里就一行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-sandbox-policy/lib/index.js:141-148</span></span><br><span class="line"><span class="title function_">resolve</span>(<span class="params">request = &#123;&#125;</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; session &#125; = request;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">mode</span>: request.<span class="property">mode</span> ?? (session === <span class="keyword">void</span> <span class="number">0</span> ? <span class="keyword">void</span> <span class="number">0</span> : <span class="variable language_">this</span>.<span class="title function_">overrideOf</span>(session)) ?? <span class="variable language_">this</span>.<span class="property">defaultMode</span>,</span><br><span class="line">    <span class="attr">workspaceRoot</span>: <span class="title function_">resolveWorkspaceRoot</span>(session?.<span class="property">header</span>.<span class="property">cwd</span> ?? <span class="variable language_">this</span>.<span class="property">workspaceRoot</span>),</span><br><span class="line">    ...session === <span class="keyword">void</span> <span class="number">0</span> ? &#123;&#125; : &#123; <span class="attr">sessionId</span>: session.<span class="property">id</span> &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意 <code>workspaceRoot</code> 的取值：<strong>跟着会话的 cwd 走</strong>，没有会话才退回到配置里的根。这就是”可写范围”的边界——不是”当前目录”，而是”这个会话认领的工作区”。</p>
+<p>还有个细节很有意思：<strong>模型自己也能看到当前策略。</strong> 每次请求装配时，<code>sandbox:policy</code> 这一段会被拼进系统提示词的上下文区（不是稳定的系统提示词本体，所以不影响缓存前缀）。三句话，按档位不同：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Current DSH file policy: read-only. Any available operation enforced by the DSH file</span><br><span class="line">sandbox cannot modify files in the standing mode. Do not refuse a required modification</span><br><span class="line">from this policy alone: try an available tool normally and follow any denial and</span><br><span class="line">escalation guidance it returns.</span><br></pre></td></tr></table></figure>
+
+<p><code>workspace-write</code> 那句会把工作区路径直接写进去；<code>danger-full-access</code> 那句则明说”不限制”。为什么要告诉模型？因为<strong>它得知道自己会被拦，而且被拦了不该自己放弃</strong>——第二句”Do not refuse a required modification from this policy alone”就是防止模型看到只读就回你一句”我改不了，你自己动手吧”。</p>
+<h2 id="6-关进去之后，能看见什么"><a href="#6-关进去之后，能看见什么" class="headerlink" title="6. 关进去之后，能看见什么"></a>6. 关进去之后，能看见什么</h2><p>这是全文最”实”的部分。以 Linux 的 bwrap 为例，profile 就是下面这 15 行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-sandbox-local/lib/index.js:22-39</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">bwrapProfileArgs</span>(<span class="params">policy</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> args = [</span><br><span class="line">    <span class="string">&quot;--ro-bind&quot;</span>, <span class="string">&quot;/&quot;</span>, <span class="string">&quot;/&quot;</span>,</span><br><span class="line">    <span class="string">&quot;--dev&quot;</span>, <span class="string">&quot;/dev&quot;</span>,</span><br><span class="line">    <span class="string">&quot;--unshare-pid&quot;</span>,</span><br><span class="line">    <span class="string">&quot;--proc&quot;</span>, <span class="string">&quot;/proc&quot;</span>,</span><br><span class="line">    <span class="string">&quot;--die-with-parent&quot;</span></span><br><span class="line">  ];</span><br><span class="line">  <span class="keyword">if</span> (policy.<span class="property">mode</span> === <span class="string">&quot;workspace-write&quot;</span>) &#123;</span><br><span class="line">    args.<span class="title function_">push</span>(<span class="string">&quot;--tmpfs&quot;</span>, <span class="string">&quot;/tmp&quot;</span>);</span><br><span class="line">    args.<span class="title function_">push</span>(<span class="string">&quot;--bind&quot;</span>, policy.<span class="property">workspaceRoot</span>, policy.<span class="property">workspaceRoot</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> args;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逐条翻译：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--ro-bind / /</code></td>
+<td>把宿主根目录<strong>只读</strong>绑定到同一位置</td>
+<td>全世界都能看，谁都改不了</td>
+</tr>
+<tr>
+<td><code>--dev /dev</code></td>
+<td>挂一个最小的 <code>/dev</code></td>
+<td>有 <code>/dev/null</code> 这类设备，没有宿主的其他设备</td>
+</tr>
+<tr>
+<td><code>--unshare-pid</code></td>
+<td>私有 PID 命名空间</td>
+<td>看不见宿主的进程</td>
+</tr>
+<tr>
+<td><code>--proc /proc</code></td>
+<td>在私有命名空间里挂 <code>/proc</code></td>
+<td>只能看到自己这一支的进程</td>
+</tr>
+<tr>
+<td><code>--die-with-parent</code></td>
+<td>父进程死，子进程跟着死</td>
+<td>没有”孤儿进程在后台偷偷干活”</td>
+</tr>
+<tr>
+<td><code>--tmpfs /tmp</code></td>
+<td>全新的空 <code>/tmp</code></td>
+<td>临时文件可以写，但<strong>只在这个进程活着的时候存在</strong></td>
+</tr>
+<tr>
+<td><code>--bind &lt;ws&gt; &lt;ws&gt;</code></td>
+<td>工作区读写绑定</td>
+<td>唯一”持久可写”的地方</td>
+</tr>
+</tbody></table>
+<p><code>--unshare-pid</code> 和 <code>--proc</code> 这一对值得多说一句。它们不只是为了”看不见别的进程”——<strong>procfs 是个后门</strong>：<code>/proc/self/cwd</code>、<code>/proc/self/root</code> 这类魔术链接指向的是文件系统里真实的位置，如果你把宿主的 <code>/proc</code> 挂进去，一条 <code>cd /proc/1/root &amp;&amp; ...</code> 就能绕开你精心布置的挂载。所以私有 PID 命名空间 + 自己挂的 <code>/proc</code> 是<strong>成对出现</strong>的，缺一个就漏了。</p>
+<p>macOS 没有命名空间，用的是另一套：Seatbelt 的策略语言（SBPL）。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-sandbox-local/lib/index.js:65-75</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">seatbeltProfileArgs</span>(<span class="params">policy</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> forms = [</span><br><span class="line">    <span class="string">&quot;(version 1)&quot;</span>,</span><br><span class="line">    <span class="string">&quot;(allow default)&quot;</span>,</span><br><span class="line">    <span class="string">&quot;(deny file-write*)&quot;</span>,</span><br><span class="line">    <span class="string">`(allow file-write* (literal <span class="subst">$&#123;sbplString(<span class="string">&quot;/dev/null&quot;</span>)&#125;</span>))`</span></span><br><span class="line">  ];</span><br><span class="line">  <span class="keyword">const</span> roots = <span class="title function_">writableRoots</span>(policy);</span><br><span class="line">  <span class="keyword">if</span> (roots.<span class="property">length</span> &gt; <span class="number">0</span>) forms.<span class="title function_">push</span>(<span class="string">`(allow file-write* <span class="subst">$&#123;roots.map((root) =&gt; <span class="string">`(subpath <span class="subst">$&#123;sbplString(root)&#125;</span>)`</span>).join(<span class="string">&quot; &quot;</span>)&#125;</span>)`</span>);</span><br><span class="line">  <span class="keyword">return</span> [<span class="string">&quot;-p&quot;</span>, forms.<span class="title function_">join</span>(<span class="string">&quot; &quot;</span>)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>“默认全允许，然后把<strong>所有写</strong>禁掉，再按白名单一个个开回来”——读和写在这里被彻底分开了，这就是为什么只读模式几乎是零成本的。</p>
+<p><code>writableRoots</code> 是个共享函数（<code>dsh-sandbox/lib/index.js:166-173</code>）：只读模式返回空数组；<code>workspace-write</code> 返回 <code>[工作区, &quot;/tmp&quot;, 系统临时目录]</code>，而且会<strong>先 canonicalize 再去重</strong>——因为 macOS 上 <code>/tmp</code> 其实是 <code>/private/tmp</code> 的软链，不解析就会白名单和实际路径对不上。</p>
+<h3 id="本机实测"><a href="#本机实测" class="headerlink" title="本机实测"></a>本机实测</h3><p>光看代码不算数。我这台机器是 macOS，正好是 Seatbelt 后端，直接打三条命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">touch</span> /tmp/dsh-demo &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;tmp: OK&quot;</span></span><br><span class="line">tmp: OK</span><br><span class="line">$ <span class="built_in">touch</span> ~/dsh-demo</span><br><span class="line"><span class="built_in">touch</span>: /Users/smzdm/dsh-demo: Operation not permitted</span><br><span class="line">$ <span class="built_in">echo</span> hi &gt; /usr/local/bin/dsh-demo</span><br><span class="line">bash: /usr/local/bin/dsh-demo: Operation not permitted</span><br><span class="line">$ <span class="built_in">touch</span> /Users/smzdm/chw/dsh-demo      <span class="comment"># 工作区的上一级</span></span><br><span class="line"><span class="built_in">touch</span>: /Users/smzdm/chw/dsh-demo: Operation not permitted</span><br><span class="line">$ <span class="built_in">head</span> -1 ~/.zshrc                     <span class="comment"># 读？随便读</span></span><br><span class="line"><span class="comment"># ===== oh-my-zsh =====</span></span><br></pre></td></tr></table></figure>
+
+<p>四行输出把模型解释得很清楚：</p>
+<ul>
+<li>整块盘<strong>可读</strong>（<code>~/.zshrc</code> 随便看）；</li>
+<li><code>/tmp</code> <strong>可写</strong>；</li>
+<li>工作区（<code>/Users/smzdm/chw/BlogCode</code>）<strong>可写</strong>；</li>
+<li>工作区的<strong>父目录</strong> <code>/Users/smzdm/chw</code> 不可写——边界正好落在会话认领的那个目录上。</li>
+</ul>
+<p align="center">
+  <img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-沙箱设计/write-scope.png" width="780" alt="一个世界，两份写权限" style="border-radius:12px;">
+</p>
+
+<p>这也顺带解释了很多人第一次用 DSH 时会碰到的那句话：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[sandbox: file access denied under workspace-write mode]</span><br></pre></td></tr></table></figure>
+
+<p>它不是”出错了”，是<strong>策略生效了</strong>。</p>
+<h2 id="7-被拒绝了会怎样"><a href="#7-被拒绝了会怎样" class="headerlink" title="7. 被拒绝了会怎样"></a>7. 被拒绝了会怎样</h2><p>一条命令被拦下来，故事没结束，反而才刚开始。DSH 在这里设计了一条很克制的链路：<strong>标记 → 提示 → 申请 → 审批 → 一次放宽</strong>。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  sequenceDiagram
+  participant M as 模型
+  participant T as tool-bash
+  participant S as ctx.sandbox
+  participant H as 人
+  M-&gt;&gt;T: bash(&quot;touch ~&#x2F;x&quot;)
+  T-&gt;&gt;S: confine(argv, workspace-write)
+  S--&gt;&gt;T: 包装后的 argv
+  T-&gt;&gt;T: spawn，stderr 报 Operation not permitted
+  T--&gt;&gt;M: sandbox.denied&#x3D;true + 拒绝标记
+  Note over M: 看到了升级提示
+  M-&gt;&gt;T: bash(&quot;touch ~&#x2F;x&quot;, sandbox_permissions&#x3D;danger-full-access, justification&#x3D;...)
+  T-&gt;&gt;H: 审批请求
+  H--&gt;&gt;T: 允许一次
+  T-&gt;&gt;S: confine(argv, danger-full-access)
+  Note over S: 短路，不包装
+  T--&gt;&gt;M: 成功
+  </pre></div>
+
+<p>第一步是<strong>结构化的事实</strong>，不是一句自然语言。结果对象里带着 <code>sandbox: &#123; mode, denied, enforcement &#125;</code>，工具层据此在输出里贴标记：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[sandbox: file access denied under workspace-write mode]</span><br></pre></td></tr></table></figure>
+
+<p>同一个标记后面还会跟一句提示（<code>dsh-sandbox/lib/index.js:76-78</code>），措辞是固定的：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[sandbox: escalation available — retry this exact command once with sandbox_permissions</span><br><span class="line">(the narrowest wider mode that suffices) + justification; the approval prompt asks the user]</span><br></pre></td></tr></table></figure>
+
+<p>“<strong>the narrowest wider mode</strong>“和”<strong>this exact command</strong>“是两个刻意的约束：只准往宽了走、不准顺带改命令。因为如果模型能借一次升级把命令也换了，那审批就形同虚设——你批的是”写 <code>/tmp</code>“，执行的可能是别的东西。</p>
+<p>升级阶梯是个闭表（<code>dsh-sandbox/lib/index.js:30-33</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>当前模式</th>
+<th>可申请到</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>read-only</code></td>
+<td><code>workspace-write</code> &#x2F; <code>danger-full-access</code></td>
+</tr>
+<tr>
+<td><code>workspace-write</code></td>
+<td><code>danger-full-access</code></td>
+</tr>
+<tr>
+<td><code>danger-full-access</code></td>
+<td>无（已经最宽）</td>
+</tr>
+</tbody></table>
+<p>审批本身走 <code>ctx.approval</code>，返回四种结果之一：<code>allowed-once</code> &#x2F; <code>rejected</code> &#x2F; <code>cancelled</code> &#x2F; <code>unavailable</code>。三种不是”允许”的情况都<strong>不等于</strong>自动放宽——<code>unavailable</code> 意思是”这个组合里根本没有审批通道”，那就老老实实失败。还有两个小规矩：同一个模式的”申请”直接放行不再打扰人；往窄了申请直接报错。</p>
+<p>值得单独说的是**”runner 失败”和”命令被拒”必须分开**。沙箱进程自己起不来（比如 bwrap 没装、Seatbelt 拒绝加载策略），和命令因为越界被内核拒绝，在 stderr 里可能只差一行字。前者如果被误判成后者，模型会以为”我只是权限不够”，然后去申请升级——而真正该做的是修环境。所以每个后端都带一份”致命签名”表（<code>dsh-sandbox-local/lib/index.js:231-243</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>后端</th>
+<th>致命标志</th>
+<th>退出码约束</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bwrap</td>
+<td><code>bwrap: </code> 开头</td>
+<td>只认签名</td>
+</tr>
+<tr>
+<td>landlock</td>
+<td><code>landlock-run: </code> 开头</td>
+<td>必须 125</td>
+</tr>
+<tr>
+<td>seatbelt</td>
+<td><code>sandbox-exec: </code> 开头</td>
+<td>只认签名</td>
+</tr>
+<tr>
+<td>windows-acl</td>
+<td><code>windows-acl-run: </code> 开头</td>
+<td>必须 127</td>
+</tr>
+</tbody></table>
+<p>命中就抛 <code>SANDBOX_UNAVAILABLE</code>，并明确告诉模型”命令<strong>没有执行</strong>，这是沙箱的问题，不是命令失败”。</p>
+<h2 id="8-写文件那条路：栅栏，不是边界"><a href="#8-写文件那条路：栅栏，不是边界" class="headerlink" title="8. 写文件那条路：栅栏，不是边界"></a>8. 写文件那条路：栅栏，不是边界</h2><p>bash 是被内核关起来的，那 <code>write</code> &#x2F; <code>edit</code> 这两个工具呢？它们不走 bash，走的是 harness 自己的文件系统服务。</p>
+<p>这里有一个非常清醒的注释（<code>dsh-fs-sandbox/lib/index.js:77-85</code>）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">The fence is a policy check in TRUSTED code over a MODEL-CONTROLLED path,</span><br><span class="line">NOT a kernel boundary — the operations are the seam&#x27;s own (open, rename),</span><br><span class="line">and only the target path is untrusted, so canonicalize-then-contain is the</span><br><span class="line">complete answer to this surface. This is containment, not a security</span><br><span class="line">boundary; kernel-grade isolation of untrusted CODE stays ctx.shell&#x27;s job.</span><br></pre></td></tr></table></figure>
+
+<p>翻译成人话：<strong>这条路上”跑什么代码”是可信的（是我们自己的 <code>open</code>），不可信的只有”路径”这个字符串。</strong> 所以不需要内核边界，把路径校验到位就够了。</p>
+<p>具体做法是 <strong>canonicalize-then-contain</strong>，而且刻意多走半步：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dsh-fs-sandbox/lib/index.js:153-166</span></span><br><span class="line"><span class="keyword">async</span> <span class="title function_">checkedTarget</span>(<span class="params">target, sandboxPolicy</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> policy = sandboxPolicy ?? <span class="variable language_">this</span>.<span class="property">ctx</span>.<span class="property">sandboxPolicy</span>.<span class="title function_">resolve</span>();</span><br><span class="line">  <span class="keyword">const</span> &#123; mode &#125; = policy;</span><br><span class="line">  <span class="keyword">if</span> (mode === <span class="string">&quot;danger-full-access&quot;</span>) <span class="keyword">return</span> target;</span><br><span class="line">  <span class="keyword">if</span> (mode === <span class="string">&quot;read-only&quot;</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">FsError</span>(<span class="string">`cannot write &quot;<span class="subst">$&#123;target.displayPath&#125;</span>&quot;: file access denied under read-only mode`</span>, <span class="string">&quot;FS_SANDBOX_DENIED&quot;</span>);</span><br><span class="line">  <span class="keyword">const</span> fresh = <span class="keyword">await</span> <span class="variable language_">this</span>.<span class="title function_">resolve</span>(target.<span class="property">displayPath</span>);</span><br><span class="line">  <span class="keyword">let</span> contained = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> root <span class="keyword">of</span> <span class="title function_">writableRoots</span>(policy)) <span class="keyword">if</span> (<span class="keyword">await</span> <span class="title function_">isPathUnder</span>(fresh.<span class="property">targetKey</span>, root)) &#123;</span><br><span class="line">    contained = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!contained) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">FsError</span>(<span class="string">`cannot write &quot;<span class="subst">$&#123;target.displayPath&#125;</span>&quot;: file access denied under workspace-write mode`</span>, <span class="string">&quot;FS_SANDBOX_DENIED&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> fresh;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个细节：</p>
+<ul>
+<li>**返回的是 <code>fresh</code>，不是原来的 <code>target</code>。**检查用的那个路径，和真正被写的那个路径，是同一个对象——这样就不存在”检查 A、写 B”的问题。</li>
+<li><strong>在委托之前重新 canonicalize 一次。<strong>因为从检查到真正落盘之间，攻击者可能把某一级祖先目录换成软链（TOCTOU）。重新解析能把窗口缩到最小，剩下的残余风险被明确写进注释、并</strong>接受</strong>了——因为威胁模型是”模型写错路径”，不是”本地有恶意进程和我赛跑”。</li>
+</ul>
+<p><code>isPathUnder</code> 本身也值得一提：先走廉价的字符串比较，词法上不在根下面时，再沿着目标路径往上找<strong>已存在的祖先</strong>，用 <code>(dev, ino)</code> 比对文件身份。这是为了兜住 Windows 的 8.3 短名和大小写不敏感这类”拼写不同、其实是同一个文件”的情况——纯字符串比较在这里会漏。</p>
+<p>所以两条路的分工是清楚的：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>bash</th>
+<th>fs（write&#x2F;edit）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>跑的是谁的代码</td>
+<td>模型写的任意代码</td>
+<td>harness 自己的 open&#x2F;rename</td>
+</tr>
+<tr>
+<td>边界性质</td>
+<td>内核边界</td>
+<td>可信代码里的策略检查</td>
+</tr>
+<tr>
+<td>不可信的东西</td>
+<td>整个进程</td>
+<td>只有目标路径</td>
+</tr>
+<tr>
+<td>拒绝形态</td>
+<td>内核 errno（EPERM&#x2F;EROFS）</td>
+<td>结构化 <code>FS_SANDBOX_DENIED</code></td>
+</tr>
+<tr>
+<td>读</td>
+<td>放行</td>
+<td>放行</td>
+</tr>
+</tbody></table>
+<h2 id="9-四个后端，四种方言"><a href="#9-四个后端，四种方言" class="headerlink" title="9. 四个后端，四种方言"></a>9. 四个后端，四种方言</h2><p>同一份策略，落到不同平台上说法不一样。这是 <code>PLATFORM_CHAINS</code> 和几张表拼起来的事实（<code>dsh-sandbox-local/lib/index.js:173-243</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>选择链</th>
+<th>机制</th>
+<th>enforcement</th>
+<th>拒绝方言</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Linux</td>
+<td><code>bwrap</code> → <code>landlock</code></td>
+<td>用户命名空间 + 挂载</td>
+<td>full</td>
+<td><code>read-only file system</code></td>
+</tr>
+<tr>
+<td>Linux</td>
+<td><code>landlock</code></td>
+<td>内核 LSM，不需要 root</td>
+<td>full（老 ABI 可能 partial）</td>
+<td><code>permission denied</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>seatbelt</code></td>
+<td><code>sandbox-exec</code> + SBPL</td>
+<td>full</td>
+<td><code>operation not permitted</code></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td><code>windows-acl</code></td>
+<td>受限令牌 + ACL</td>
+<td><strong>partial</strong></td>
+<td><code>access is denied</code> 等</td>
+</tr>
+</tbody></table>
+<p>三条规则值记住：</p>
+<p><strong>一、先按平台选，再做探针。</strong> Linux 有两个候选，所以会在第一次需要时<strong>功能性地试一遍</strong>（真的跑一次 <code>bwrap ... -- true</code>，退出码 0 才算可用），结果缓存在 provider 生命周期里。macOS 只有 <code>sandbox-exec</code> 一个候选，<strong>根本不探</strong>——没有备选的时候，探针没有意义，只会增加启动延迟。这条”探针只用来仲裁，不用来复核唯一选择”的取舍，代码注释里写得很直白。</p>
+<p><strong>二、enforcement 是”报告的事实”，不是”承诺”。</strong> 每个包装返回值都带 <code>enforcement: &#39;full&#39; | &#39;partial&#39;</code>。Windows 的 ACL 方案是 partial——它管不住硬链接、管不住未受限进程的读、也管不住 AppContainer 的 ACL 边界。老版本 Landlock ABI 同理。需要绝对边界的调用方可以直接拒绝 partial。</p>
+<p><strong>三、失败要失败得”响”。</strong> 平台没有链、或者链上每个探针都失败，<code>confine()</code> 不是”算了裸跑吧”，而是抛错：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sandbox mode &quot;&lt;mode&gt;&quot; is requested but no sandbox backend is usable on this host;</span><br><span class="line">refusing to run the command unconfined. Install bubblewrap or run a Landlock-enforcing</span><br><span class="line">kernel (Linux), ensure sandbox-exec is usable (macOS), or ensure the ACL restricted-token</span><br><span class="line">runner can start (Windows) — otherwise switch the consumer to danger-full-access.</span><br></pre></td></tr></table></figure>
+
+<p><strong>“refusing to run the command unconfined”</strong> ——这句话是整个设计的地基。宁可失败，也不悄悄降级。因为悄悄降级是安全的反面：用户以为有保护，实际没有，而且永远不会知道。</p>
+<h2 id="10-另一条路：E2B-把整个世界换掉"><a href="#10-另一条路：E2B-把整个世界换掉" class="headerlink" title="10. 另一条路：E2B 把整个世界换掉"></a>10. 另一条路：E2B 把整个世界换掉</h2><p>前面说的都是”同世界围栏”。如果确实需要另一个世界——比如要跑一段来源不明的代码、要限制网络、要让文件系统从零开始——那就不是换个后端能解决的，得<strong>换掉能力本身</strong>。</p>
+<p>E2B 就是这样一套东西，DSH 把它做成了三个包：</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>替换了什么</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>e2b</code></td>
+<td>新增 <code>ctx.e2b</code></td>
+<td>沙箱的生命周期所有者：构造即创建，销毁即删除</td>
+</tr>
+<tr>
+<td><code>fs-e2b</code></td>
+<td><strong>替换</strong> <code>ctx.fs</code></td>
+<td>所有文件操作打到远端 Linux 沙箱</td>
+</tr>
+<tr>
+<td><code>subprocess-e2b</code></td>
+<td><strong>替换</strong> <code>ctx.subprocess</code></td>
+<td>所有子进程在远端跑，字节流回传</td>
+</tr>
+</tbody></table>
+<p>注意它<strong>不是</strong> <code>ctx.sandbox</code> 的后端——它压根不走 <code>confine</code> 这条缝。这是两个层次的替换：本地沙箱是”给命令戴手套”，E2B 是”把工作台整个搬走”。</p>
+<p>几个实际参数：</p>
+<ul>
+<li><code>cwd</code> 默认 <code>/home/user/workspace</code>，必须是绝对 POSIX 路径，<strong>它是解析约定，不是 containment</strong>（里面的程序照样能寻址别的路径）；</li>
+<li><code>timeoutMs</code> 默认 300000，到点删沙箱；</li>
+<li><code>apiKey</code> 只配给宿主侧的 SDK，<strong>从不装进沙箱</strong>；</li>
+<li>不搬过去的东西：harness 进程本身、agent 状态、会话日志、LLM 请求、技能——这些全留在本地。</li>
+</ul>
+<p>而且它是<strong>实验性的、opt-in 的</strong>：任何出厂组合（base &#x2F; headless &#x2F; web-app）都<strong>不默认挂载</strong>。要用得自己在 profile 里声明三个插件，而且 <code>fs-e2b</code>、<code>subprocess-e2b</code> 必须排在 <code>e2b</code> 之后加载。</p>
+<p>所以选型其实很简单：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  Q{&quot;要隔离的是什么？&quot;} --&gt;|&quot;写错地方&quot;| A[&quot;本地沙箱&lt;br&#x2F;&gt;confine(argv)&quot;]
+  Q --&gt;|&quot;整个环境&lt;br&#x2F;&gt;网络&#x2F;依赖&#x2F;不可信代码&quot;| B[&quot;E2B&lt;br&#x2F;&gt;替换 ctx.fs + ctx.subprocess&quot;]
+  A --&gt; A1[&quot;同内核，同文件系统&lt;br&#x2F;&gt;毫秒级，无需 root&quot;]
+  B --&gt; B1[&quot;独立 Linux 沙箱&lt;br&#x2F;&gt;远程，状态短暂&quot;]
+  </pre></div>
+
+<h2 id="11-它明确不做什么"><a href="#11-它明确不做什么" class="headerlink" title="11. 它明确不做什么"></a>11. 它明确不做什么</h2><p>一份诚实的设计说明，得把边界写清楚。DSH 的本地沙箱<strong>只管文件写</strong>：</p>
+<ul>
+<li>**不管网络。**命令照样能 <code>curl</code> 出去。</li>
+<li>**不管进程数量、CPU、内存。**没有 cgroup 配额。</li>
+<li>**不管 syscall 和内核攻击面。**共享内核，只是换了挂载视图。</li>
+<li><strong>不管设备。</strong><code>/dev</code> 只是最小集合，不是白名单。</li>
+<li>**不管凭据。**它不会替你清掉环境变量里的 token。</li>
+<li>**读永远放行。**所以 <code>~/.ssh</code>、<code>~/.aws</code>、钥匙串，只要进程知道路径，就能读。</li>
+</ul>
+<p>再加几条工程上的限制：一个 context 只能有一个 provider；拒绝的分类靠 stderr 方言推断（内核不给结构化通道）；Windows 只有 partial。</p>
+<p>知道这些之后，”沙箱”这个词就不该被理解成”安全了”，而应该理解成**”默认把破坏半径压到最小”**。真正的隔离，要么上容器&#x2F;虚拟机，要么在它外面再加一层网络和凭据的边界。</p>
+<h2 id="12-自己动手验证"><a href="#12-自己动手验证" class="headerlink" title="12. 自己动手验证"></a>12. 自己动手验证</h2><p>三步，都能在你自己的机器上复现。</p>
+<p><strong>第一步，看这个组合到底挂了哪些沙箱包：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dsh web --dump-config | grep -iE <span class="string">&quot;sandbox&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>正常情况下你会看到 <code>sandbox</code>、<code>sandbox-policy</code>、<code>sandbox-local</code>，以及某个 <code>*-sandbox</code> 执行器（bash 或 pwsh）。看不到 <code>e2b</code> 是对的——它默认不挂。</p>
+<p><strong>第二步，看默认策略：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$DSH_PERMISSION_MODE</span>       <span class="comment"># 没设就是组合里的默认值</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步，直接撞一次边界：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> /tmp/ok &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;tmp 可以写&quot;</span></span><br><span class="line"><span class="built_in">touch</span> ~/nope &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;不该看到这一行&quot;</span></span><br><span class="line"><span class="built_in">echo</span> hi &gt; /usr/local/bin/nope</span><br><span class="line"><span class="built_in">head</span> -1 ~/.zshrc                <span class="comment"># 读是不设防的</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你看到 <code>Operation not permitted</code>，说明 Seatbelt 在工作；看到 <code>Read-only file system</code>，那是 bwrap；<code>Permission denied</code> 则是 Landlock。三种方言，一个意思。</p>
+<p>最后，如果你想知道”为什么模型总说自己的权限不够”，翻回第 5 节——它每次请求都会收到一句 <code>Current DSH file policy: ...</code>，那是它对自己处境的唯一知情来源。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>把这篇的骨架压缩成五句话：</p>
+<ol>
+<li>沙箱防的是”写错地方”，不是”恶意逃逸”——所以它选了最轻的那条路：给命令戴手套，而不是搬家。</li>
+<li>没有”启动沙箱”这一步，只有”把 argv 包一层”；沙箱的寿命等于命令的寿命。</li>
+<li>三条缝各管一件事：契约（能不能包）、策略（包成什么样）、后端（用谁包）。</li>
+<li>每次调用重新解析策略，三级优先，<code>danger-full-access</code> 短路；失败宁可报错也不裸跑。</li>
+<li>被拦下不是一个终点，而是一条固定链路：标记 → 提示 → 只准变宽的申请 → 人工审批。</li>
+</ol>
+<p>下一篇想聊工具系统（一个 bash 工具描述为什么能写那么长），或者子代理与团队。看完有想深挖的点，直接说。</p>
+<p><strong>相关阅读</strong>：</p>
+<ul>
+<li><a href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/">DSH 上下文装配全解</a>：一次模型请求到底是怎么拼出来的</li>
+<li><a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">DSH 会话压缩策略详解</a>：上下文快满了怎么办</li>
+<li><a href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/">DSH Agent 主循环</a>：一条用户消息的完整旅程</li>
+<li><a href="/2026/04/28/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/">Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境</a>：偏概念的入门版，可以对照着看</li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/')">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=DSH 沙箱设计：一次 bash 调用，到底被关进了什么&amp;url=https://benedicttom.github.io/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/&amp;pic=/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Agent/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Agent<span class="tagsPageCount">11</span></a><a class="post-meta__box__tags" href="/tags/DeepSeek/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>DeepSeek<span class="tagsPageCount">4</span></a><a class="post-meta__box__tags" href="/tags/DSH/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>DSH<span class="tagsPageCount">3</span></a><a class="post-meta__box__tags" href="/tags/sandbox/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>sandbox<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">DSH Agent 主循环：一条用户消息的完整旅程</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/" title="DSH Agent 主循环：一条用户消息的完整旅程"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-10-30</div><div class="title">DSH Agent 主循环：一条用户消息的完整旅程</div></div></a></div><div><a href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/" title="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-10-30</div><div class="title">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</div></div></a></div><div><a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-10-30</div><div class="title">DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘</div></div></a></div><div><a href="/2026/04/25/AI_MCP/" title="FunctionCall、Agent、Mcp"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/AI_MCP/cover.webp" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">FunctionCall、Agent、Mcp</div></div></a></div><div><a href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-11</div><div class="title">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</div></div></a></div><div><a href="/2026/04/28/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/" title="Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-28</div><div class="title">Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%A6%82%E6%8B%AC"><span class="toc-number">1.</span> <span class="toc-text">0. 一句话概括</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%88%E7%BA%A0%E6%AD%A3%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%89"><span class="toc-number">2.</span> <span class="toc-text">1. 先纠正一个直觉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9D%9E%E8%A6%81%E6%B2%99%E7%AE%B1"><span class="toc-number">3.</span> <span class="toc-text">2. 为什么非要沙箱</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%B2%99%E7%AE%B1%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%B5%81%E6%B4%BE"><span class="toc-number">4.</span> <span class="toc-text">3. 沙箱的四种流派</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%89%E6%9D%A1%E7%BC%9D%EF%BC%9A%E6%B2%99%E7%AE%B1%E4%B8%8D%E6%98%AF%E4%B8%80%E4%B8%AA%E5%8C%85"><span class="toc-number">5.</span> <span class="toc-text">4. 三条缝：沙箱不是一个包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BC%9A%E8%A2%AB%E5%85%B3%E8%BF%9B%E5%8E%BB"><span class="toc-number">6.</span> <span class="toc-text">5. 什么时候会被关进去</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%85%B3%E8%BF%9B%E5%8E%BB%E4%B9%8B%E5%90%8E%EF%BC%8C%E8%83%BD%E7%9C%8B%E8%A7%81%E4%BB%80%E4%B9%88"><span class="toc-number">7.</span> <span class="toc-text">6. 关进去之后，能看见什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E6%9C%BA%E5%AE%9E%E6%B5%8B"><span class="toc-number">7.1.</span> <span class="toc-text">本机实测</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%A2%AB%E6%8B%92%E7%BB%9D%E4%BA%86%E4%BC%9A%E6%80%8E%E6%A0%B7"><span class="toc-number">8.</span> <span class="toc-text">7. 被拒绝了会怎样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%86%99%E6%96%87%E4%BB%B6%E9%82%A3%E6%9D%A1%E8%B7%AF%EF%BC%9A%E6%A0%85%E6%A0%8F%EF%BC%8C%E4%B8%8D%E6%98%AF%E8%BE%B9%E7%95%8C"><span class="toc-number">9.</span> <span class="toc-text">8. 写文件那条路：栅栏，不是边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%9B%9B%E4%B8%AA%E5%90%8E%E7%AB%AF%EF%BC%8C%E5%9B%9B%E7%A7%8D%E6%96%B9%E8%A8%80"><span class="toc-number">10.</span> <span class="toc-text">9. 四个后端，四种方言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%8F%A6%E4%B8%80%E6%9D%A1%E8%B7%AF%EF%BC%9AE2B-%E6%8A%8A%E6%95%B4%E4%B8%AA%E4%B8%96%E7%95%8C%E6%8D%A2%E6%8E%89"><span class="toc-number">11.</span> <span class="toc-text">10. 另一条路：E2B 把整个世界换掉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%AE%83%E6%98%8E%E7%A1%AE%E4%B8%8D%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-number">12.</span> <span class="toc-text">11. 它明确不做什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E9%AA%8C%E8%AF%81"><span class="toc-number">13.</span> <span class="toc-text">12. 自己动手验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">14.</span> <span class="toc-text">小结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/" title="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"/></a><div class="content"><a class="title" href="/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/" title="DSH 沙箱设计：一次 bash 调用，到底被关进了什么">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</a><time datetime="2026-11-02T06:20:00.000Z" title="Created 2026-11-02 14:20:00">2026-11-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/" title="DSH Agent 主循环：一条用户消息的完整旅程"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH Agent 主循环：一条用户消息的完整旅程"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/" title="DSH Agent 主循环：一条用户消息的完整旅程">DSH Agent 主循环：一条用户消息的完整旅程</a><time datetime="2026-10-30T13:55:00.000Z" title="Created 2026-10-30 21:55:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/" title="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/" title="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</a><time datetime="2026-10-30T13:10:00.000Z" title="Created 2026-10-30 21:10:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘">DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘</a><time datetime="2026-10-30T08:30:00.000Z" title="Created 2026-10-30 16:30:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"/></a><div class="content"><a class="title" href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</a><time datetime="2026-05-11T06:00:00.000Z" title="Created 2026-05-11 14:00:00">2026-05-11</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-theme.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">106</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">51</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">31</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>2</sup></a><a href="/tags/AMQP/" style="font-size: 0.88rem;">AMQP<sup>1</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>11</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>2</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>4</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>3</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>1</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 0.88rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>1</sup></a><a href="/tags/Spring/" style="font-size: 0.88rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 0.88rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 0.88rem;">Swagger<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 0.88rem;">agent-loop<sup>1</sup></a><a href="/tags/http/" style="font-size: 0.88rem;">http<sup>1</sup></a><a href="/tags/sandbox/" style="font-size: 0.88rem;">sandbox<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 0.88rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 0.88rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>9</sup></a><a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 0.88rem;">并发<sup>10</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 0.88rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.88rem;">算法<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("/images/theme/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
