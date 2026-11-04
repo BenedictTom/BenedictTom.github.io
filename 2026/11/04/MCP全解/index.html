@@ -1,0 +1,763 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>MCP 全解：从 stdio 到无状态，再到网关与高并发 | Joie's Blog</title><meta name="keywords" content="Agent,Protocol,AI,MCP"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="MCP 全解：从 stdio 到无状态，再到网关与高并发"><meta name="application-name" content="MCP 全解：从 stdio 到无状态，再到网关与高并发"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="MCP 全解：从 stdio 到无状态，再到网关与高并发"><meta property="og:url" content="https://benedicttom.github.io/2026/11/04/MCP%E5%85%A8%E8%A7%A3/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="一次讲清 MCP 的两种传输、五个版本的有状态到无状态改造、网关该不该上、调用量大了怎么扛，最后手写一个能跑的最简 MCP Server。"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/MCP%E5%85%A8%E8%A7%A3/cover.gif"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/MCP%E5%85%A8%E8%A7%A3/cover.gif"><meta name="description" content="一次讲清 MCP 的两种传输、五个版本的有状态到无状态改造、网关该不该上、调用量大了怎么扛，最后手写一个能跑的最简 MCP Server。"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/11/04/MCP%E5%85%A8%E8%A7%A3/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'MCP 全解：从 stdio 到无状态，再到网关与高并发',
+  postAI: '',
+  pageFillDescription: '0. 一句话概括, 1. MCP 到底解决了什么, 2. 两种传输：stdio 和 Streamable HTTP, SSE 那段历史为什么让人晕, 3. 有状态 → 无状态：这三年到底改了什么, 3.1 曾经的有状态长什么样, 3.2 为什么非删不可, 3.3 那状态去哪了？, 3.4 我拿真机跑了一遍差别是这样的, 4. 那 SSE 现在还有什么用, 5. MCP Gateway：把很多个 server收成一个, 6. 调用量特别大怎么办, 7. 写一个最简单的 MCP, 7.1 装依赖, 7.2 三十行写完, 7.3 跑起来, 7.4 接进真实客户端, 7.5 三个必踩的坑, 8. 一页速查, 相关阅读一句话概括就是给模型调工具这件事定的一份说明书用说话两种传输本地走远程走五个版本里把连接是有状态的这一点一路削成了每条请求自带身份而绝大多数人卡住的三个问题其实是一个问题的三个面状态放哪为什么远程服务老要开因为服务器有话说得有条通道往回推为什么新版本把会话删了因为有状态让扩容变贵而绝大部分工具根本不需要为什么上了网关因为一个会话就是一份内存十个工具就是十份配置得有人替你把它们收拢下面按你关心的顺序一个个说先看图协议插图本文封面同款到底解决了什么先说个老掉牙但确实准确的类比没有的时候每个应用要和个外部能力对接就得写套胶水搜索一套数据库一套工单系统一套个应用就是份代码每份都要处理鉴权超时重试参数格式返回格式有了应用只认协议工具只实现协议复杂度从塌成没有条胶水应用搜索数据库应用有应用应用搜索数据库协议本身只规定三种服务端原语原语一句话解释典型例子模型可以调用的函数查天气跑发工单模型可以读的上下文资源文件日志表结构预置的提示词模板帮我审这段代码客户端那边还有几个反向能力这里有个大坑在年这条线上已经日落看到老文章教你用让服务器反过来借客户端的模型先确认一下版本再说所有消息都是所以报文长什么样这件事本身没什么可讲的真正有意思的全在传输和状态上两种传输和社区里最常见的混乱是问用还是用这个问题本身是错的和是两种传输是传输里的一种响应格式不是同一个维度的选项把当子进程客户端往写进程从回结果是独立服务客户端服务或流客户端把当子进程拉起来一行一条消息走进程的标准输入输出没有端口没有网络没有鉴权天然只服务一个客户端桌面应用里的本地工具读文件跑命令查本地库基本都该用它是独立部署的服务客户端到单个端点比如响应可以是普通也可以是一条流这样才可能一边算一边回多客户端共享那段历史为什么让人晕规范里叫要两个端点一个收请求一个开长连接收回复两个端点意味着两套鉴权两套路由两套网关规则还得处理连接断了消息就丢了换成单端点进去普通请求直接回需要流式就回一条双端点方案从此列为连流能不能续传这件事都砍了事件断点重投全部移除断了就当这条请求丢了客户端换个新重发所以判断一份资料是不是过期有个特别快的办法看它有没有教你配两个有就是年的东西有状态无状态这三年到底改了什么这是本文最想讲清楚的一段因为它解释了今天所有怎么扩容的答案双端点协议版本头会话头改名删掉会话与握手曾经的有状态长什么样年的设计里一次连接是这样开的先握手再一直带着会话号握手响应头发之后每个请求都带这个头进程内存里存着这一轮的状态每条请求自带身份里带版本能力客户端信息现场处理处理完就忘规范演进规范原文写得很克制服务器可以在的响应里给一个客户端必须在后续请求里带上服务器想结束会话就随便结束之后对这个回客户端收到必须重新握手问题就埋在服务器可以这三个字里因为协议允许所以生态里长出了大量有会话的实现会话里存鉴权上下文存用户偏好存上次查到第几页存连接对象这些东西一旦进内存你就得到了一个有状态服务它的所有麻烦随之而来为什么非删不可一句话有状态的服务扩容要付利息负载均衡不能随便轮询了得做会话粘滞或者把会话搬进一个节点重启落在那台机器上的会话全断客户端得重新握手一台机器能扛多少客户端取决于能存多少会话于是你得设计上限空闲回收超时踢人长连接本身也贵每个客户端挂一条流就是一条一直开着的连接而现实是绝大多数工具调用根本不需要状态查天气不需要知道上次查了谁跑一次不需要记住上一条为了少数场景让所有部署变复杂显然不划算这一版的处理非常干净利落删掉握手连接不再有建立这一步上来就是请求删掉没有会话号可带也就没有会话可以丢每条请求自带身份里放客户端建议再带服务器在结果里回版本对不上就回新增想一次性知道这台服务器支持什么版本有什么能力是谁就问它服务器必须实现列表不再随连接变化的结果跟连接无关了可以缓存可以可以预先算好那状态去哪了不是不许有状态是状态不能藏在连接里得变成明面上的东西规范给了三条路显式句柄需要跨调用记住什么就让服务器造一个当普通参数传回来想记分页位置返回一个想记购物车返回一个这样状态存在你的数据库里服务器本身还是无状态的服务器处理到一半发现我需要用户确认一下就回一个的结果里面带客户端拿着答案带着把原请求重发一遍注意是客户端重发不是服务器挂在内存里等要收变更通知开一条长寿命的响应流声明你关心哪几类事件工具列表变了资源列表变了服务器通过这条流推给你我拿真机跑了一遍差别是这样的光看规范容易将信将疑所以我在本机用官方这条线写了个最小服务器把两种时代的请求各发了一遍第一条老办法先握手服务器依次回第二条新办法不握手每条请求自带回的列表里带着几个新字段信息量很大获取某城市的天气预报是新版每个结果都必须带的和是给客户端和网关的缓存指令我这里是和意思是别缓存这一点后面讲扩容时会再用到顺手踩的一个坑如果你不带直接发服务器会把它当成时代的无声明开场回你一句不是服务器坏了是它按旧规矩接待了你那现在还有什么用回到聊天记录里没答完的那个问题什么样的工具需要推送答案是当服务器有话说而这句话不在本次请求的返回值里的时候之后这句话的场景收敛成四类客户端一个长任务进度通知服务器要输入但不占内存带重发原请求流式结果结果太大或太慢一条事件一条地吐比攒完再发体验好得多进度通知长任务报进度让客户端别以为卡死了变更订阅工具或资源列表变了推给客户端中途要输入的不需要推送的场景就别用流一次查询一次写入一次计算普通返回就行多一条长连接就多一份连接数超时网关和负载均衡的配置成本把很多个收成一个这里要先把一个误解拆掉网关不是用来给单个扩容的单个扛不住你该做的是无状态化加副本下一节网关解决的是另一种痛那边要配个每个都有自己的启动命令环境变量密钥个的工具全塞进上下文光工具描述就吃掉几千密钥散落在每个客户端的配置里谁泄露了都不知道想审计这个今天调了哪些工具无从查起以的为例里的底座它把这几件事一次性办了每个跑在独立容器里统一入口密钥由侧管理而不进环境变量内置流程动态发现所有的并聚合外加日志与调用追踪自研鉴权聚合审计搜索数据库工单所以判断要不要上网关看的是这三条里中了几条工具多到管不过来密钥多到不敢发要审计只有一台只有你自己用加网关纯属给自己加一层故障点顺带一个容易被忽略的收益网关可以让多个客户端共享同一份发现结果给网关池专门留了参数探测一次把结果存起来后面每个新客户端连接时直接采用一个字节都不用发对网关每秒要接几百个短连接这种场景这是实打实的省调用量特别大怎么办把优化按从便宜到贵排个序照这个顺序做基本不会错无状态化请求之间不留内存横向加副本负载均衡随便挂上缓存事件跨节点接网关兜底限流熔断连接池无状态化在这条线上这是默认行为每个请求都从你的工厂函数现场造一个实例处理完就扔没有会话就没有粘滞没有粘滞就没有某台机器挂了带走一批客户端横向加副本无状态之后横向扩容是挂到任意负载均衡后面这一句话的事不需要会话亲和不需要共享状态不需要配置这也是为什么规范宁肯删掉会话它把扩容从架构设计降级成了运维动作如果你还停在的老线有会话那就只有两条路把会话搬进共享存储每个节点都指向同一个断流可从任意节点续或者做消息路由按把流量固定到属主节点两条都比无状态贵缓存结果里的和就是干这个的这类与连接无关的端点天生适合缓存网关侧缓存一份能挡掉大量重复发现请求事件总线无状态部署里唯一还会跨节点的东西是默认的事件总线是进程内的节点上的工具变了永远到不了节点上挂着的订阅者解法是把实现到你的上每个节点都拿同一个总线网关兜底限流熔断并发上限连接池放在网关层比放在每个里靠谱因为它是唯一能看到全局流量的地方还有一个必须提的成本项工具描述也是十个一百个工具全暴露给模型每次请求都要为这些描述付钱还容易让模型选错所以先缩小暴露面再谈扩容按需发现按场景挂载用完就摘往往比加机器更有效写一个最简单的理论说完了动手下面这个服务器我本机跑通过改动量几乎为零装依赖注意是这个新包不是老的顺手记两个坑要求并且不再自动带里要写三十行写完获取某城市的天气预报未来一周晴天几个点值得停一下收的是一个工厂函数不是实例每次需要新实例时它自己调这正是无状态在代码里的样子直接写会转成我上面实测输出的是那份处理函数返回的是数组不是字符串因为一条回复可以由多种内容拼成文本图片资源引用跑起来服务器不会自己打印什么你得喂给它把下面几行按行写进去杭州你会看到两行回包第二行是杭州未来一周晴天没有任何握手上来就是调用这就是的样子接进真实客户端本地工具用配置里就是一条命令绝对路径三个必踩的坑坑一会把客户端搞挂传输里是协议通道你打一行调试日志客户端就读到一条不合法的直接断连所有日志走坑二不带会得到如上文实测裸请求会被当成时代的老客户端写测试脚本时务必带上坑三工具描述就是上下文成本描述写得太细每个会话都要为它付写得太粗模型选错工具经验是一句话说清什么时候该用它比罗列参数更有用参数本来就在里一页速查问题答案本地工具用什么传输子进程标准输入输出远程服务用什么传输单端点或看到两个端点两个年的老写法已废弃现在还有会话吗起没有了连都删了那状态存哪显式句柄当参数什么时候开流流式结果进度变更订阅中途要输入会话粘滞还要不要无状态部署不要只有老线才需要网关解决什么工具多密钥多要审计不是用来给单点扩容的扩容第一步无状态化然后横向加副本最省事的降本减少暴露给模型的工具数量相关阅读三者的入门概念与对比本文是它在协议层面的展开协议让学会对话的通信标准管到工具管到互补而非竞争主循环一次对话到底是怎么跑起来的工具调用在内部长什么样沙箱设计一次调用到底被关进了什么工具真跑起来之后边界在哪',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-11-04 18:30:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="/images/theme/loading-avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/images/theme/reward-wechat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-wechat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/theme/reward-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>3</sup></a><a href="/tags/AMQP/" style="font-size: 1.05rem;">AMQP<sup>1</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>12</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>2</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>4</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/MCP/" style="font-size: 1.05rem;">MCP<sup>1</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 1.05rem;">ORM<sup>3</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 1.05rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>1</sup></a><a href="/tags/Spring/" style="font-size: 1.05rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 1.05rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 1.05rem;">Swagger<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 1.05rem;">agent-loop<sup>1</sup></a><a href="/tags/http/" style="font-size: 1.05rem;">http<sup>1</sup></a><a href="/tags/sandbox/" style="font-size: 1.05rem;">sandbox<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 1.05rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 1.05rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 1.05rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 1.05rem;">多线程<sup>9</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 1.05rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 1.05rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 1.05rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/11/"><span class="card-archive-list-date">November 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Agent/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Agent</span></a><a class="article-meta__tags" href="/tags/Protocol/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Protocol</span></a><a class="article-meta__tags" href="/tags/AI/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>AI</span></a><a class="article-meta__tags" href="/tags/MCP/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>MCP</span></a></span></div></div><h1 class="post-title" itemprop="name headline">MCP 全解：从 stdio 到无状态，再到网关与高并发</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-11-04T10:30:00.000Z" title="Created 2026-11-04 18:30:00">2026-11-04</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-11-04T10:30:00.000Z" title="Updated 2026-11-04 18:30:00">2026-11-04</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/MCP%E5%85%A8%E8%A7%A3/cover.gif"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/11/04/MCP%E5%85%A8%E8%A7%A3/"><header><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a><a href="/tags/Agent/" tabindex="-1" itemprop="url">Agent</a><a href="/tags/Protocol/" tabindex="-1" itemprop="url">Protocol</a><a href="/tags/AI/" tabindex="-1" itemprop="url">AI</a><a href="/tags/MCP/" tabindex="-1" itemprop="url">MCP</a><h1 id="CrawlerTitle" itemprop="name headline">MCP 全解：从 stdio 到无状态，再到网关与高并发</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-11-04T10:30:00.000Z" title="Created 2026-11-04 18:30:00">2026-11-04</time><time itemprop="dateCreated datePublished" datetime="2026-11-04T10:30:00.000Z" title="Updated 2026-11-04 18:30:00">2026-11-04</time></header><h2 id="0-一句话概括"><a href="#0-一句话概括" class="headerlink" title="0. 一句话概括"></a>0. 一句话概括</h2><p>MCP 就是<strong>给”模型调工具”这件事定的一份说明书</strong>：用 JSON-RPC 2.0 说话，两种传输（本地走 stdio，远程走 Streamable HTTP），五个版本里把”连接是有状态的”这一点一路削成了”每条请求自带身份”。</p>
+<p>而绝大多数人卡住的三个问题，其实是一个问题的三个面——<strong>状态放哪</strong>：</p>
+<ul>
+<li>为什么远程服务老要开 SSE？→ 因为服务器有话说，得有条通道往回推。</li>
+<li>为什么新版本把会话删了？→ 因为有状态让扩容变贵，而绝大部分工具根本不需要。</li>
+<li>为什么上了网关？→ 因为一个会话就是一份内存，十个工具就是十份配置，得有人替你把它们收拢。</li>
+</ul>
+<p>下面按你关心的顺序一个个说。先看图。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/MCP全解/mcp-illustration.gif" alt="MCP 示意图" width="460">
+<figcaption>MCP 协议插图（本文封面同款）</figcaption>
+</figure>
+
+<h2 id="1-MCP-到底解决了什么"><a href="#1-MCP-到底解决了什么" class="headerlink" title="1. MCP 到底解决了什么"></a>1. MCP 到底解决了什么</h2><p>先说个老掉牙但确实准确的类比。</p>
+<p>没有 MCP 的时候，每个 AI 应用要和 N 个外部能力对接，就得写 N 套胶水：搜索一套、数据库一套、工单系统一套。M 个应用就是 M × N 份代码，每份都要处理鉴权、超时、重试、参数格式、返回格式……</p>
+<p>有了 MCP，应用只认协议，工具只实现协议，复杂度从 M × N 塌成 M + N。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  subgraph before[&quot;没有 MCP：M × N 条胶水&quot;]
+    direction TB
+    a1[应用 A] --- s1[搜索]
+    a1 --- s2[数据库]
+    a2[应用 B] --- s1
+    a2 --- s2
+  end
+  subgraph after[&quot;有 MCP：M + N&quot;]
+    direction TB
+    b1[应用 A] --- p[(&quot;MCP&quot;)]
+    b2[应用 B] --- p
+    p --- t1[搜索 server]
+    p --- t2[数据库 server]
+  end
+  before --&gt; after
+  </pre></div>
+
+<p>协议本身只规定<strong>三种服务端原语</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>原语</th>
+<th>一句话解释</th>
+<th>典型例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tools</td>
+<td>模型可以调用的函数</td>
+<td>查天气、跑 SQL、发工单</td>
+</tr>
+<tr>
+<td>Resources</td>
+<td>模型可以读的上下文资源</td>
+<td>文件、日志、表结构</td>
+</tr>
+<tr>
+<td>Prompts</td>
+<td>预置的提示词模板</td>
+<td>“帮我审这段代码”</td>
+</tr>
+</tbody></table>
+<p>客户端那边还有几个反向能力（roots、sampling、elicitation）。这里有个大坑：<strong>sampling 在 2026 年这条线上已经日落（sunset）</strong>，看到老文章教你用 sampling 让服务器反过来”借”客户端的模型，先确认一下版本再说。</p>
+<p>所有消息都是 JSON-RPC 2.0，所以”报文长什么样”这件事本身没什么可讲的——真正有意思的全在<strong>传输</strong>和<strong>状态</strong>上。</p>
+<h2 id="2-两种传输：stdio-和-Streamable-HTTP"><a href="#2-两种传输：stdio-和-Streamable-HTTP" class="headerlink" title="2. 两种传输：stdio 和 Streamable HTTP"></a>2. 两种传输：stdio 和 Streamable HTTP</h2><p>社区里最常见的混乱是问”用 stdio 还是用 SSE”。这个问题本身是错的：<strong>stdio 和 Streamable HTTP 是两种传输，SSE 是 HTTP 传输里的一种响应格式</strong>，不是同一个维度的选项。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  subgraph local[&quot;stdio：把 server 当子进程&quot;]
+    c1[客户端] --&gt;|&quot;往 stdin 写 JSON-RPC&quot;| srv[server 进程]
+    srv --&gt;|&quot;从 stdout 回结果&quot;| c1
+  end
+  subgraph remote[&quot;Streamable HTTP：server 是独立服务&quot;]
+    c2[客户端] --&gt;|&quot;POST &#x2F;mcp&quot;| http[server 服务]
+    http --&gt;|&quot;JSON 或 SSE 流&quot;| c2
+  end
+  </pre></div>
+
+<p><strong>stdio</strong>：客户端把 server 当子进程拉起来，一行一条 JSON-RPC 消息，走进程的标准输入输出。没有端口、没有网络、没有鉴权，天然只服务一个客户端。桌面应用里的本地工具（读文件、跑命令、查本地库）基本都该用它。</p>
+<p><strong>Streamable HTTP</strong>：server 是独立部署的服务，客户端 POST 到单个端点（比如 <code>/mcp</code>），响应可以是普通 JSON，也可以是一条 SSE 流。这样才可能一边算一边回、多客户端共享。</p>
+<h3 id="SSE-那段历史，为什么让人晕"><a href="#SSE-那段历史，为什么让人晕" class="headerlink" title="SSE 那段历史，为什么让人晕"></a>SSE 那段历史，为什么让人晕</h3><ul>
+<li><strong>2024-11-05</strong>：规范里叫 “HTTP with SSE”。要两个端点——一个 POST 收请求，一个 GET 开 SSE 长连接收回复。两个端点意味着两套鉴权、两套路由、两套网关规则，还得处理”连接断了消息就丢了”。</li>
+<li><strong>2025-03-26</strong>：换成 “Streamable HTTP”。<strong>单端点</strong>，POST 进去，普通请求直接回 JSON，需要流式就回一条 SSE。双端点方案从此列为 Deprecated。</li>
+<li><strong>2026-07-28</strong>：连”流能不能续传”这件事都砍了——<code>Last-Event-ID</code>、事件 id、断点重投全部移除，断了就当这条请求丢了，客户端换个新 id 重发。</li>
+</ul>
+<p>所以判断一份资料是不是过期，有个特别快的办法：<strong>看它有没有教你配两个 URL</strong>。有，就是 2024 年的东西。</p>
+<h2 id="3-有状态-→-无状态：这三年到底改了什么"><a href="#3-有状态-→-无状态：这三年到底改了什么" class="headerlink" title="3. 有状态 → 无状态：这三年到底改了什么"></a>3. 有状态 → 无状态：这三年到底改了什么</h2><p>这是本文最想讲清楚的一段，因为它解释了今天所有”MCP 怎么扩容”的答案。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  v1[&quot;2024-11&lt;br&#x2F;&gt;HTTP + SSE 双端点&quot;] --&gt; v2[&quot;2025-03&lt;br&#x2F;&gt;Streamable HTTP&quot;]
+  v2 --&gt; v3[&quot;2025-06&lt;br&#x2F;&gt;协议版本头&quot;]
+  v3 --&gt; v4[&quot;2025-11&lt;br&#x2F;&gt;会话头改名&quot;]
+  v4 --&gt; v5[&quot;2026-07&lt;br&#x2F;&gt;删掉会话与握手&quot;]
+  </pre></div>
+
+<h3 id="3-1-曾经的”有状态”长什么样"><a href="#3-1-曾经的”有状态”长什么样" class="headerlink" title="3.1 曾经的”有状态”长什么样"></a>3.1 曾经的”有状态”长什么样</h3><p>2025 年的设计里，一次连接是这样开的：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TB
+  subgraph old[&quot;2025：先握手，再一直带着会话号&quot;]
+    o1[&quot;initialize 握手&quot;] --&gt; o2[&quot;响应头发 Mcp-Session-Id&quot;]
+    o2 --&gt; o3[&quot;之后每个请求都带这个头&quot;]
+    o3 --&gt; o4[&quot;server 进程内存里存着这一轮的状态&quot;]
+  end
+  subgraph new[&quot;2026-07：每条请求自带身份&quot;]
+    n1[&quot;tools&#x2F;call&quot;] --&gt; n2[&quot;_meta 里带版本 &#x2F; 能力 &#x2F; 客户端信息&quot;]
+    n2 --&gt; n3[&quot;server 现场处理，处理完就忘&quot;]
+  end
+  old -.-&gt;|规范演进| new
+  </pre></div>
+
+<p>规范原文写得很克制：服务器<strong>可以</strong>（MAY）在 initialize 的响应里给一个 <code>Mcp-Session-Id</code>，客户端<strong>必须</strong>（MUST）在后续请求里带上；服务器想结束会话就随便结束，之后对这个 id 回 404，客户端收到 404 <strong>必须</strong>重新握手。</p>
+<p>问题就埋在”服务器<strong>可以</strong>“这三个字里。因为协议允许，所以生态里长出了大量”有会话”的实现：会话里存鉴权上下文、存用户偏好、存”上次查到第几页”、存 SSE 连接对象。这些东西一旦进内存，你就得到了一个有状态服务，它的所有麻烦随之而来。</p>
+<h3 id="3-2-为什么非删不可"><a href="#3-2-为什么非删不可" class="headerlink" title="3.2 为什么非删不可"></a>3.2 为什么非删不可</h3><p>一句话：<strong>有状态的服务，扩容要付利息。</strong></p>
+<ul>
+<li>负载均衡不能随便轮询了，得做会话粘滞，或者把会话搬进 Redis；</li>
+<li>一个节点重启，落在那台机器上的会话全断，客户端得重新握手；</li>
+<li>一台机器能扛多少客户端，取决于能存多少会话，于是你得设计上限、空闲回收、超时踢人；</li>
+<li>长连接本身也贵：每个客户端挂一条 GET SSE 流，就是一条一直开着的 HTTP 连接。</li>
+</ul>
+<p>而现实是：<strong>绝大多数工具调用根本不需要状态。</strong> 查天气不需要知道上次查了谁，跑一次 SQL 不需要记住上一条 SQL。为了少数场景让所有部署变复杂，显然不划算。</p>
+<p>2026-07-28 这一版的处理非常干净利落：</p>
+<ul>
+<li><strong>删掉 <code>initialize</code> 握手</strong>。连接不再有”建立”这一步，上来就是请求。</li>
+<li><strong>删掉 <code>Mcp-Session-Id</code></strong>。没有会话号可带，也就没有会话可以丢。</li>
+<li><strong>每条请求自带身份</strong>：<code>_meta</code> 里放 <code>io.modelcontextprotocol/protocolVersion</code>、<code>.../clientCapabilities</code>，客户端建议再带 <code>clientInfo</code>；服务器在结果里回 <code>serverInfo</code>，版本对不上就回 <code>UnsupportedProtocolVersionError</code>。</li>
+<li><strong>新增 <code>server/discover</code></strong>：想一次性知道”这台服务器支持什么版本、有什么能力、是谁”，就问它，服务器必须实现。</li>
+<li><strong>列表不再随连接变化</strong>：<code>tools/list</code> 的结果跟连接无关了，可以缓存、可以 CDN、可以预先算好。</li>
+</ul>
+<h3 id="3-3-那状态去哪了？"><a href="#3-3-那状态去哪了？" class="headerlink" title="3.3 那状态去哪了？"></a>3.3 那状态去哪了？</h3><p>不是不许有状态，是<strong>状态不能藏在连接里，得变成明面上的东西</strong>。规范给了三条路：</p>
+<ol>
+<li><strong>显式句柄</strong>：需要跨调用记住什么，就让服务器造一个 handle 当普通参数传回来。想记分页位置？返回一个 <code>cursor</code>；想记购物车？返回一个 <code>cart_id</code>。这样状态存在你的数据库里，服务器本身还是无状态的。</li>
+<li><strong>MRTR（Multi Round-Trip Requests）</strong>：服务器处理到一半发现”我需要用户确认一下”，就回一个 <code>resultType: &quot;input_required&quot;</code> 的结果，里面带 <code>inputRequests</code>；客户端拿着答案，<strong>带着 <code>inputResponses</code> 把原请求重发一遍</strong>。注意——是客户端重发，不是服务器挂在内存里等。</li>
+<li><strong><code>subscriptions/listen</code></strong>：要收变更通知？开一条长寿命的 POST 响应流，声明你关心哪几类事件（工具列表变了、资源列表变了……），服务器通过这条流推给你。</li>
+</ol>
+<h3 id="3-4-我拿真机跑了一遍，差别是这样的"><a href="#3-4-我拿真机跑了一遍，差别是这样的" class="headerlink" title="3.4 我拿真机跑了一遍，差别是这样的"></a>3.4 我拿真机跑了一遍，差别是这样的</h3><p>光看规范容易将信将疑，所以我在本机用官方 v2 SDK（<code>@modelcontextprotocol/server@2.4.0</code>，2026-07-28 这条线）写了个最小服务器，把两种”时代”的请求各发了一遍。</p>
+<p><strong>第一条：老办法，先握手。</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span><span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span><span class="attr">&quot;id&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span><span class="attr">&quot;method&quot;</span><span class="punctuation">:</span><span class="string">&quot;initialize&quot;</span><span class="punctuation">,</span><span class="attr">&quot;params&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span><span class="string">&quot;2025-06-18&quot;</span><span class="punctuation">,</span><span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="attr">&quot;clientInfo&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;old-client&quot;</span><span class="punctuation">,</span><span class="attr">&quot;version&quot;</span><span class="punctuation">:</span><span class="string">&quot;1.0&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span><span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span><span class="attr">&quot;method&quot;</span><span class="punctuation">:</span><span class="string">&quot;notifications/initialized&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span><span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span><span class="attr">&quot;id&quot;</span><span class="punctuation">:</span><span class="number">2</span><span class="punctuation">,</span><span class="attr">&quot;method&quot;</span><span class="punctuation">:</span><span class="string">&quot;tools/list&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务器依次回：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;result&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span><span class="string">&quot;2025-06-18&quot;</span><span class="punctuation">,</span><span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;tools&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="attr">&quot;serverInfo&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;weather&quot;</span><span class="punctuation">,</span><span class="attr">&quot;version&quot;</span><span class="punctuation">:</span><span class="string">&quot;1.0.0&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>第二条：新办法，不握手，每条请求自带 <code>_meta</code>。</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span><span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span><span class="attr">&quot;id&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span><span class="attr">&quot;method&quot;</span><span class="punctuation">:</span><span class="string">&quot;tools/list&quot;</span><span class="punctuation">,</span><span class="attr">&quot;params&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;_meta&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;io.modelcontextprotocol/protocolVersion&quot;</span><span class="punctuation">:</span><span class="string">&quot;2026-07-28&quot;</span><span class="punctuation">,</span><span class="attr">&quot;io.modelcontextprotocol/clientCapabilities&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="attr">&quot;io.modelcontextprotocol/clientInfo&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;probe&quot;</span><span class="punctuation">,</span><span class="attr">&quot;version&quot;</span><span class="punctuation">:</span><span class="string">&quot;0.0.1&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>回的列表里带着几个新字段，信息量很大：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;result&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;tools&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;get-forecast&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span><span class="string">&quot;获取某城市的天气预报&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;inputSchema&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span> <span class="attr">&quot;$schema&quot;</span><span class="punctuation">:</span><span class="string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span><span class="string">&quot;object&quot;</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;properties&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;city&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;type&quot;</span><span class="punctuation">:</span><span class="string">&quot;string&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span> <span class="attr">&quot;required&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="string">&quot;city&quot;</span><span class="punctuation">]</span> <span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;resultType&quot;</span><span class="punctuation">:</span><span class="string">&quot;complete&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;ttlMs&quot;</span><span class="punctuation">:</span><span class="number">0</span><span class="punctuation">,</span> <span class="attr">&quot;cacheScope&quot;</span><span class="punctuation">:</span><span class="string">&quot;private&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;_meta&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;io.modelcontextprotocol/serverInfo&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;weather&quot;</span><span class="punctuation">,</span><span class="attr">&quot;version&quot;</span><span class="punctuation">:</span><span class="string">&quot;1.0.0&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>resultType: &quot;complete&quot;</code> 是新版每个结果都必须带的；<code>ttlMs</code> 和 <code>cacheScope</code> 是<strong>给客户端和网关的缓存指令</strong>（我这里是 0 和 private，意思是别缓存）——这一点后面讲扩容时会再用到。</p>
+<p><strong>顺手踩的一个坑</strong>：如果你不带 <code>_meta</code> 直接发 <code>server/discover</code>，服务器会把它当成 2025 时代的”无声明开场”，回你一句：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span><span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span><span class="attr">&quot;id&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span><span class="attr">&quot;error&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;code&quot;</span><span class="punctuation">:</span><span class="number">-32601</span><span class="punctuation">,</span><span class="attr">&quot;message&quot;</span><span class="punctuation">:</span><span class="string">&quot;Method not found&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>不是服务器坏了，是它按旧规矩接待了你。</p>
+<h2 id="4-那-SSE-现在还有什么用"><a href="#4-那-SSE-现在还有什么用" class="headerlink" title="4. 那 SSE 现在还有什么用"></a>4. 那 SSE 现在还有什么用</h2><p>回到聊天记录里没答完的那个问题：<strong>什么样的工具需要推送？</strong></p>
+<p>答案是”当服务器有话说，而这句话不在本次请求的返回值里”的时候。2026-07-28 之后，这句话的场景收敛成四类：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  sequenceDiagram
+  participant C as 客户端
+  participant S as MCP Server
+  C-&gt;&gt;S: tools&#x2F;call 一个长任务
+  S--&gt;&gt;C: 进度通知 progress
+  S--&gt;&gt;C: resultType: input_required
+  Note over C,S: 服务器要输入（MRTR），但不占内存
+  C-&gt;&gt;S: 带 inputResponses 重发原请求
+  S--&gt;&gt;C: resultType: complete
+  </pre></div>
+
+<ol>
+<li><strong>流式结果</strong>：结果太大或太慢，一条 SSE 事件一条地吐，比攒完再发体验好得多。</li>
+<li><strong>进度通知</strong>：长任务报进度，让客户端别以为卡死了。</li>
+<li><strong>变更订阅</strong>：<code>subscriptions/listen</code>，工具或资源列表变了推给客户端。</li>
+<li><strong>中途要输入</strong>：MRTR 的 <code>input_required</code>。</li>
+</ol>
+<p><strong>不需要推送的场景，就别用流。</strong> 一次查询、一次写入、一次计算，普通 JSON 返回就行——多一条长连接，就多一份连接数、超时、网关和负载均衡的配置成本。</p>
+<h2 id="5-MCP-Gateway：把”很多个-server”收成一个"><a href="#5-MCP-Gateway：把”很多个-server”收成一个" class="headerlink" title="5. MCP Gateway：把”很多个 server”收成一个"></a>5. MCP Gateway：把”很多个 server”收成一个</h2><p>这里要先把一个误解拆掉：<strong>网关不是用来给单个 server 扩容的。</strong> 单个 server 扛不住，你该做的是无状态化 + 加副本（下一节）。网关解决的是另一种痛：</p>
+<ul>
+<li>Agent 那边要配 10 个 server，每个都有自己的启动命令、环境变量、密钥；</li>
+<li>10 个 server 的工具全塞进上下文，光工具描述就吃掉几千 token；</li>
+<li>密钥散落在每个客户端的配置里，谁泄露了都不知道；</li>
+<li>想审计”这个 Agent 今天调了哪些工具”，无从查起。</li>
+</ul>
+<p>以 Docker 的 MCP Gateway 为例（<code>docker/mcp-gateway</code>，Docker Desktop 里 MCP Toolkit 的底座），它把这几件事一次性办了：每个 server 跑在独立容器里、<strong>统一入口</strong>、密钥由 Docker 侧管理而不进环境变量、内置 OAuth 流程、<strong>动态发现</strong>所有 server 的 tools&#x2F;resources&#x2F;prompts 并聚合、外加日志与调用追踪。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  c1[Claude Desktop] --&gt; gw[(&quot;MCP Gateway&quot;)]
+  c2[Cursor] --&gt; gw
+  c3[自研 Agent] --&gt; gw
+  gw --&gt;|&quot;鉴权 · 聚合 · 审计&quot;| s1[搜索 server]
+  gw --&gt; s2[数据库 server]
+  gw --&gt; s3[工单 server]
+  </pre></div>
+
+<p>所以判断”要不要上网关”，看的是这三条里中了几条：<strong>工具多到管不过来 &#x2F; 密钥多到不敢发 &#x2F; 要审计</strong>。只有一台 server、只有你自己用，加网关纯属给自己加一层故障点。</p>
+<p>顺带一个容易被忽略的收益：网关可以让多个客户端共享同一份”发现结果”。SDK 给网关&#x2F;worker 池专门留了 <code>prior</code> 参数——<strong>探测一次 <code>server/discover</code>，把结果存起来，后面每个新客户端连接时直接采用，一个字节都不用发</strong>。对”网关每秒要接几百个短连接”这种场景，这是实打实的省。</p>
+<h2 id="6-调用量特别大，怎么办"><a href="#6-调用量特别大，怎么办" class="headerlink" title="6. 调用量特别大，怎么办"></a>6. 调用量特别大，怎么办</h2><p>把优化按”从便宜到贵”排个序，照这个顺序做基本不会错。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TB
+  l1[&quot;① 无状态化：请求之间不留内存&quot;] --&gt; l2[&quot;② 横向加副本：负载均衡随便挂&quot;]
+  l2 --&gt; l3[&quot;③ 上缓存：ttlMs &#x2F; cacheScope&quot;]
+  l3 --&gt; l4[&quot;④ 事件跨节点：ServerEventBus 接 Redis&quot;]
+  l4 --&gt; l5[&quot;⑤ 网关兜底：限流 &#x2F; 熔断 &#x2F; 连接池&quot;]
+  </pre></div>
+
+<p><strong>① 无状态化。</strong> 在 2026-07-28 这条线上，这是默认行为：每个 HTTP 请求都从你的工厂函数现场造一个 server 实例，处理完就扔。没有会话就没有粘滞，没有粘滞就没有”某台机器挂了带走一批客户端”。</p>
+<p><strong>② 横向加副本。</strong> 无状态之后，横向扩容是”挂到任意负载均衡后面”这一句话的事——不需要会话亲和，不需要共享状态，不需要配置。这也是为什么规范宁肯删掉会话：<strong>它把扩容从”架构设计”降级成了”运维动作”</strong>。</p>
+<p>如果你还停在 2025 的老线（有会话），那就只有两条路：把会话搬进共享存储（每个节点都指向同一个 event store，断流可从任意节点续），或者做消息路由（按 session 把流量固定到属主节点）。两条都比无状态贵。</p>
+<p><strong>③ 缓存。</strong> 结果里的 <code>ttlMs</code> 和 <code>cacheScope</code> 就是干这个的。<code>tools/list</code> 这类”与连接无关”的端点天生适合缓存；网关侧缓存一份，能挡掉大量重复发现请求。</p>
+<p><strong>④ 事件总线。</strong> 无状态部署里唯一还会跨节点的东西是 <code>subscriptions/listen</code>——默认的事件总线是进程内的，A 节点上的”工具变了”永远到不了 B 节点上挂着的订阅者。解法是把 <code>ServerEventBus</code> 实现到你的 Redis &#x2F; MQ 上，每个节点都拿同一个总线。</p>
+<p><strong>⑤ 网关兜底。</strong> 限流、熔断、并发上限、连接池，放在网关层比放在每个 server 里靠谱，因为它是唯一能看到全局流量的地方。</p>
+<p>还有一个必须提的成本项：<strong>工具描述也是 token</strong>。十个 server 一百个工具全暴露给模型，每次请求都要为这些描述付钱，还容易让模型选错。所以”先缩小暴露面，再谈扩容”——按需发现、按场景挂载、用完就摘，往往比加机器更有效。</p>
+<h2 id="7-写一个最简单的-MCP"><a href="#7-写一个最简单的-MCP" class="headerlink" title="7. 写一个最简单的 MCP"></a>7. 写一个最简单的 MCP</h2><p>理论说完了，动手。下面这个服务器我本机跑通过，改动量几乎为零。</p>
+<h3 id="7-1-装依赖"><a href="#7-1-装依赖" class="headerlink" title="7.1 装依赖"></a>7.1 装依赖</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @modelcontextprotocol/server zod</span><br></pre></td></tr></table></figure>
+
+<p>注意是 <code>@modelcontextprotocol/server</code> 这个新包（v2），不是老的 <code>@modelcontextprotocol/sdk</code>。顺手记两个坑：v2 要求 <strong>zod 4</strong>（<code>zod ^4.2.0</code>），并且 TypeScript ≥ 6 不再自动带 <code>@types/*</code>，<code>tsconfig</code> 里要写 <code>&quot;types&quot;: [&quot;node&quot;]</code>。</p>
+<h3 id="7-2-三十行写完"><a href="#7-2-三十行写完" class="headerlink" title="7.2 三十行写完"></a>7.2 三十行写完</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">McpServer</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@modelcontextprotocol/server&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; serveStdio &#125; <span class="keyword">from</span> <span class="string">&#x27;@modelcontextprotocol/server/stdio&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> z <span class="keyword">from</span> <span class="string">&#x27;zod/v4&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">serveStdio</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> server = <span class="keyword">new</span> <span class="title class_">McpServer</span>(&#123; <span class="attr">name</span>: <span class="string">&#x27;weather&#x27;</span>, <span class="attr">version</span>: <span class="string">&#x27;1.0.0&#x27;</span> &#125;);</span><br><span class="line"></span><br><span class="line">  server.<span class="title function_">registerTool</span>(</span><br><span class="line">    <span class="string">&#x27;get-forecast&#x27;</span>,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">description</span>: <span class="string">&#x27;获取某城市的天气预报&#x27;</span>,</span><br><span class="line">      <span class="attr">inputSchema</span>: z.<span class="title function_">object</span>(&#123; <span class="attr">city</span>: z.<span class="title function_">string</span>() &#125;),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">async</span> (&#123; city &#125;) =&gt; (&#123;</span><br><span class="line">      <span class="attr">content</span>: [&#123; <span class="attr">type</span>: <span class="string">&#x27;text&#x27;</span>, <span class="attr">text</span>: <span class="string">`<span class="subst">$&#123;city&#125;</span> 未来一周晴天。`</span> &#125;],</span><br><span class="line">    &#125;),</span><br><span class="line">  );</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> server;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>几个点值得停一下：</p>
+<ul>
+<li><code>serveStdio</code> 收的是一个<strong>工厂函数</strong>，不是实例。每次需要新实例时它自己调——这正是”无状态”在代码里的样子。</li>
+<li><code>inputSchema</code> 直接写 zod，SDK 会转成 JSON Schema（我上面实测输出的是 draft 2020-12 那份）。</li>
+<li>处理函数返回的是 <code>content</code> 数组，不是字符串——因为一条回复可以由多种内容拼成（文本、图片、资源引用）。</li>
+</ul>
+<h3 id="7-3-跑起来"><a href="#7-3-跑起来" class="headerlink" title="7.3 跑起来"></a>7.3 跑起来</h3><p>stdio 服务器不会自己打印什么，你得喂给它 JSON-RPC。把下面几行按行写进去：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;%s\n&#x27;</span> \</span><br><span class="line"> <span class="string">&#x27;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;tools/list&quot;,&quot;params&quot;:&#123;&quot;_meta&quot;:&#123;&quot;io.modelcontextprotocol/protocolVersion&quot;:&quot;2026-07-28&quot;,&quot;io.modelcontextprotocol/clientCapabilities&quot;:&#123;&#125;,&quot;io.modelcontextprotocol/clientInfo&quot;:&#123;&quot;name&quot;:&quot;probe&quot;,&quot;version&quot;:&quot;0.0.1&quot;&#125;&#125;&#125;&#125;&#x27;</span> \</span><br><span class="line"> <span class="string">&#x27;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:2,&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:&#123;&quot;name&quot;:&quot;get-forecast&quot;,&quot;arguments&quot;:&#123;&quot;city&quot;:&quot;杭州&quot;&#125;,&quot;_meta&quot;:&#123;&quot;io.modelcontextprotocol/protocolVersion&quot;:&quot;2026-07-28&quot;,&quot;io.modelcontextprotocol/clientCapabilities&quot;:&#123;&#125;,&quot;io.modelcontextprotocol/clientInfo&quot;:&#123;&quot;name&quot;:&quot;probe&quot;,&quot;version&quot;:&quot;0.0.1&quot;&#125;&#125;&#125;&#125;&#x27;</span> \</span><br><span class="line"> | node weather.mjs</span><br></pre></td></tr></table></figure>
+
+<p>你会看到两行回包，第二行是：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;result&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;content&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="punctuation">&#123;</span><span class="attr">&quot;type&quot;</span><span class="punctuation">:</span><span class="string">&quot;text&quot;</span><span class="punctuation">,</span><span class="attr">&quot;text&quot;</span><span class="punctuation">:</span><span class="string">&quot;杭州 未来一周晴天。&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">]</span><span class="punctuation">,</span><span class="attr">&quot;resultType&quot;</span><span class="punctuation">:</span><span class="string">&quot;complete&quot;</span><span class="punctuation">,</span><span class="attr">&quot;_meta&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;io.modelcontextprotocol/serverInfo&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;weather&quot;</span><span class="punctuation">,</span><span class="attr">&quot;version&quot;</span><span class="punctuation">:</span><span class="string">&quot;1.0.0&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>没有任何握手，上来就是调用</strong>——这就是 2026-07-28 的样子。</p>
+<h3 id="7-4-接进真实客户端"><a href="#7-4-接进真实客户端" class="headerlink" title="7.4 接进真实客户端"></a>7.4 接进真实客户端</h3><p>本地工具用 stdio，配置里就是一条命令：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;weather&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;node&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;/绝对路径/weather.mjs&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-5-三个必踩的坑"><a href="#7-5-三个必踩的坑" class="headerlink" title="7.5 三个必踩的坑"></a>7.5 三个必踩的坑</h3><p><strong>坑一：<code>console.log</code> 会把客户端搞挂。</strong> stdio 传输里 stdout 是协议通道，你打一行调试日志，客户端就读到一条不合法的 JSON-RPC，直接断连。所有日志走 <code>console.error</code>。</p>
+<p><strong>坑二：不带 <code>_meta</code> 会得到 <code>Method not found</code>。</strong> 如上文实测，裸请求会被当成 2025 时代的老客户端。写测试脚本时务必带上。</p>
+<p><strong>坑三：工具描述就是上下文成本。</strong> 描述写得太细，每个会话都要为它付 token；写得太粗，模型选错工具。经验是<strong>一句话说清”什么时候该用它”</strong>，比罗列参数更有用（参数本来就在 schema 里）。</p>
+<h2 id="8-一页速查"><a href="#8-一页速查" class="headerlink" title="8. 一页速查"></a>8. 一页速查</h2><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>答案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>本地工具用什么传输</td>
+<td>stdio（子进程 + 标准输入输出）</td>
+</tr>
+<tr>
+<td>远程服务用什么传输</td>
+<td>Streamable HTTP（单端点，JSON 或 SSE）</td>
+</tr>
+<tr>
+<td>看到两个端点 &#x2F; 两个 URL</td>
+<td>2024 年的老写法，已废弃</td>
+</tr>
+<tr>
+<td>现在还有会话吗</td>
+<td>2026-07-28 起没有了，连 <code>initialize</code> 都删了</td>
+</tr>
+<tr>
+<td>那状态存哪</td>
+<td>显式句柄当参数、MRTR、<code>subscriptions/listen</code></td>
+</tr>
+<tr>
+<td>什么时候开流</td>
+<td>流式结果、进度、变更订阅、中途要输入</td>
+</tr>
+<tr>
+<td>会话粘滞还要不要</td>
+<td>无状态部署不要；只有 2025 老线才需要</td>
+</tr>
+<tr>
+<td>网关解决什么</td>
+<td>工具多、密钥多、要审计；不是用来给单点扩容的</td>
+</tr>
+<tr>
+<td>扩容第一步</td>
+<td>无状态化，然后横向加副本</td>
+</tr>
+<tr>
+<td>最省事的降本</td>
+<td>减少暴露给模型的工具数量</td>
+</tr>
+</tbody></table>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="/2026/04/25/AI_MCP/">FunctionCall、Agent、Mcp</a> —— 三者的入门概念与对比，本文是它在协议层面的展开</li>
+<li><a href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/">A2A 协议：让 AI Agent 学会”对话”的通信标准</a> —— MCP 管”Agent 到工具”，A2A 管”Agent 到 Agent”，互补而非竞争</li>
+<li><a href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/">DSH Agent 主循环：一次对话到底是怎么跑起来的</a> —— 工具调用在 Agent 内部长什么样</li>
+<li><a href="/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</a> —— 工具真跑起来之后，边界在哪</li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/11/04/MCP%E5%85%A8%E8%A7%A3/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/11/04/MCP%E5%85%A8%E8%A7%A3/')">MCP 全解：从 stdio 到无状态，再到网关与高并发</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/11/04/MCP%E5%85%A8%E8%A7%A3/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=MCP 全解：从 stdio 到无状态，再到网关与高并发&amp;url=https://benedicttom.github.io/2026/11/04/MCP%E5%85%A8%E8%A7%A3/&amp;pic=/images/MCP%E5%85%A8%E8%A7%A3/cover.gif" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Agent/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Agent<span class="tagsPageCount">12</span></a><a class="post-meta__box__tags" href="/tags/Protocol/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Protocol<span class="tagsPageCount">2</span></a><a class="post-meta__box__tags" href="/tags/AI/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>AI<span class="tagsPageCount">3</span></a><a class="post-meta__box__tags" href="/tags/MCP/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>MCP<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/MCP%E5%85%A8%E8%A7%A3/cover.gif" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-11</div><div class="title">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</div></div></a></div><div><a href="/2026/04/28/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/" title="Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-28</div><div class="title">Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境</div></div></a></div><div><a href="/2026/04/25/AI_MCP/" title="FunctionCall、Agent、Mcp"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/AI_MCP/cover.webp" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">FunctionCall、Agent、Mcp</div></div></a></div><div><a href="/2026/04/25/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/" title="Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory</div></div></a></div><div><a href="/2026/03/29/Claude-Code-Skill-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/" title="Claude Code Skill 开发指南"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Claude-Code-Skill-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-03-29</div><div class="title">Claude Code Skill 开发指南</div></div></a></div><div><a href="/2026/04/25/ClaudeCode-OpenClaw-OpenCode%20%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/" title="ClaudeCode-OpenClaw-OpenCode 上下文管理"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/ClaudeCode-OpenClaw-OpenCode-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">ClaudeCode-OpenClaw-OpenCode 上下文管理</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%A6%82%E6%8B%AC"><span class="toc-number">1.</span> <span class="toc-text">0. 一句话概括</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-MCP-%E5%88%B0%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">1. MCP 到底解决了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%A4%E7%A7%8D%E4%BC%A0%E8%BE%93%EF%BC%9Astdio-%E5%92%8C-Streamable-HTTP"><span class="toc-number">3.</span> <span class="toc-text">2. 两种传输：stdio 和 Streamable HTTP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSE-%E9%82%A3%E6%AE%B5%E5%8E%86%E5%8F%B2%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AE%A9%E4%BA%BA%E6%99%95"><span class="toc-number">3.1.</span> <span class="toc-text">SSE 那段历史，为什么让人晕</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9C%89%E7%8A%B6%E6%80%81-%E2%86%92-%E6%97%A0%E7%8A%B6%E6%80%81%EF%BC%9A%E8%BF%99%E4%B8%89%E5%B9%B4%E5%88%B0%E5%BA%95%E6%94%B9%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">3. 有状态 → 无状态：这三年到底改了什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%9B%BE%E7%BB%8F%E7%9A%84%E2%80%9D%E6%9C%89%E7%8A%B6%E6%80%81%E2%80%9D%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 曾经的”有状态”长什么样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9D%9E%E5%88%A0%E4%B8%8D%E5%8F%AF"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 为什么非删不可</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E9%82%A3%E7%8A%B6%E6%80%81%E5%8E%BB%E5%93%AA%E4%BA%86%EF%BC%9F"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 那状态去哪了？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E6%88%91%E6%8B%BF%E7%9C%9F%E6%9C%BA%E8%B7%91%E4%BA%86%E4%B8%80%E9%81%8D%EF%BC%8C%E5%B7%AE%E5%88%AB%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84"><span class="toc-number">4.4.</span> <span class="toc-text">3.4 我拿真机跑了一遍，差别是这样的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E9%82%A3-SSE-%E7%8E%B0%E5%9C%A8%E8%BF%98%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">4. 那 SSE 现在还有什么用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-MCP-Gateway%EF%BC%9A%E6%8A%8A%E2%80%9D%E5%BE%88%E5%A4%9A%E4%B8%AA-server%E2%80%9D%E6%94%B6%E6%88%90%E4%B8%80%E4%B8%AA"><span class="toc-number">6.</span> <span class="toc-text">5. MCP Gateway：把”很多个 server”收成一个</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B0%83%E7%94%A8%E9%87%8F%E7%89%B9%E5%88%AB%E5%A4%A7%EF%BC%8C%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">7.</span> <span class="toc-text">6. 调用量特别大，怎么办</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%86%99%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84-MCP"><span class="toc-number">8.</span> <span class="toc-text">7. 写一个最简单的 MCP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E8%A3%85%E4%BE%9D%E8%B5%96"><span class="toc-number">8.1.</span> <span class="toc-text">7.1 装依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E4%B8%89%E5%8D%81%E8%A1%8C%E5%86%99%E5%AE%8C"><span class="toc-number">8.2.</span> <span class="toc-text">7.2 三十行写完</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="toc-number">8.3.</span> <span class="toc-text">7.3 跑起来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-%E6%8E%A5%E8%BF%9B%E7%9C%9F%E5%AE%9E%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">8.4.</span> <span class="toc-text">7.4 接进真实客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-%E4%B8%89%E4%B8%AA%E5%BF%85%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="toc-number">8.5.</span> <span class="toc-text">7.5 三个必踩的坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E4%B8%80%E9%A1%B5%E9%80%9F%E6%9F%A5"><span class="toc-number">9.</span> <span class="toc-text">8. 一页速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-number">10.</span> <span class="toc-text">相关阅读</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/04/MCP%E5%85%A8%E8%A7%A3/" title="MCP 全解：从 stdio 到无状态，再到网关与高并发"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/MCP%E5%85%A8%E8%A7%A3/cover.gif" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MCP 全解：从 stdio 到无状态，再到网关与高并发"/></a><div class="content"><a class="title" href="/2026/11/04/MCP%E5%85%A8%E8%A7%A3/" title="MCP 全解：从 stdio 到无状态，再到网关与高并发">MCP 全解：从 stdio 到无状态，再到网关与高并发</a><time datetime="2026-11-04T10:30:00.000Z" title="Created 2026-11-04 18:30:00">2026-11-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/" title="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"/></a><div class="content"><a class="title" href="/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/" title="DSH 沙箱设计：一次 bash 调用，到底被关进了什么">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</a><time datetime="2026-11-02T06:20:00.000Z" title="Created 2026-11-02 14:20:00">2026-11-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/" title="DSH Agent 主循环：一条用户消息的完整旅程"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH Agent 主循环：一条用户消息的完整旅程"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/" title="DSH Agent 主循环：一条用户消息的完整旅程">DSH Agent 主循环：一条用户消息的完整旅程</a><time datetime="2026-10-30T13:55:00.000Z" title="Created 2026-10-30 21:55:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/" title="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/" title="DSH 上下文装配全解：一次模型请求到底是怎么拼出来的">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</a><time datetime="2026-10-30T13:10:00.000Z" title="Created 2026-10-30 21:10:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘"/></a><div class="content"><a class="title" href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" title="DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘">DSH 会话压缩（Compaction）策略详解：阈值、剪裁、摘要与落盘</a><time datetime="2026-10-30T08:30:00.000Z" title="Created 2026-10-30 16:30:00">2026-10-30</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-theme.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">107</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">31</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>3</sup></a><a href="/tags/AMQP/" style="font-size: 0.88rem;">AMQP<sup>1</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>12</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>2</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>4</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/MCP/" style="font-size: 0.88rem;">MCP<sup>1</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/ORM/" style="font-size: 0.88rem;">ORM<sup>3</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>7</sup></a><a href="/tags/Redisson/" style="font-size: 0.88rem;">Redisson<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>1</sup></a><a href="/tags/Spring/" style="font-size: 0.88rem;">Spring<sup>3</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Spring-Data/" style="font-size: 0.88rem;">Spring Data<sup>5</sup></a><a href="/tags/Swagger/" style="font-size: 0.88rem;">Swagger<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 0.88rem;">agent-loop<sup>1</sup></a><a href="/tags/http/" style="font-size: 0.88rem;">http<sup>1</sup></a><a href="/tags/sandbox/" style="font-size: 0.88rem;">sandbox<sup>1</sup></a><a href="/tags/%E4%B8%9A%E5%8A%A1/" style="font-size: 0.88rem;">业务<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" style="font-size: 0.88rem;">分布式锁<sup>1</sup></a><a href="/tags/%E5%8A%9B%E6%89%A3/" style="font-size: 0.88rem;">力扣<sup>11</sup></a><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 0.88rem;">多线程<sup>9</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 0.88rem;">开发工具<sup>2</sup></a><a href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" style="font-size: 0.88rem;">异步编程<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a><a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 0.88rem;">集合<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("/images/theme/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
