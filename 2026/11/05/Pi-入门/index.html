@@ -1,0 +1,691 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>Pi 入门：从一条命令，到一个会改代码的 agent | Joie's Blog</title><meta name="keywords" content="Agent,Pi,源码解析"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="Pi 入门：从一条命令，到一个会改代码的 agent"><meta name="application-name" content="Pi 入门：从一条命令，到一个会改代码的 agent"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="Pi 入门：从一条命令，到一个会改代码的 agent"><meta property="og:url" content="https://benedicttom.github.io/2026/11/05/Pi-%E5%85%A5%E9%97%A8/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="把 Pi 拆开看：一条 &amp;#96;pi&amp;#96; 命令进来之后，参数怎么解析、会话从哪来、十一个包各自管什么，以及为什么它要把一个 agent 拆得这么碎。"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/Pi-%E5%85%A5%E9%97%A8/cover.png"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/Pi-%E5%85%A5%E9%97%A8/cover.png"><meta name="description" content="把 Pi 拆开看：一条 &amp;#96;pi&amp;#96; 命令进来之后，参数怎么解析、会话从哪来、十一个包各自管什么，以及为什么它要把一个 agent 拆得这么碎。"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/11/05/Pi-%E5%85%A5%E9%97%A8/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'Pi 入门：从一条命令，到一个会改代码的 agent',
+  postAI: '',
+  pageFillDescription: '0. 一句话概括, 1. 先跑起来, 2. 一条命令的旅程, 会话存在哪, 3. 十一个包怎么分工, 4. 三个反直觉的设计, 4.1 它没有模式切换的魔法只有一层很薄的包装, 4.2 模型层不认识工具循环, 4.3 一堆东西是可选挂载的, 5. 这个系列怎么读, 6. 读源码前的三个准备, 7. 小结一句话概括是一个跑在终端里的编程你在某个目录下敲它读文件跑命令改代码但源码层面它更值得看的地方不是能改代码这是所有同类工具的基本盘而是它把这件事拆成了十一个包并且每个包都能单独拿出来用想把嵌进自己的服务用的两三百行就能起一个想自己接一家模型供应商只改别的包一行不用动想把变成一个扛崩溃多客户端能长时间跑的服务换它和终端版共用同一个模型层想让模型别背一百个工具说明书而是写段脚本去编排它们那是这篇是系列的第一篇只做一件事把地图铺开一条命令从敲下到模型开口中间经过哪些模块十一个包谁依赖谁后面八篇分别往哪儿钻本文所有结论基于仓库提交版本拉取行号会随版本漂移对不上时以同名的函数为目标去搜先跑起来安装有两条路官方推荐第一条它把依赖版本都钉死之后用升级第二条是需要或更高这不是随手写的门槛下面会看到原因它用到了一些比较新的能力而且包本身是纯靠的直接跑装完在一个项目目录里起第一次会让你选模型有订阅比如的走登录没订阅的填本地跑的也能接选完就开始对话了界面是三段式上面是对话记录中间是输入框底下是状态栏当前目录模型会话状态官方文档里的截图长这样的交互模式截图来自官方文档到这里为止它和别的终端没什么两样差别在敲下回车之后一条命令的旅程这个可执行文件指向真正的入口是行它做的事情可以按顺序切成四段解析参数决定跟哪个会话打交道建一个会话对象选一种跑法敲下解析参数要不要接着旧会话新会话选跑法终端交互一次性被别的程序驱动四个跑法里三个值得说一句是人用的快捷键命令树形会话浏览都在这一层是用的跑一次把结果打到就退出适合塞进脚本或是给别的程序用的外面套一层或者插件就能驱动它也就是说同一个内核三种外壳后面写扩展写写网关时外壳和内核的边界会反复出现先记住这条线真正把东西拼起来的是它接受一个选项对象把会话管理器模型运行时工具扩展系统提示词一样样装进去最后这个就是后面八篇的主角它是议程的中心上面接着或下面接着和模型会话存在哪的会话不是数据库是一个个文件按工作目录分桶这个目录名是拿编码来的去掉开头的斜杠把和换成两边各包两个短横线的所以同一个项目下的会话自动聚在一起换个目录就是另一堆的好处是追加只写一行不用回读整个文件坏处是查询得自己扫的取舍很明确宁可扫也不引入数据库原因在第三篇会讲因为它的会话是树每行都带和追加写恰好是最自然的树存储方式全局配置也在这个目录下面是凭据自定义模型偏好项目级的约定则放在仓库里的这个第四篇细说十一个包怎么分工仓库是的下十一个包按离模型多远排一下包代码量非测试管什么行终端会话工具扩展命令接线行上下文与取消传播的底层设施行把变成可恢复的服务实验性行模型层供应商流式解析模型目录鉴权行终端组件与渲染行参数配置校验行客户端集成行让模型写脚本调工具行最小循环少量环境探测少量评测两个地方值得停一下第一最小的那个包才是心脏只有行核心循环行行的全都建在它上面这个比例本身就是一种态度循环要小到能一眼看完复杂的东西都推到外围第二是独立可复用的的依赖列表里能看到但它没有依赖反过来和是平级的两者都站在和上一个面向一个人一个终端一个面向多客户端扛崩溃两种形态终端可恢复的服务共用内核供应商与流底座上下文取消校验终端渲染脚本化工具客户端这张图是后面所有文章的路线图讲讲讲讲里的会话上下文和工具三个反直觉的设计读源码之前先接受三件事后面会顺很多它没有模式切换的魔法只有一层很薄的包装很多人对的想像是有个调度器判断该聊天还是该干活然后切模式里没有这个东西有的只是一个循环把消息拼成请求流式拿回响应如果响应里有工具调用就执行把结果塞回消息再来一轮直到模型不再要工具为止所谓干活就是这个循环转了很多圈所谓聊天就是转了一圈就停这个循环在的行里一百多行第二篇会一行行拆模型层不认识工具循环里没有没有没有重试策略它只做一件事给一个模型一串消息一组工具声明吐出一个流式响应反过来包不知道不知道不知道哪家供应商它只知道调拿事件这条界线的好处是接第十家供应商不用碰循环改循环不用碰十家供应商代价是中间那层类型要设计得很仔细和是两个类型只在发请求那一刻转换的这个只在边界转换的规矩是整份代码里贯彻得最彻底的一堆东西是可选挂载的会话工具扩展缓存预热压缩这些在别的实现里往往是核心的一部分在里全是往会话对象上挂的的选项对象有几十个字段每一个都是给就给不给用默认所以你能看到同一份代码支撑三种形态终端全挂上脚本挂一部分不要嵌入或只挂你要的这也是为什么本文标题是从一条命令到一个会改代码的那条命令本身很薄重量都在它拼出来的那个对象上这个系列怎么读九篇分三组建议按顺序但每组内部可以跳第一组终端是怎么转的本篇地图一次请求转几圈什么时候停是什么为什么截断的工具调用一律不执行会话树为什么对话是一棵树而不是一条线回退时那半条分支去哪了压缩怎么在树上切一刀上下文工程系统提示词不是一次性写死的它是分段的改一段只发改动的那段工具系统一个工具从到模型手里的中间过了几道手第二组模型层十几家供应商怎么收敛到一个接口流式事件长什么样鉴权两条路与怎么并存第三组把变成服务上崩溃了怎么接着干的一步到底多长下任务树文档多客户端同步扩展热替换为什么让模型写代码调工具可能比给模型一百个工具更省读源码前的三个准备如果你打算边读边跟这三件事能省你不少时间第一先跑一次交互模式有干扰读一下说说这个项目更干净你能看到工具调用是怎么一轮轮发生的第二知道会话文件在哪跑完去你的目录找最新的一下你会看到每一行是一个对象字段有这比任何文档都直观第三篇全靠它第三别从开始读它行而且大量代码是渲染和命令解析从开始行读完再往两边扩小结是一条命令但那条命令只做四件事解析参数挑会话建会话对象选外壳内核是行循环行模型层是终端体验是服务形态是没有模式切换只有一个请求工具再请求的循环没有魔法只有一堆可选挂载会话是下的按目录分桶一行一个节点下一篇从那个循环开始一次到底转了几圈每一圈里发生了什么以及它凭什么知道该停了相关阅读的一次请求里到底发生了什么的会话树一条对话为什么不是一条线的上下文工程每次请求模型到底看到了什么',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-11-05 01:10:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="/images/theme/loading-avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/images/theme/reward-wechat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-wechat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/theme/reward-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>18</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 1.05rem;">Codemode<sup>1</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 1.05rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 1.05rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 1.05rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/LLM/" style="font-size: 1.05rem;">LLM<sup>1</sup></a><a href="/tags/MCP/" style="font-size: 1.05rem;">MCP<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 1.05rem;">Pi<sup>9</sup></a><a href="/tags/Prompt/" style="font-size: 1.05rem;">Prompt<sup>1</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>7</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 1.05rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 1.05rem;">Streaming<sup>1</sup></a><a href="/tags/Tool/" style="font-size: 1.05rem;">Tool<sup>1</sup></a><a href="/tags/TypeBox/" style="font-size: 1.05rem;">TypeBox<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 1.05rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 1.05rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 1.05rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 1.05rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">源码解析<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/11/"><span class="card-archive-list-date">November 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">11</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/Pi/" itemprop="url">Pi</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Agent/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Agent</span></a><a class="article-meta__tags" href="/tags/Pi/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Pi</span></a><a class="article-meta__tags" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>源码解析</span></a></span></div></div><h1 class="post-title" itemprop="name headline">Pi 入门：从一条命令，到一个会改代码的 agent</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-11-04T17:10:00.000Z" title="Created 2026-11-05 01:10:00">2026-11-05</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-11-04T17:10:00.000Z" title="Updated 2026-11-05 01:10:00">2026-11-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/Pi-%E5%85%A5%E9%97%A8/cover.png"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/11/05/Pi-%E5%85%A5%E9%97%A8/"><header><a class="post-meta-categories" href="/categories/Pi/" itemprop="url">Pi</a><a href="/tags/Agent/" tabindex="-1" itemprop="url">Agent</a><a href="/tags/Pi/" tabindex="-1" itemprop="url">Pi</a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" tabindex="-1" itemprop="url">源码解析</a><h1 id="CrawlerTitle" itemprop="name headline">Pi 入门：从一条命令，到一个会改代码的 agent</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-11-04T17:10:00.000Z" title="Created 2026-11-05 01:10:00">2026-11-05</time><time itemprop="dateCreated datePublished" datetime="2026-11-04T17:10:00.000Z" title="Updated 2026-11-05 01:10:00">2026-11-05</time></header><h2 id="0-一句话概括"><a href="#0-一句话概括" class="headerlink" title="0. 一句话概括"></a>0. 一句话概括</h2><p>Pi 是一个跑在终端里的编程 agent：你在某个目录下敲 <code>pi</code>，它读文件、跑命令、改代码。</p>
+<p>但源码层面它更值得看的地方不是”能改代码”——这是所有同类工具的基本盘——而是<strong>它把这件事拆成了十一个包</strong>，并且每个包都能单独拿出来用：</p>
+<ul>
+<li>想把 agent 嵌进自己的服务？用 <code>pi-agent-core</code> 的 loop，两三百行就能起一个。</li>
+<li>想自己接一家模型供应商？只改 <code>pi-ai</code>，别的包一行不用动。</li>
+<li>想把 agent 变成一个扛崩溃、多客户端、能长时间跑的服务？换 <code>pi-durable</code>，它和终端版共用同一个模型层。</li>
+<li>想让模型别背一百个工具说明书，而是写段脚本去编排它们？那是 <code>codemode</code>。</li>
+</ul>
+<p>这篇是系列的第一篇，只做一件事：<strong>把地图铺开</strong>。一条命令从敲下到模型开口，中间经过哪些模块；十一个包谁依赖谁；后面八篇分别往哪儿钻。</p>
+<blockquote>
+<p>本文所有结论基于 <code>earendil-works/pi</code> 仓库提交 <code>395f3e0</code>、<code>packages/coding-agent</code> 版本 <code>1.5.0</code>（2026-11-04 拉取）。行号会随版本漂移，对不上时以同名的函数为目标去搜。</p>
+</blockquote>
+<h2 id="1-先跑起来"><a href="#1-先跑起来" class="headerlink" title="1. 先跑起来"></a>1. 先跑起来</h2><p>安装有两条路，官方推荐第一条：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://pi.dev/install.sh | sh</span><br></pre></td></tr></table></figure>
+
+<p>它把依赖版本都钉死，之后用 <code>pi update</code> 升级。第二条是 npm：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g --ignore-scripts @earendil-works/pi-coding-agent</span><br></pre></td></tr></table></figure>
+
+<p>需要 Node.js 22.19 或更高——这不是随手写的门槛，下面会看到原因：它用到了一些比较新的 Node 能力，而且包本身是纯 ESM、靠 Node 的 type stripping 直接跑 TypeScript。</p>
+<p>装完在一个项目目录里起：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/my-project</span><br><span class="line">pi</span><br></pre></td></tr></table></figure>
+
+<p>第一次会让你选模型：有订阅（比如 Claude、ChatGPT）的走登录，没订阅的填 API key，本地跑 llama.cpp 的也能接。选完就开始对话了。</p>
+<p>界面是三段式：上面是对话记录，中间是输入框，底下是状态栏（当前目录、模型、会话状态）。官方文档里的截图长这样：</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-入门/interactive-mode.png" alt="Pi 的终端界面：对话、编辑器与状态栏">
+<figcaption>Pi 的交互模式（截图来自 Pi 官方文档 <code>packages/coding-agent/docs/images/interactive-mode.png</code>）</figcaption>
+</figure>
+
+<p>到这里为止，它和别的终端 agent 没什么两样。差别在敲下回车之后。</p>
+<h2 id="2-一条命令的旅程"><a href="#2-一条命令的旅程" class="headerlink" title="2. 一条命令的旅程"></a>2. 一条命令的旅程</h2><p><code>pi</code> 这个可执行文件指向 <code>dist/bundle/cli.js</code>，真正的入口是 <code>src/main.ts</code>（1,011 行）。它做的事情可以按顺序切成四段：<strong>解析参数 → 决定跟哪个会话打交道 → 建一个会话对象 → 选一种跑法</strong>。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+  a[&quot;敲下 pi&quot;] --&gt; b[&quot;main.ts 解析参数&lt;br&#x2F;&gt;cwd &#x2F; model &#x2F; session&quot;]
+  b --&gt; c{&quot;要不要接着旧会话&quot;}
+  c --&gt;|&quot;新会话&quot;| d[&quot;SessionManager.create&quot;]
+  c --&gt;|&quot;continue&quot;| e[&quot;SessionManager.continueRecent&quot;]
+  c --&gt;|&quot;open &#x2F; fork&quot;| f[&quot;SessionManager.open &#x2F; forkFrom&quot;]
+  d --&gt; g[&quot;createAgentSession&lt;br&#x2F;&gt;core&#x2F;sdk.ts:191&quot;]
+  e --&gt; g
+  f --&gt; g
+  g --&gt; h{&quot;选跑法&quot;}
+  h --&gt;|&quot;终端交互&quot;| i[&quot;InteractiveMode&quot;]
+  h --&gt;|&quot;一次性&quot;| j[&quot;runPrintMode&quot;]
+  h --&gt;|&quot;被别的程序驱动&quot;| k[&quot;runRpcMode&quot;]
+  </pre></div>
+
+<p>四个跑法里三个值得说一句：</p>
+<ul>
+<li><strong>InteractiveMode</strong> 是人用的：TUI、快捷键、<code>/</code> 命令、树形会话浏览都在这一层。</li>
+<li><strong>runPrintMode</strong> 是 <code>pi -p &quot;...&quot;</code> 用的：跑一次，把结果打到 stdout 就退出，适合塞进脚本或 CI。</li>
+<li><strong>runRpcMode</strong> 是给别的程序用的：JSON-RPC over stdio，外面套一层 GUI 或者 IDE 插件就能驱动它。</li>
+</ul>
+<p>也就是说，<strong>同一个 agent 内核，三种外壳</strong>。后面写扩展、写 MCP、写网关时，”外壳”和”内核”的边界会反复出现，先记住这条线。</p>
+<p>真正把东西拼起来的是 <code>createAgentSession()</code>（<code>core/sdk.ts:191</code>）。它接受一个选项对象，把会话管理器、模型运行时、工具、扩展、系统提示词一样样装进去，最后 <code>new AgentSession(...)</code>（<code>core/sdk.ts:455</code>）。这个 <code>AgentSession</code> 就是后面八篇的主角——它是”议程”的中心：上面接着 TUI 或 RPC，下面接着 agent loop 和模型。</p>
+<h3 id="会话存在哪"><a href="#会话存在哪" class="headerlink" title="会话存在哪"></a>会话存在哪</h3><p>Pi 的会话不是数据库，是一个个 JSONL 文件，按工作目录分桶：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.pi/agent/sessions/--Users-smzdm-chw-my-project--/2026-11-04T17-43-52-8f3a.jsonl</span><br></pre></td></tr></table></figure>
+
+<p>这个目录名是拿 cwd 编码来的：去掉开头的斜杠，把 <code>/</code> 和 <code>:</code> 换成 <code>-</code>，两边各包两个短横线（<code>core/session-manager.ts</code> 的 <code>getDefaultSessionDirPath</code>）。所以同一个项目下的会话自动聚在一起，换个目录就是另一堆。</p>
+<p>JSONL 的好处是<strong>追加只写一行</strong>，不用回读整个文件；坏处是查询得自己扫。Pi 的取舍很明确：宁可扫，也不引入数据库。原因在第三篇会讲——因为它的会话是<strong>树</strong>，每行都带 <code>id</code> 和 <code>parentId</code>，追加写恰好是最自然的树存储方式。</p>
+<p>全局配置也在这个目录：<code>~/.pi/agent/</code> 下面是 <code>auth.json</code>（凭据）、<code>models.json</code>（自定义模型）、<code>settings.json</code>（偏好）。项目级的约定则放在仓库里的 <code>AGENTS.md</code>，这个第四篇细说。</p>
+<h2 id="3-十一个包怎么分工"><a href="#3-十一个包怎么分工" class="headerlink" title="3. 十一个包怎么分工"></a>3. 十一个包怎么分工</h2><p>仓库是 npm workspaces 的 monorepo，<code>packages/</code> 下十一个包。按”离模型多远”排一下：</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>代码量（非测试 .ts）</th>
+<th>管什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>coding-agent</code></td>
+<td>77,357 行</td>
+<td>终端 harness：会话、工具、扩展、命令、TUI 接线</td>
+</tr>
+<tr>
+<td><code>chord</code></td>
+<td>52,502 行</td>
+<td>上下文与取消传播的底层设施</td>
+</tr>
+<tr>
+<td><code>durable</code></td>
+<td>33,669 行</td>
+<td>把 agent 变成可恢复的服务（实验性）</td>
+</tr>
+<tr>
+<td><code>ai</code></td>
+<td>28,806 行</td>
+<td>模型层：供应商、流式解析、模型目录、鉴权</td>
+</tr>
+<tr>
+<td><code>tui</code></td>
+<td>19,973 行</td>
+<td>终端 UI 组件与渲染</td>
+</tr>
+<tr>
+<td><code>schema</code></td>
+<td>4,573 行</td>
+<td>参数&#x2F;配置校验</td>
+</tr>
+<tr>
+<td><code>mcp</code></td>
+<td>4,742 行</td>
+<td>MCP 客户端集成</td>
+</tr>
+<tr>
+<td><code>codemode</code></td>
+<td>3,037 行</td>
+<td>让模型写脚本调工具</td>
+</tr>
+<tr>
+<td><code>agent</code></td>
+<td>2,555 行</td>
+<td>最小 agent 循环（<code>pi-agent-core</code>）</td>
+</tr>
+<tr>
+<td><code>env</code></td>
+<td>少量</td>
+<td>环境探测</td>
+</tr>
+<tr>
+<td><code>evals</code></td>
+<td>少量</td>
+<td>评测</td>
+</tr>
+</tbody></table>
+<p>两个地方值得停一下。</p>
+<p><strong>第一，最小的那个包才是心脏。</strong> <code>agent</code> 只有 2,555 行，核心循环 <code>agent-loop.ts</code> 959 行。77,000 行的 <code>coding-agent</code> 全都建在它上面。这个比例本身就是一种态度：循环要小到能一眼看完，复杂的东西都推到外围。</p>
+<p><strong>第二，<code>ai</code> 是独立可复用的。</strong> <code>coding-agent</code> 的依赖列表里能看到 <code>@earendil-works/pi-agent-core</code>、<code>pi-ai</code>、<code>pi-codemode</code>、<code>pi-mcp</code>、<code>pi-tui</code>，但它没有依赖 <code>durable</code>。反过来，<code>durable</code> 和 <code>coding-agent</code> 是<strong>平级</strong>的——两者都站在 <code>agent</code> 和 <code>ai</code> 上，一个面向”一个人、一个终端”，一个面向”多客户端、扛崩溃”。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart BT
+  subgraph apps[&quot;两种形态&quot;]
+    ca[&quot;coding-agent&lt;br&#x2F;&gt;终端 harness&quot;]
+    du[&quot;durable&lt;br&#x2F;&gt;可恢复的服务&quot;]
+  end
+  subgraph core[&quot;共用内核&quot;]
+    ag[&quot;agent&lt;br&#x2F;&gt;agent loop&quot;]
+    ai[&quot;ai&lt;br&#x2F;&gt;供应商与流&quot;]
+  end
+  subgraph base[&quot;底座&quot;]
+    ch[&quot;chord&lt;br&#x2F;&gt;上下文&#x2F;取消&quot;]
+    sc[&quot;schema&lt;br&#x2F;&gt;校验&quot;]
+    tu[&quot;tui&lt;br&#x2F;&gt;终端渲染&quot;]
+    cm[&quot;codemode&lt;br&#x2F;&gt;脚本化工具&quot;]
+    mc[&quot;mcp&lt;br&#x2F;&gt;MCP 客户端&quot;]
+  end
+  ca --&gt; ag
+  ca --&gt; ai
+  ca --&gt; tu
+  ca --&gt; cm
+  ca --&gt; mc
+  du --&gt; ag
+  du --&gt; ai
+  du --&gt; ch
+  ag --&gt; ai
+  ag --&gt; ch
+  ai --&gt; sc
+  cm --&gt; sc
+  </pre></div>
+
+<p>这张图是后面所有文章的路线图。⑨ 讲 <code>ai</code>，⑩⑪ 讲 <code>durable</code>，⑫ 讲 <code>codemode</code>，②③④⑤ 讲 <code>coding-agent</code> 里的 loop、会话、上下文和工具。</p>
+<h2 id="4-三个反直觉的设计"><a href="#4-三个反直觉的设计" class="headerlink" title="4. 三个反直觉的设计"></a>4. 三个反直觉的设计</h2><p>读源码之前先接受三件事，后面会顺很多。</p>
+<h3 id="4-1-它没有”模式切换”的魔法，只有一层很薄的包装"><a href="#4-1-它没有”模式切换”的魔法，只有一层很薄的包装" class="headerlink" title="4.1 它没有”模式切换”的魔法，只有一层很薄的包装"></a>4.1 它没有”模式切换”的魔法，只有一层很薄的包装</h3><p>很多人对 agent 的想像是：有个调度器，判断该聊天还是该干活，然后切模式。Pi 里没有这个东西。</p>
+<p>有的只是一个循环：<strong>把消息拼成请求 → 流式拿回响应 → 如果响应里有工具调用就执行 → 把结果塞回消息 → 再来一轮</strong>，直到模型不再要工具为止。所谓”干活”，就是这个循环转了很多圈；所谓”聊天”，就是转了一圈就停。</p>
+<p>这个循环在 <code>packages/agent/src/agent-loop.ts</code> 的 <code>runLoop()</code>（172-330 行）里，一百多行。第二篇会一行行拆。</p>
+<h3 id="4-2-模型层不认识”工具循环”"><a href="#4-2-模型层不认识”工具循环”" class="headerlink" title="4.2 模型层不认识”工具循环”"></a>4.2 模型层不认识”工具循环”</h3><p><code>pi-ai</code> 里没有 turn、没有 tool loop、没有重试策略。它只做一件事：<strong>给一个模型 + 一串消息 + 一组工具声明，吐出一个流式响应</strong>。</p>
+<p>反过来，<code>agent</code> 包不知道 HTTP、不知道 SSE、不知道哪家供应商。它只知道”调 <code>streamFn</code>，拿事件”。</p>
+<p>这条界线的好处是：接第十家供应商不用碰循环，改循环不用碰十家供应商。代价是中间那层类型要设计得很仔细——<code>AgentMessage</code> 和 <code>Message</code> 是两个类型，只在发请求那一刻转换（<code>agent-loop.ts:404</code> 的 <code>config.convertToLlm(messages)</code>）。这个”只在边界转换”的规矩，是整份代码里贯彻得最彻底的。</p>
+<h3 id="4-3-一堆东西是”可选挂载”的"><a href="#4-3-一堆东西是”可选挂载”的" class="headerlink" title="4.3 一堆东西是”可选挂载”的"></a>4.3 一堆东西是”可选挂载”的</h3><p>会话、工具、扩展、MCP、codemode、缓存预热、压缩——这些在别的实现里往往是核心的一部分，在 Pi 里全是<strong>往会话对象上挂的</strong>。</p>
+<p><code>createAgentSession()</code> 的选项对象有几十个字段，每一个都是”给就给，不给用默认”。所以你能看到同一份代码支撑三种形态：</p>
+<ul>
+<li><code>pi</code> 终端：全挂上。</li>
+<li><code>pi -p</code> 脚本：挂一部分，不要 TUI。</li>
+<li>嵌入 SDK 或 RPC：只挂你要的。</li>
+</ul>
+<p>这也是为什么本文标题是”从一条命令到一个会改代码的 agent”——那条命令本身很薄，重量都在它拼出来的那个对象上。</p>
+<h2 id="5-这个系列怎么读"><a href="#5-这个系列怎么读" class="headerlink" title="5. 这个系列怎么读"></a>5. 这个系列怎么读</h2><p>九篇分三组，建议按顺序，但每组内部可以跳。</p>
+<p><strong>第一组：终端 agent 是怎么转的（①-⑤）</strong></p>
+<ul>
+<li>① 本篇：地图。</li>
+<li>② Agent Loop：一次请求转几圈，什么时候停，<code>terminate</code> 是什么，为什么”截断的工具调用一律不执行”。</li>
+<li>③ 会话树：为什么对话是一棵树而不是一条线，<code>/tree</code> 回退时那半条分支去哪了，压缩怎么在树上切一刀。</li>
+<li>④ 上下文工程：系统提示词不是一次性写死的，它是<strong>分段</strong>的，改一段只发改动的那段。</li>
+<li>⑤ 工具系统：一个工具从 TypeBox schema 到模型手里的 JSON Schema，中间过了几道手。</li>
+</ul>
+<p><strong>第二组：模型层（⑨）</strong></p>
+<ul>
+<li>⑨ <code>pi-ai</code>：十几家供应商怎么收敛到一个接口，流式事件长什么样，鉴权两条路（API key 与 OAuth）怎么并存。</li>
+</ul>
+<p><strong>第三组：把 agent 变成服务（⑩-⑫）</strong></p>
+<ul>
+<li>⑩ Durable 上：崩溃了怎么接着干，checkpoint 的”一步”到底多长。</li>
+<li>⑪ Durable 下：任务树、文档、多客户端同步、扩展热替换。</li>
+<li>⑫ Codemode：为什么”让模型写代码调工具”可能比”给模型一百个工具”更省。</li>
+</ul>
+<h2 id="6-读源码前的三个准备"><a href="#6-读源码前的三个准备" class="headerlink" title="6. 读源码前的三个准备"></a>6. 读源码前的三个准备</h2><p>如果你打算边读边跟，这三件事能省你不少时间。</p>
+<p><strong>第一，先跑一次 <code>pi -p</code>。</strong> 交互模式有 TUI 干扰，<code>pi -p &quot;读一下 package.json 说说这个项目&quot;</code> 更干净，你能看到工具调用是怎么一轮轮发生的。</p>
+<p><strong>第二，知道会话文件在哪。</strong> 跑完去 <code>~/.pi/agent/sessions/--&lt;你的目录&gt;--/</code> 找最新的 <code>.jsonl</code>，<code>cat</code> 一下。你会看到每一行是一个 JSON 对象，<code>type</code> 字段有 <code>session</code>、<code>message</code>、<code>model_change</code>、<code>compaction</code>……<strong>这比任何文档都直观</strong>，第三篇全靠它。</p>
+<p><strong>第三，别从 <code>coding-agent</code> 开始读。</strong> 它 77,000 行，而且大量代码是 TUI 渲染和命令解析。从 <code>packages/agent/src/agent-loop.ts</code> 开始，959 行，读完再往两边扩。</p>
+<h2 id="7-小结"><a href="#7-小结" class="headerlink" title="7. 小结"></a>7. 小结</h2><ul>
+<li>Pi 是一条命令，但那条命令只做四件事：解析参数、挑会话、建会话对象、选外壳。</li>
+<li>内核是 <code>agent</code>（2,555 行，循环 959 行），模型层是 <code>ai</code>，终端体验是 <code>coding-agent</code> + <code>tui</code>，服务形态是 <code>durable</code>。</li>
+<li>没有模式切换，只有一个”请求-工具-再请求”的循环；没有魔法，只有一堆可选挂载。</li>
+<li>会话是 <code>~/.pi/agent/sessions/</code> 下的 JSONL，按目录分桶，一行一个节点。</li>
+</ul>
+<p>下一篇从那个循环开始：一次 <code>pi -p &quot;...&quot;</code> 到底转了几圈，每一圈里发生了什么，以及它凭什么知道”该停了”。</p>
+<hr>
+<p><strong>相关阅读</strong></p>
+<ul>
+<li><a href="/2026/11/05/Pi-Loop/">Pi 的一次请求：agent loop 里到底发生了什么</a></li>
+<li><a href="/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/">Pi 的会话树：一条对话为什么不是一条线</a></li>
+<li><a href="/2026/11/05/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/">Pi 的上下文工程：每次请求，模型到底看到了什么</a></li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/11/05/Pi-%E5%85%A5%E9%97%A8/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/11/05/Pi-%E5%85%A5%E9%97%A8/')">Pi 入门：从一条命令，到一个会改代码的 agent</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/11/05/Pi-%E5%85%A5%E9%97%A8/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=Pi 入门：从一条命令，到一个会改代码的 agent&amp;url=https://benedicttom.github.io/2026/11/05/Pi-%E5%85%A5%E9%97%A8/&amp;pic=/images/Pi-%E5%85%A5%E9%97%A8/cover.png" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Agent/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Agent<span class="tagsPageCount">18</span></a><a class="post-meta__box__tags" href="/tags/Pi/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Pi<span class="tagsPageCount">9</span></a><a class="post-meta__box__tags" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>源码解析<span class="tagsPageCount">2</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/Pi-Codemode/cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2026/11/05/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Pi 的上下文工程：每次请求，模型到底看到了什么</div></div></a></div><div class="next-post pull-right"><a href="/2026/11/05/Pi-%E5%B7%A5%E5%85%B7/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E5%B7%A5%E5%85%B7/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Pi 怎么定义一个工具：一张卡片上的十个字段</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/11/05/Pi-Loop/" title="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Loop/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了</div></div></a></div><div><a href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8A/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi Durable（上）：先落盘，再显示</div></div></a></div><div><a href="/2026/11/05/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/" title="Pi 的上下文工程：每次请求，模型到底看到了什么"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 的上下文工程：每次请求，模型到底看到了什么</div></div></a></div><div><a href="/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/" title="Pi 的会话树：一条对话为什么不是一条线"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 的会话树：一条对话为什么不是一条线</div></div></a></div><div><a href="/2026/11/05/Pi-%E5%B7%A5%E5%85%B7/" title="Pi 怎么定义一个工具：一张卡片上的十个字段"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E5%B7%A5%E5%85%B7/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 怎么定义一个工具：一张卡片上的十个字段</div></div></a></div><div><a href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-11</div><div class="title">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%A6%82%E6%8B%AC"><span class="toc-number">1.</span> <span class="toc-text">0. 一句话概括</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%88%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="toc-number">2.</span> <span class="toc-text">1. 先跑起来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E7%9A%84%E6%97%85%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">2. 一条命令的旅程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%9A%E8%AF%9D%E5%AD%98%E5%9C%A8%E5%93%AA"><span class="toc-number">3.1.</span> <span class="toc-text">会话存在哪</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8D%81%E4%B8%80%E4%B8%AA%E5%8C%85%E6%80%8E%E4%B9%88%E5%88%86%E5%B7%A5"><span class="toc-number">4.</span> <span class="toc-text">3. 十一个包怎么分工</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%89%E4%B8%AA%E5%8F%8D%E7%9B%B4%E8%A7%89%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">5.</span> <span class="toc-text">4. 三个反直觉的设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AE%83%E6%B2%A1%E6%9C%89%E2%80%9D%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8D%A2%E2%80%9D%E7%9A%84%E9%AD%94%E6%B3%95%EF%BC%8C%E5%8F%AA%E6%9C%89%E4%B8%80%E5%B1%82%E5%BE%88%E8%96%84%E7%9A%84%E5%8C%85%E8%A3%85"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 它没有”模式切换”的魔法，只有一层很薄的包装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%A8%A1%E5%9E%8B%E5%B1%82%E4%B8%8D%E8%AE%A4%E8%AF%86%E2%80%9D%E5%B7%A5%E5%85%B7%E5%BE%AA%E7%8E%AF%E2%80%9D"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 模型层不认识”工具循环”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E4%B8%80%E5%A0%86%E4%B8%9C%E8%A5%BF%E6%98%AF%E2%80%9D%E5%8F%AF%E9%80%89%E6%8C%82%E8%BD%BD%E2%80%9D%E7%9A%84"><span class="toc-number">5.3.</span> <span class="toc-text">4.3 一堆东西是”可选挂载”的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%BF%99%E4%B8%AA%E7%B3%BB%E5%88%97%E6%80%8E%E4%B9%88%E8%AF%BB"><span class="toc-number">6.</span> <span class="toc-text">5. 这个系列怎么读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AF%BB%E6%BA%90%E7%A0%81%E5%89%8D%E7%9A%84%E4%B8%89%E4%B8%AA%E5%87%86%E5%A4%87"><span class="toc-number">7.</span> <span class="toc-text">6. 读源码前的三个准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%B0%8F%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">7. 小结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Codemode/" title="Pi-Codemode：让模型写一段脚本去调工具"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Codemode/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi-Codemode：让模型写一段脚本去调工具"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Codemode/" title="Pi-Codemode：让模型写一段脚本去调工具">Pi-Codemode：让模型写一段脚本去调工具</a><time datetime="2026-11-04T19:55:00.000Z" title="Created 2026-11-05 03:55:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Durable-%E4%B8%8B/" title="Pi Durable（下）：谁在跑，谁在看"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8B/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi Durable（下）：谁在跑，谁在看"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Durable-%E4%B8%8B/" title="Pi Durable（下）：谁在跑，谁在看">Pi Durable（下）：谁在跑，谁在看</a><time datetime="2026-11-04T19:20:00.000Z" title="Created 2026-11-05 03:20:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8A/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi Durable（上）：先落盘，再显示"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示">Pi Durable（上）：先落盘，再显示</a><time datetime="2026-11-04T18:45:00.000Z" title="Created 2026-11-05 02:45:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-ai/" title="pi-ai：43 个供应商，10 种协议，一套流"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-ai/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="pi-ai：43 个供应商，10 种协议，一套流"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-ai/" title="pi-ai：43 个供应商，10 种协议，一套流">pi-ai：43 个供应商，10 种协议，一套流</a><time datetime="2026-11-04T18:10:00.000Z" title="Created 2026-11-05 02:10:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Loop/" title="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Loop/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Loop/" title="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了">Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了</a><time datetime="2026-11-04T17:40:00.000Z" title="Created 2026-11-05 01:40:00">2026-11-05</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-theme.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">116</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">66</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">32</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>18</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 0.88rem;">Codemode<sup>1</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 0.88rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 0.88rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 0.88rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/LLM/" style="font-size: 0.88rem;">LLM<sup>1</sup></a><a href="/tags/MCP/" style="font-size: 0.88rem;">MCP<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 0.88rem;">Pi<sup>9</sup></a><a href="/tags/Prompt/" style="font-size: 0.88rem;">Prompt<sup>1</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>7</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 0.88rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 0.88rem;">Streaming<sup>1</sup></a><a href="/tags/Tool/" style="font-size: 0.88rem;">Tool<sup>1</sup></a><a href="/tags/TypeBox/" style="font-size: 0.88rem;">TypeBox<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 0.88rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 0.88rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 0.88rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 0.88rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 0.88rem;">源码解析<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("/images/theme/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>

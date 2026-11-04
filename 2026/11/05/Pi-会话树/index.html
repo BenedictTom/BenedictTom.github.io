@@ -1,0 +1,692 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>Pi 的会话树：一条对话为什么不是一条线 | Joie's Blog</title><meta name="keywords" content="Agent,Pi,Session,JSONL"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="Pi 的会话树：一条对话为什么不是一条线"><meta name="application-name" content="Pi 的会话树：一条对话为什么不是一条线"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="Pi 的会话树：一条对话为什么不是一条线"><meta property="og:url" content="https://benedicttom.github.io/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="拆开 Pi 的会话存储：为什么一条对话被存成一棵 append-only 的树，leafId 是什么，压缩和回退怎么在树上&amp;quot;切一刀&amp;quot;而不删东西。"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/cover.png"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/cover.png"><meta name="description" content="拆开 Pi 的会话存储：为什么一条对话被存成一棵 append-only 的树，leafId 是什么，压缩和回退怎么在树上&amp;quot;切一刀&amp;quot;而不删东西。"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'Pi 的会话树：一条对话为什么不是一条线',
+  postAI: '',
+  pageFillDescription: '0. 先说结论, 1. 一条线的三个坏处, 2. 换一张数据结构, 3. entry 不只是消息, 4. 一个指针：leafId, 5. 投影：从叶子往上走在压缩处切一刀, 6. 回退：不是删除是挂一页摘要, 7. 想改一条旧消息怎么办, 8. fork 与标签, 9. 代价, 10. 小结上一篇跟完了一次请求在里的完整路径这一篇往下一层那些消息到底被存在哪儿以什么形状存的如果你写过玩具答案大概是一个数组存盘就是不是它把一条对话存成了一棵树而且这个文件永远只追加从不修改这不是为了炫技九个功能里有六个是被树这个形状直接送出来的回退重试分叉压缩切换模型改一条旧消息换成数组每一个都要单独打补丁先说结论三句话会话文件是一行一个的每行是一个自带和树的结构完全由决定另外只有一个叫的指针表示我现在站在这棵树的哪个节点上每次要发给模型之前从往上走到根把这条路投影成消息数组路径就是上下文就这三条下面全部是它的推论一条线的三个坏处先把为什么不能是数组讲清楚否则树看起来很无理坏处一回退只能截断数组里你想退回到第条消息只能把这之后的全删掉可用户往往只是这条支线试错了我想回到分叉点换个说法被删掉的那段其实有价值删了就是真丢了坏处二重试要在原地改模型答得不好想让它重答数组方案里你要么覆盖最后一条那就丢了原答案要么在中间插一条那后面所有消息的位置都变了而磁盘上的文件是追加写的改中间一行的代价是重写整个文件坏处三压缩没有位置感上下文快满了要压掉前条压完之后那条原始记录还要不要留数组方案里它们只能被替换掉于是压缩和删历史变成同一件事这三个坏处有同一个根源一条线只能表达顺序表达不了分叉和覆盖而的日常操作恰恰全是分叉和覆盖换一张数据结构的选择是把顺序降级成指针第一行是文件头里面有可选的之后每行是一个公共字段只有四个这一条是什么自己的上一条是谁表示根顺序信息在哪在文件里的物理行序里也在链里二者平时一致一旦你回退它们就不一致了后面追加的的会指向旧节点物理上却排在文件末尾这就是树能长出来的原因追加写指回去线性数组回退只能截断树旧重试回退时挂一页摘要这个设计有个立刻能感受到的好处所有操作都退化成追加一行回退是追加压缩是追加改一条旧消息也是追加文件永远只往长了长不存在写坏一半的问题崩溃时最多丢掉最后半行读取时坏行会被跳过的注释写得很直白不只是消息第二个反直觉的地方会话文件里存的不只是消息是个联合类型一共种的定义它表示什么一条真正的消息思考档位被改成了换了一个模型一次请求的用量与花费一次上下文压缩的结果一段被放弃支线的摘要扩展存的自定义状态只是状态不进上下文扩展注入的一条消息进上下文对某条旧消息的改写声明给某个节点起个名字会话级别的元信息比如标题为什么要这么细因为在里发生了什么和模型看到了什么是两件事举个例子你中途把模型从换到数组方案里这条信息无处安放只能写进某条消息的文本里很多真的这么干过于是模型会看到用户说请从现在起用另一个模型这种假消息里它是一条节点落在树上投影的时候被读成当前状态上面这段是从摘的我省掉了类型标注注意它是遍历路径后来者覆盖所以当前用什么模型不是一个字段而是这条路径上最后一次声明的结果这就是树给的第二个红利状态是推导出来的不是维护出来的任何回退都会自动把模型思考档位一起退回去不需要额外代码去恢复状态一个指针树有了但还需要知道我现在在哪答案是一个指针指向当前叶子节点有意思的是这个指针不存它不在文件里在内存里维护默认就是文件里最后一条我省了的构建所以当前在哪这件事默认等于最后写了什么回退时被显式改指这带来一个很干净的性质文件本身是完整的历史指针只是视角同一份文件换个就是另一段对话后面讲的和压缩全靠这一点投影从叶子往上走在压缩处切一刀真正发给模型的东西不是文件是投影分两步第一步把路径取出来从出发沿一路向上到根然后反转一个循环没有递归没有遍历整棵树这是树形存储的关键性能性质读一条路径的代价是路径长度不是文件大小第二步在这条路径上切出有效区间这一步是也是整个设计里最巧的地方它先在这条路径上找最新的一次压缩然后把结果拼成三段压缩节点本身它是一条里面装着摘要和从到压缩节点之间且不是消息的那些压缩节点之后的全部当前叶子摘要上下文摘要从起的原文之后的全部用人话说压缩不是把前条删掉换成一段摘要而是宣布从第条开始重新看第到条仍然躺在文件里随时可以回去读只是在构造上下文时它们被那个摘要节点替代了这就解释了为什么允许你压缩完继续聊聊崩了还能回到压缩之前因为压缩这个动作本身没有破坏任何数据它只是在树上挂了一个新的起点顺带一提的存在说明压缩是有损但可控的摘要之外还硬保留一段原始消息最近的若干条避免模型丢失最近几轮的细节回退不是删除是挂一页摘要现在讲最常用也最容易做错的功能在里输入会弹出一个树形选择器的你选中任意一个节点回车接下来的动作在的里算出从当前叶子到目标节点这一段被放弃的问你要不要给这段支线生成一页摘要要的话生成一条挂在目标节点下面把改指目标节点注意第步被放弃的那段不是消失了是被总结成了一页重新挂回树上用户选中旧节点旧被放弃的列表可选生成摘要摘要文件只追加旧分支一条都没删为什么值得这么做因为我回到分叉点换个说法通常意味着那条死路我已经想明白了如果摘要里写的是试过用方案失败原因是那么新分支一开头就带着这个结论回退不但没丢信息还把信息提升了密度这是一个很典型的取舍与其让用户或模型在新分支里重新踩一遍坑不如花一次摘要的成本把旧的上下文压缩后继承过来把这做成一个可选的开关默认关因为有时候你回到分叉点就是想彻底甩掉之前的思路顺带说一个实现细节也被模式用也就是里同样可以回退这说明树不是的装饰它是会话模型的一部分任何前端都能用想改一条旧消息怎么办还剩一个最难的情况我不回退我就想改第条消息里的一个错别字追加写的文件改不了中间那行删了重写那所有都得重编指纹全变的做法是的追加一条内容是第条消息替换成这样或第条消息省略掉投影的时候这条会把目标的投影结果换掉文件里第条还是原样但模型看到的是改后的版本代码里能看到这个机制的两个真实用途用户主动编辑某条消息工具执行失败上下文已经脏了的时候把坏掉的那条消息从投影里省略保证后续对话还能继续第二个用途很有意思它是错误恢复而不是用户编辑当一条消息的投影结果无法持久化代码里抛系统宁可退化成抛错也不肯悄悄改历史这个较真是对的一旦允许静默改写树的可信度就没了与标签树的最后两个红利各一句话从一个会话分叉出一个新会话新文件复制到分叉点为止的所有文件头里写上于是同一份历史两条不同走向成为可能而且血缘关系明确多智能体协作里这就是每个子任务拿一份自己的分支给某个节点起个名字因为节点有有名字你就可以用回到那个叫的节点来代替回退到第条引用的是节点不是位置位置会变节点不会代价一个诚实的设计总要付账树形会话付的账是每次启动都要重建投影文件可能有几百条要全读一遍的缓解手段是读文件时按行流式解析坏行跳过头部扫描上限但本质上它仍然是文件大小的重建不是索引查询文件只增不减长期使用的会话会一直变长这是的必然代价换来的是任何时刻都能回到过去且过去的东西不会被覆盖心智负担第一次看到的树形选择器多数人是要愣一下的线性对话是所有人都熟悉的隐喻树不是小结回到开头那三个坏处坏处数组方案树方案回退截断丢历史移动指针全保留还能挂摘要重试覆盖或中间插入追加一个分叉节点压缩替换掉原文挂一个压缩节点原文留着三条推论再抄一遍一条对话一棵的树节点靠相连文件只追加上下文从到根的一条路径压缩节点在这条路径上切出有效区间状态是推导的不是维护的模型思考档位压缩边界消息改写全都是沿路径读出来的结果这套设计最值得抄的地方不是也不是而是那个判断把顺序从数据结构里拿出来变成一个指针顺序一旦可变分叉回退覆盖就都免费了相关阅读入门一个把极简当真了的的一次请求里到底发生了什么',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-11-05 00:40:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="/images/theme/loading-avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/images/theme/reward-wechat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-wechat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/theme/reward-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>18</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 1.05rem;">Codemode<sup>1</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 1.05rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 1.05rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 1.05rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/LLM/" style="font-size: 1.05rem;">LLM<sup>1</sup></a><a href="/tags/MCP/" style="font-size: 1.05rem;">MCP<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 1.05rem;">Pi<sup>9</sup></a><a href="/tags/Prompt/" style="font-size: 1.05rem;">Prompt<sup>1</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>7</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 1.05rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 1.05rem;">Streaming<sup>1</sup></a><a href="/tags/Tool/" style="font-size: 1.05rem;">Tool<sup>1</sup></a><a href="/tags/TypeBox/" style="font-size: 1.05rem;">TypeBox<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 1.05rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 1.05rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 1.05rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 1.05rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">源码解析<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/11/"><span class="card-archive-list-date">November 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">11</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/Pi/" itemprop="url">Pi</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Agent/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Agent</span></a><a class="article-meta__tags" href="/tags/Pi/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Pi</span></a><a class="article-meta__tags" href="/tags/Session/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Session</span></a><a class="article-meta__tags" href="/tags/JSONL/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>JSONL</span></a></span></div></div><h1 class="post-title" itemprop="name headline">Pi 的会话树：一条对话为什么不是一条线</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-11-04T16:40:00.000Z" title="Created 2026-11-05 00:40:00">2026-11-05</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-11-04T16:40:00.000Z" title="Updated 2026-11-05 00:40:00">2026-11-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/cover.png"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/"><header><a class="post-meta-categories" href="/categories/Pi/" itemprop="url">Pi</a><a href="/tags/Agent/" tabindex="-1" itemprop="url">Agent</a><a href="/tags/Pi/" tabindex="-1" itemprop="url">Pi</a><a href="/tags/Session/" tabindex="-1" itemprop="url">Session</a><a href="/tags/JSONL/" tabindex="-1" itemprop="url">JSONL</a><h1 id="CrawlerTitle" itemprop="name headline">Pi 的会话树：一条对话为什么不是一条线</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-11-04T16:40:00.000Z" title="Created 2026-11-05 00:40:00">2026-11-05</time><time itemprop="dateCreated datePublished" datetime="2026-11-04T16:40:00.000Z" title="Updated 2026-11-05 00:40:00">2026-11-05</time></header><p>上一篇跟完了一次请求在 Pi 里的完整路径。这一篇往下一层：那些消息到底被存在哪儿、以什么形状存的。</p>
+<p>如果你写过玩具 agent，答案大概是一个数组：<code>messages.push(...)</code>，存盘就是 <code>JSON.stringify(messages)</code>。Pi 不是。它把一条对话存成了<strong>一棵树</strong>，而且这个文件永远只追加、从不修改。</p>
+<p>这不是为了炫技。九个功能里有六个是被”树”这个形状直接送出来的——回退、重试、分叉、压缩、切换模型、改一条旧消息。换成数组，每一个都要单独打补丁。</p>
+<h2 id="0-先说结论"><a href="#0-先说结论" class="headerlink" title="0. 先说结论"></a>0. 先说结论</h2><p>三句话：</p>
+<ol>
+<li>会话文件是一行一个 JSON 的 JSONL，每行是一个 <strong>entry</strong>，entry 自带 <code>id</code> 和 <code>parentId</code>。</li>
+<li>树的结构完全由 <code>parentId</code> 决定，另外只有一个叫 <code>leafId</code> 的指针表示”我现在站在这棵树的哪个节点上”。</li>
+<li>每次要发给模型之前，从 <code>leafId</code> 往上走到根，把这条路投影成消息数组——<strong>路径就是上下文</strong>。</li>
+</ol>
+<p>就这三条。下面全部是它的推论。</p>
+<h2 id="1-一条线的三个坏处"><a href="#1-一条线的三个坏处" class="headerlink" title="1. 一条线的三个坏处"></a>1. 一条线的三个坏处</h2><p>先把”为什么不能是数组”讲清楚，否则树看起来很无理。</p>
+<p><strong>坏处一：回退只能截断。</strong> 数组里你想退回到第 5 条消息，只能把这之后的全删掉。可用户往往只是”这条支线试错了，我想回到分叉点换个说法”——被删掉的那段其实有价值，删了就是真丢了。</p>
+<p><strong>坏处二：重试要在原地改。</strong> 模型答得不好，想让它重答。数组方案里你要么覆盖最后一条（那就丢了原答案），要么在中间插一条（那后面所有消息的位置都变了）。而磁盘上的文件是追加写的，改中间一行的代价是重写整个文件。</p>
+<p><strong>坏处三：压缩没有位置感。</strong> 上下文快满了，要压掉前 30 条。压完之后，那 30 条原始记录还要不要留？数组方案里它们只能被替换掉——于是”压缩”和”删历史”变成同一件事。</p>
+<p>这三个坏处有同一个根源：<strong>一条线只能表达”顺序”，表达不了”分叉”和”覆盖”</strong>。而 agent 的日常操作恰恰全是分叉和覆盖。</p>
+<h2 id="2-换一张数据结构"><a href="#2-换一张数据结构" class="headerlink" title="2. 换一张数据结构"></a>2. 换一张数据结构</h2><p>Pi 的选择是把”顺序”降级成”指针”：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;type&quot;:&quot;session&quot;,&quot;version&quot;:3,&quot;id&quot;:&quot;0199...&quot;,&quot;timestamp&quot;:&quot;...&quot;,&quot;cwd&quot;:&quot;/Users/me/proj&quot;&#125;</span><br><span class="line">&#123;&quot;type&quot;:&quot;message&quot;,&quot;id&quot;:&quot;a1&quot;,&quot;parentId&quot;:null,&quot;timestamp&quot;:&quot;...&quot;,&quot;message&quot;:&#123;...&#125;&#125;</span><br><span class="line">&#123;&quot;type&quot;:&quot;message&quot;,&quot;id&quot;:&quot;a2&quot;,&quot;parentId&quot;:&quot;a1&quot;,&quot;timestamp&quot;:&quot;...&quot;,&quot;message&quot;:&#123;...&#125;&#125;</span><br><span class="line">&#123;&quot;type&quot;:&quot;message&quot;,&quot;id&quot;:&quot;a3&quot;,&quot;parentId&quot;:&quot;a2&quot;,&quot;timestamp&quot;:&quot;...&quot;,&quot;message&quot;:&#123;...&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一行是文件头 <code>SessionHeader</code>（<code>session-manager.ts:35-43</code>），里面有 <code>cwd</code>、<code>version</code>、可选的 <code>parentSession</code>。之后每行是一个 <code>SessionEntry</code>，公共字段只有四个（<code>session-manager.ts:49-54</code>）：</p>
+<ul>
+<li><code>type</code>：这一条是什么</li>
+<li><code>id</code>：自己的 id</li>
+<li><code>parentId</code>：上一条是谁（<code>null</code> 表示根）</li>
+<li><code>timestamp</code></li>
+</ul>
+<p><strong>顺序信息在哪？</strong> 在文件里的物理行序里，也在 <code>parentId</code> 链里。二者平时一致，一旦你回退，它们就不一致了——后面追加的 entry 的 <code>parentId</code> 会指向旧节点，物理上却排在文件末尾。这就是树能”长”出来的原因：<strong>追加写 + 指回去</strong>。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  subgraph lin[&quot;线性（数组）&quot;]
+    L1[&quot;msg1&quot;] --&gt; L2[&quot;msg2&quot;] --&gt; L3[&quot;msg3&quot;] --&gt; L4[&quot;msg4&quot;]
+    L3 -. 回退只能截断 .-&gt; L2
+  end
+  subgraph tree[&quot;树（append-only）&quot;]
+    T1[&quot;msg1&quot;] --&gt; T2[&quot;msg2&quot;]
+    T2 --&gt; T3a[&quot;msg3（旧）&quot;]
+    T2 --&gt; T3b[&quot;msg3（重试）&quot;]
+    T3a --&gt; T4a[&quot;msg4a&quot;]
+    T3b --&gt; T4b[&quot;msg4b&quot;]
+    T3a -. 回退时挂一页摘要 .-&gt; S[&quot;branch_summary&quot;]
+  end
+  </pre></div>
+
+<p>这个设计有个立刻能感受到的好处：<strong>所有操作都退化成”追加一行”</strong>。回退是追加、压缩是追加、改一条旧消息也是追加。文件永远只往长了长，不存在”写坏一半”的问题，崩溃时最多丢掉最后半行（读取时坏行会被跳过，<code>session-manager.ts:675</code> 的注释写得很直白：<code>Blank and malformed lines are skipped</code>）。</p>
+<h2 id="3-entry-不只是消息"><a href="#3-entry-不只是消息" class="headerlink" title="3. entry 不只是消息"></a>3. entry 不只是消息</h2><p>第二个反直觉的地方：会话文件里存的不只是”消息”。</p>
+<p><code>SessionEntry</code> 是个联合类型，一共 11 种（<code>session-manager.ts</code> 的 <code>SessionEntry</code> 定义）：</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>它表示什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>message</code></td>
+<td>一条真正的消息（user &#x2F; assistant &#x2F; toolResult）</td>
+</tr>
+<tr>
+<td><code>thinking_level_change</code></td>
+<td>思考档位被改成了 <code>high</code></td>
+</tr>
+<tr>
+<td><code>model_change</code></td>
+<td>换了一个模型</td>
+</tr>
+<tr>
+<td><code>usage</code></td>
+<td>一次请求的用量与花费</td>
+</tr>
+<tr>
+<td><code>compaction</code></td>
+<td>一次上下文压缩的结果</td>
+</tr>
+<tr>
+<td><code>branch_summary</code></td>
+<td>一段被放弃支线的摘要</td>
+</tr>
+<tr>
+<td><code>custom</code></td>
+<td>扩展存的自定义状态（只是状态，不进上下文）</td>
+</tr>
+<tr>
+<td><code>custom_message</code></td>
+<td>扩展注入的一条消息（进上下文）</td>
+</tr>
+<tr>
+<td><code>context_edit</code></td>
+<td>对某条旧消息的”改写声明”</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>给某个节点起个名字</td>
+</tr>
+<tr>
+<td><code>session_info</code></td>
+<td>会话级别的元信息（比如标题）</td>
+</tr>
+</tbody></table>
+<p>为什么要这么细？因为<strong>在 Pi 里，”发生了什么”和”模型看到了什么”是两件事</strong>。</p>
+<p>举个例子：你中途把模型从 <code>claude</code> 换到 <code>deepseek</code>。数组方案里这条信息无处安放，只能写进某条消息的文本里（很多 agent 真的这么干过，于是模型会看到”用户说：请从现在起用另一个模型”这种假消息）。Pi 里它是一条 <code>model_change</code> 节点，落在树上，投影的时候被”读”成当前状态：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getSessionContextSettings</span>(<span class="params"><span class="attr">path</span>: <span class="title class_">SessionEntry</span>[]</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> thinkingLevel = <span class="string">&quot;off&quot;</span>;</span><br><span class="line">  <span class="keyword">let</span> model = <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> entry <span class="keyword">of</span> path) &#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.<span class="property">type</span> === <span class="string">&quot;thinking_level_change&quot;</span>) thinkingLevel = entry.<span class="property">thinkingLevel</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (entry.<span class="property">type</span> === <span class="string">&quot;model_change&quot;</span>) model = &#123; <span class="attr">provider</span>: entry.<span class="property">provider</span>, <span class="attr">modelId</span>: entry.<span class="property">modelId</span> &#125;;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (entry.<span class="property">type</span> === <span class="string">&quot;message&quot;</span> &amp;&amp; entry.<span class="property">message</span>.<span class="property">role</span> === <span class="string">&quot;assistant&quot;</span>) &#123;</span><br><span class="line">      model = &#123; <span class="attr">provider</span>: entry.<span class="property">message</span>.<span class="property">provider</span>, <span class="attr">modelId</span>: entry.<span class="property">message</span>.<span class="property">model</span> &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> &#123; thinkingLevel, model &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这段是从 <code>session-manager.ts:419-436</code> 摘的（我省掉了类型标注）。注意它是<strong>遍历路径、后来者覆盖</strong>——所以”当前用什么模型”不是一个字段，而是这条路径上最后一次声明的结果。这就是树给的第二个红利：<strong>状态是推导出来的，不是维护出来的</strong>。任何回退都会自动把模型、思考档位一起退回去，不需要额外代码去”恢复状态”。</p>
+<h2 id="4-一个指针：leafId"><a href="#4-一个指针：leafId" class="headerlink" title="4. 一个指针：leafId"></a>4. 一个指针：leafId</h2><p>树有了，但还需要知道”我现在在哪”。答案是一个指针 <code>leafId</code>，指向当前叶子节点。</p>
+<p>有意思的是：<strong>这个指针不存</strong>。它不在文件里，<code>SessionManager</code> 在内存里维护（<code>getLeafId()</code>，<code>session-manager.ts:1415</code>），默认就是文件里最后一条 entry：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> leaf = leafId ? index.<span class="title function_">get</span>(leafId) : <span class="literal">undefined</span>;</span><br><span class="line">leaf ??= entries[entries.<span class="property">length</span> - <span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+
+<p>（<code>session-manager.ts:400-405</code>，我省了 <code>index</code> 的构建。）</p>
+<p>所以”当前在哪”这件事，默认等于”最后写了什么”，回退时被显式改指。这带来一个很干净的性质：<strong>文件本身是完整的历史，指针只是视角</strong>。同一份文件，换个 <code>leafId</code> 就是另一段对话——后面讲的 fork 和压缩，全靠这一点。</p>
+<h2 id="5-投影：从叶子往上走，在压缩处切一刀"><a href="#5-投影：从叶子往上走，在压缩处切一刀" class="headerlink" title="5. 投影：从叶子往上走，在压缩处切一刀"></a>5. 投影：从叶子往上走，在压缩处切一刀</h2><p>真正发给模型的东西，不是文件，是<strong>投影</strong>。分两步。</p>
+<p><strong>第一步：把路径取出来。</strong> 从 <code>leafId</code> 出发，沿 <code>parentId</code> 一路向上到根，然后反转（<code>buildSessionPath</code>，<code>session-manager.ts:390-417</code>）：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="attr">path</span>: <span class="title class_">SessionEntry</span>[] = [];</span><br><span class="line"><span class="keyword">let</span> current = leaf;</span><br><span class="line"><span class="keyword">while</span> (current) &#123;</span><br><span class="line">  path.<span class="title function_">push</span>(current);</span><br><span class="line">  current = current.<span class="property">parentId</span> ? index.<span class="title function_">get</span>(current.<span class="property">parentId</span>) : <span class="literal">undefined</span>;</span><br><span class="line">&#125;</span><br><span class="line">path.<span class="title function_">reverse</span>();</span><br></pre></td></tr></table></figure>
+
+<p>一个 while 循环，没有递归，没有遍历整棵树。这是树形存储的关键性能性质：<strong>读一条路径的代价是路径长度，不是文件大小</strong>。</p>
+<p><strong>第二步：在这条路径上切出”有效区间”。</strong> 这一步是 <code>buildContextEntries</code>（<code>session-manager.ts:476-543</code>），也是整个设计里最巧的地方。</p>
+<p>它先在这条路径上找<strong>最新的一次压缩</strong>，然后把结果拼成三段：</p>
+<ol>
+<li>压缩节点本身（它是一条 <code>compaction</code> entry，里面装着摘要和 <code>firstKeptEntryId</code>）</li>
+<li>从 <code>firstKeptEntryId</code> 到压缩节点之间、且不是 system 消息的那些 entry</li>
+<li>压缩节点之后的全部 entry</li>
+</ol>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+  L[&quot;leafId（当前叶子）&quot;] --&gt; E5[&quot;entry 5&quot;]
+  E5 --&gt; CP[&quot;compaction&lt;br&#x2F;&gt;摘要 + firstKeptEntryId&quot;]
+  CP --&gt; E3[&quot;entry 3&quot;]
+  E3 --&gt; E2[&quot;entry 2&quot;]
+  E2 --&gt; E1[&quot;entry 1&quot;]
+  CPD[&quot;上下文 &#x3D; 摘要 + 从 firstKeptEntryId 起的原文 + 之后的全部&quot;]
+  CP -.-&gt; CPD
+  </pre></div>
+
+<p>用人话说：<strong>压缩不是”把前 30 条删掉换成一段摘要”，而是”宣布从第 31 条开始重新看”</strong>。第 1 到 30 条仍然躺在文件里，随时可以回去读；只是在构造上下文时，它们被那个摘要节点替代了。</p>
+<p>这就解释了为什么 Pi 允许你压缩完继续聊、聊崩了还能回到压缩之前——因为压缩这个动作本身没有破坏任何数据，它只是在树上挂了一个”新的起点”。</p>
+<p>顺带一提，<code>firstKeptEntryId</code> 的存在说明压缩是<strong>有损但可控</strong>的：摘要之外，还硬保留一段原始消息（最近的若干条），避免模型丢失最近几轮的细节。</p>
+<h2 id="6-回退：不是删除，是挂一页摘要"><a href="#6-回退：不是删除，是挂一页摘要" class="headerlink" title="6. 回退：不是删除，是挂一页摘要"></a>6. 回退：不是删除，是挂一页摘要</h2><p>现在讲最常用也最容易做错的功能：<code>/tree</code>。</p>
+<p>在 Pi 里输入 <code>/tree</code> 会弹出一个树形选择器（<code>TreeSelectorComponent</code>，<code>interactive-mode.ts:5693</code> 的 <code>showTreeSelector</code>），你选中任意一个节点，回车。接下来的动作在 <code>agent-session.ts</code> 的 <code>navigateTree()</code>（<code>:4093</code>）里：</p>
+<ol>
+<li>算出”从当前叶子到目标节点”这一段被放弃的 entry（<code>collectEntriesForBranchSummary</code>，<code>:4124</code>）</li>
+<li>问你要不要给这段支线生成一页摘要</li>
+<li>要的话，生成一条 <code>branch_summary</code> entry 挂在目标节点下面</li>
+<li>把 <code>leafId</code> 改指目标节点</li>
+</ol>
+<p>注意第 2、3 步：<strong>被放弃的那段，不是消失了，是被总结成了一页，重新挂回树上</strong>。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  sequenceDiagram
+  participant U as 用户
+  participant S as AgentSession
+  participant M as SessionManager
+  U-&gt;&gt;S: &#x2F;tree → 选中旧节点
+  S-&gt;&gt;M: collectEntriesForBranchSummary(旧leaf, target)
+  M--&gt;&gt;S: 被放弃的 entry 列表
+  S-&gt;&gt;S: （可选）生成摘要
+  S-&gt;&gt;M: appendBranchSummary(target, 摘要)
+  S-&gt;&gt;M: setLeafId(target)
+  Note over M: 文件只追加&lt;br&#x2F;&gt;旧分支一条都没删
+  </pre></div>
+
+<p>为什么值得这么做？因为”我回到分叉点换个说法”通常意味着”那条死路我已经想明白了”。如果摘要里写的是”试过用 A 方案，失败原因是 B”，那么新分支一开头就带着这个结论——<strong>回退不但没丢信息，还把信息提升了密度</strong>。</p>
+<p>这是一个很典型的取舍：与其让用户（或模型）在新分支里重新踩一遍坑，不如花一次摘要的成本，把旧的上下文压缩后继承过来。Pi 把这做成一个可选的开关，默认关——因为有时候你回到分叉点就是想彻底甩掉之前的思路。</p>
+<p>顺带说一个实现细节：<code>navigateTree</code> 也被 print 模式用（<code>print-mode.ts:93</code>），也就是 <code>pi -p</code> 里同样可以回退。这说明”树”不是 TUI 的装饰，它是会话模型的一部分，任何前端都能用。</p>
+<h2 id="7-想改一条旧消息怎么办"><a href="#7-想改一条旧消息怎么办" class="headerlink" title="7. 想改一条旧消息怎么办"></a>7. 想改一条旧消息怎么办</h2><p>还剩一个最难的情况：<strong>我不回退，我就想改第 5 条消息里的一个错别字</strong>。</p>
+<p>追加写的文件改不了中间那行。删了重写？那所有 id 都得重编，指纹全变。Pi 的做法是 <code>context_edit</code>（<code>session-manager.ts:1371</code> 的 <code>appendContextEdit</code>）：追加一条 entry，内容是”第 5 条消息，替换成这样”或”第 5 条消息，省略掉”。</p>
+<p>投影的时候，这条 <code>context_edit</code> 会把目标 entry 的投影结果换掉。文件里第 5 条还是原样，但模型看到的是改后的版本。</p>
+<p>代码里能看到这个机制的两个真实用途：</p>
+<ul>
+<li><code>agent-session.ts:983</code>：用户主动编辑某条消息</li>
+<li><code>agent-session.ts:1291</code>：工具执行失败、上下文已经脏了的时候，把坏掉的那条消息<strong>从投影里省略</strong>（<code>replacement: null</code>），保证后续对话还能继续</li>
+</ul>
+<p>第二个用途很有意思——它是”错误恢复”而不是”用户编辑”。当一条消息的投影结果无法持久化（代码里抛 <code>Cannot persist recovery omission because a projected message has no source entry</code>），系统宁可退化成抛错，也不肯悄悄改历史。<strong>这个较真是对的</strong>：一旦允许静默改写，树的可信度就没了。</p>
+<h2 id="8-fork-与标签"><a href="#8-fork-与标签" class="headerlink" title="8. fork 与标签"></a>8. fork 与标签</h2><p>树的最后两个红利，各一句话：</p>
+<p><strong>fork。</strong> 从一个会话分叉出一个新会话（<code>forkFrom</code>），新文件复制到分叉点为止的所有 entry，文件头里写上 <code>parentSession</code>。于是”同一份历史、两条不同走向”成为可能，而且血缘关系明确。多智能体协作里，这就是”每个子任务拿一份自己的分支”。</p>
+<p><strong>label。</strong> <code>label</code> entry 给某个节点起个名字。因为节点有 id、有名字，你就可以用”回到那个叫 xxx 的节点”来代替”回退到第 37 条”——<strong>引用的是节点，不是位置</strong>。位置会变，节点不会。</p>
+<h2 id="9-代价"><a href="#9-代价" class="headerlink" title="9. 代价"></a>9. 代价</h2><p>一个诚实的设计总要付账。树形会话付的账是：</p>
+<p><strong>每次启动都要重建投影。</strong> 文件可能有几百条 entry，<code>buildSessionProjection</code>（<code>session-manager.ts:544</code>）要全读一遍。Pi 的缓解手段是：读文件时按行流式解析（<code>loadEntriesFromFile</code>，<code>:628</code>）、坏行跳过、头部扫描上限 1 MB（<code>MAX_SESSION_HEADER_SCAN_BYTES</code>，<code>:608</code>）。但本质上它仍然是 O(文件大小) 的重建，不是索引查询。</p>
+<p><strong>文件只增不减。</strong> 长期使用的会话会一直变长。这是 append-only 的必然代价，换来的是”任何时刻都能回到过去，且过去的东西不会被覆盖”。</p>
+<p><strong>心智负担。</strong> 第一次看到 <code>/tree</code> 的树形选择器，多数人是要愣一下的。线性对话是所有人都熟悉的隐喻，树不是。</p>
+<h2 id="10-小结"><a href="#10-小结" class="headerlink" title="10. 小结"></a>10. 小结</h2><p>回到开头那三个坏处：</p>
+<table>
+<thead>
+<tr>
+<th>坏处</th>
+<th>数组方案</th>
+<th>树方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>回退</td>
+<td>截断，丢历史</td>
+<td>移动指针，全保留，还能挂摘要</td>
+</tr>
+<tr>
+<td>重试</td>
+<td>覆盖或中间插入</td>
+<td>追加一个分叉节点</td>
+</tr>
+<tr>
+<td>压缩</td>
+<td>替换掉原文</td>
+<td>挂一个压缩节点，原文留着</td>
+</tr>
+</tbody></table>
+<p>三条推论再抄一遍：</p>
+<ol>
+<li><strong>一条对话 &#x3D; 一棵 append-only 的树</strong>，节点靠 <code>parentId</code> 相连，文件只追加。</li>
+<li><strong>上下文 &#x3D; 从 <code>leafId</code> 到根的一条路径</strong>，压缩节点在这条路径上切出有效区间。</li>
+<li><strong>状态是推导的，不是维护的</strong>：模型、思考档位、压缩边界、消息改写，全都是”沿路径读出来”的结果。</li>
+</ol>
+<p>这套设计最值得抄的地方，不是 JSONL，也不是 <code>parentId</code>——而是那个判断：<strong>把”顺序”从数据结构里拿出来，变成一个指针</strong>。顺序一旦可变，分叉、回退、覆盖就都免费了。</p>
+<hr>
+<p><strong>相关阅读</strong></p>
+<ul>
+<li><a href="/2026/11/05/Pi-%E5%85%A5%E9%97%A8/">Pi 入门：一个把”极简”当真了的 agent</a></li>
+<li><a href="/2026/11/05/Pi-Loop/">Pi 的一次请求：agent loop 里到底发生了什么</a></li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/')">Pi 的会话树：一条对话为什么不是一条线</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=Pi 的会话树：一条对话为什么不是一条线&amp;url=https://benedicttom.github.io/2026/11/05/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/&amp;pic=/images/Pi-%E4%BC%9A%E8%AF%9D%E6%A0%91/cover.png" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Agent/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Agent<span class="tagsPageCount">18</span></a><a class="post-meta__box__tags" href="/tags/Pi/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Pi<span class="tagsPageCount">9</span></a><a class="post-meta__box__tags" href="/tags/Session/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Session<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/JSONL/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>JSONL<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/Pi-Codemode/cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2026/11/04/MCP%E5%85%A8%E8%A7%A3/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/MCP%E5%85%A8%E8%A7%A3/cover.gif" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">MCP 全解：从 stdio 到无状态，再到网关与高并发</div></div></a></div><div class="next-post pull-right"><a href="/2026/11/05/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Pi 的上下文工程：每次请求，模型到底看到了什么</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/11/05/Pi-Loop/" title="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Loop/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了</div></div></a></div><div><a href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8A/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi Durable（上）：先落盘，再显示</div></div></a></div><div><a href="/2026/11/05/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/" title="Pi 的上下文工程：每次请求，模型到底看到了什么"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 的上下文工程：每次请求，模型到底看到了什么</div></div></a></div><div><a href="/2026/11/05/Pi-%E5%85%A5%E9%97%A8/" title="Pi 入门：从一条命令，到一个会改代码的 agent"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E5%85%A5%E9%97%A8/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 入门：从一条命令，到一个会改代码的 agent</div></div></a></div><div><a href="/2026/11/05/Pi-%E5%B7%A5%E5%85%B7/" title="Pi 怎么定义一个工具：一张卡片上的十个字段"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E5%B7%A5%E5%85%B7/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 怎么定义一个工具：一张卡片上的十个字段</div></div></a></div><div><a href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-11</div><div class="title">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%85%88%E8%AF%B4%E7%BB%93%E8%AE%BA"><span class="toc-number">1.</span> <span class="toc-text">0. 先说结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%80%E6%9D%A1%E7%BA%BF%E7%9A%84%E4%B8%89%E4%B8%AA%E5%9D%8F%E5%A4%84"><span class="toc-number">2.</span> <span class="toc-text">1. 一条线的三个坏处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%8D%A2%E4%B8%80%E5%BC%A0%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">2. 换一张数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-entry-%E4%B8%8D%E5%8F%AA%E6%98%AF%E6%B6%88%E6%81%AF"><span class="toc-number">4.</span> <span class="toc-text">3. entry 不只是消息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%80%E4%B8%AA%E6%8C%87%E9%92%88%EF%BC%9AleafId"><span class="toc-number">5.</span> <span class="toc-text">4. 一个指针：leafId</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%8A%95%E5%BD%B1%EF%BC%9A%E4%BB%8E%E5%8F%B6%E5%AD%90%E5%BE%80%E4%B8%8A%E8%B5%B0%EF%BC%8C%E5%9C%A8%E5%8E%8B%E7%BC%A9%E5%A4%84%E5%88%87%E4%B8%80%E5%88%80"><span class="toc-number">6.</span> <span class="toc-text">5. 投影：从叶子往上走，在压缩处切一刀</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%9B%9E%E9%80%80%EF%BC%9A%E4%B8%8D%E6%98%AF%E5%88%A0%E9%99%A4%EF%BC%8C%E6%98%AF%E6%8C%82%E4%B8%80%E9%A1%B5%E6%91%98%E8%A6%81"><span class="toc-number">7.</span> <span class="toc-text">6. 回退：不是删除，是挂一页摘要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%83%B3%E6%94%B9%E4%B8%80%E6%9D%A1%E6%97%A7%E6%B6%88%E6%81%AF%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">8.</span> <span class="toc-text">7. 想改一条旧消息怎么办</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-fork-%E4%B8%8E%E6%A0%87%E7%AD%BE"><span class="toc-number">9.</span> <span class="toc-text">8. fork 与标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E4%BB%A3%E4%BB%B7"><span class="toc-number">10.</span> <span class="toc-text">9. 代价</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%B0%8F%E7%BB%93"><span class="toc-number">11.</span> <span class="toc-text">10. 小结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Codemode/" title="Pi-Codemode：让模型写一段脚本去调工具"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Codemode/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi-Codemode：让模型写一段脚本去调工具"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Codemode/" title="Pi-Codemode：让模型写一段脚本去调工具">Pi-Codemode：让模型写一段脚本去调工具</a><time datetime="2026-11-04T19:55:00.000Z" title="Created 2026-11-05 03:55:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Durable-%E4%B8%8B/" title="Pi Durable（下）：谁在跑，谁在看"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8B/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi Durable（下）：谁在跑，谁在看"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Durable-%E4%B8%8B/" title="Pi Durable（下）：谁在跑，谁在看">Pi Durable（下）：谁在跑，谁在看</a><time datetime="2026-11-04T19:20:00.000Z" title="Created 2026-11-05 03:20:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8A/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi Durable（上）：先落盘，再显示"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示">Pi Durable（上）：先落盘，再显示</a><time datetime="2026-11-04T18:45:00.000Z" title="Created 2026-11-05 02:45:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-ai/" title="pi-ai：43 个供应商，10 种协议，一套流"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-ai/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="pi-ai：43 个供应商，10 种协议，一套流"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-ai/" title="pi-ai：43 个供应商，10 种协议，一套流">pi-ai：43 个供应商，10 种协议，一套流</a><time datetime="2026-11-04T18:10:00.000Z" title="Created 2026-11-05 02:10:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Loop/" title="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Loop/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Loop/" title="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了">Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了</a><time datetime="2026-11-04T17:40:00.000Z" title="Created 2026-11-05 01:40:00">2026-11-05</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-theme.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">116</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">66</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">32</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>18</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 0.88rem;">Codemode<sup>1</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>3</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 0.88rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 0.88rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 0.88rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/LLM/" style="font-size: 0.88rem;">LLM<sup>1</sup></a><a href="/tags/MCP/" style="font-size: 0.88rem;">MCP<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 0.88rem;">Pi<sup>9</sup></a><a href="/tags/Prompt/" style="font-size: 0.88rem;">Prompt<sup>1</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>7</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 0.88rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 0.88rem;">Streaming<sup>1</sup></a><a href="/tags/Tool/" style="font-size: 0.88rem;">Tool<sup>1</sup></a><a href="/tags/TypeBox/" style="font-size: 0.88rem;">TypeBox<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 0.88rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 0.88rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 0.88rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 0.88rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 0.88rem;">源码解析<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("/images/theme/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
