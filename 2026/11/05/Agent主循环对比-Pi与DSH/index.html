@@ -1,0 +1,733 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖 | Joie's Blog</title><meta name="keywords" content="Agent,Pi,DSH,源码解析"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"><meta name="application-name" content="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"><meta property="og:url" content="https://benedicttom.github.io/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="把 Pi 和 DSH 的 agent loop 摆在一起，逐条对六个真问题：工具集合中途变了怎么办、用户在跑的时候插话怎么办、上下文撑爆了怎么压、内部消息怎么变成供应商能吃的格式、中止时那些跑到一半的工具调用怎么收尾，以及两套循环在&amp;quot;真相&amp;quot;的定义上有什么根本分歧。"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg"><meta name="description" content="把 Pi 和 DSH 的 agent loop 摆在一起，逐条对六个真问题：工具集合中途变了怎么办、用户在跑的时候插话怎么办、上下文撑爆了怎么压、内部消息怎么变成供应商能吃的格式、中止时那些跑到一半的工具调用怎么收尾，以及两套循环在&amp;quot;真相&amp;quot;的定义上有什么根本分歧。"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: '同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖',
+  postAI: '',
+  pageFillDescription: '0. 一句话概括, 1. 先把两副骨架摆出来, 2. 工具集合在会话中途变了, 3. 运行时插话, 4. 压缩, 5. 内部消息怎么变成供应商能吃的格式, 6. 中止, 7. 重试：是把决定记下来再等还是等完再说, 8. 顺带看两个维度, 9. 一张对照总表, 10. 两种世界观, 相关阅读一句话概括的主循环就是一句里面塞三件事把上下文喂给模型把模型吐出的工具调用执行掉判断还要不要转下一圈这句话两个项目都会背真正的差异全在那些看起来像边角料的地方工具集合在会话中途变了用户在模型正在跑的时候又发了一句话上下文快撑爆了内部的消息结构要翻译成某家供应商的格式用户按了这些情况每一个都会把一个天真的循环撕碎我最近把和编译产物从里解出来的两边的循环都读了一遍它们是同一族设计的两支都把模型调用抽成流把工具执行抽成调度都靠收场但在这六件事上两边给出的答案几乎每一条都不同而且不同的方向高度一致指向两种不同的世界观下面按问题组织每个问题先摆两边的做法再给源码坐标最后说这个选择换来了什么代价是什么先把两副骨架摆出来的循环在的里是两层嵌套外层还有没有人补话内层工具与插话注入插话消息发请求流式收助手消息执行工具内层退出的唯一条件没有工具调用也没有待处理消息内层的条件写得很直白只要还有工具调用或者还有排队的话没说完就再转一圈外层的注释是内层已经打算停了结果又有人说话外层把它捞回来再转的循环长得像一个里只有一句每一步返回还有没有下一步循环本身不关心里面发生了工具调用还是别的真正干活的是以及一个显式的相位状态机这个差别不是审美把要不要继续编码成了循环条件里的两个布尔量把它编码成了状态机的一次相变并且额外给了第三个相位用于那些我需要独占这个干一件不进对话的事的场景压缩就在里面跑两层循环外层内层取插话发请求执行工具都空了相变循环压缩维护返回一个后果可以先记下来的插话是轮询进来的的插话是投递进来的这条差别会在第节炸开工具集合在会话中途变了这是最容易被忽略但几乎必踩的一件事会话跑到第十轮某个插件注册了一个新工具或者把一个工具从延迟加载变成已加载此时请求里能带的工具清单变了供应商那边对这件事的容忍度天差地别有的允许你在对话中途改工具列表有的要求工具声明在整段对话里保持稳定还有的比如某些走缓存的路由一旦声明变了就整段缓存失效所以两个项目都必须回答三个问题变化记在哪谁来决定怎么表达什么时候让模型知道的做法是盖章在每次发请求前把上下文里已经声明过的工具集合和当前真正生效的工具声明做一次得到有变化就往消息流里插一条消息把这次变化盖上如果待发的消息里本来就有消息就把它改写成带变化字段的那条保证一次请求里最多一条盖章消息而且盖在用户消息前面注意是从反推的的当前工具集不是某个全局的即时快照而是这批消息一路声明下来的结果这跟它整个项目会话记录是唯一真相的取向一致的做法是记账投影循环在里对比本次请求头与上一次落盘的头变了就追加一条然后按名字出增删追加一条内容是块来源标记为工具增加时还会把新挂在这条消息上用于把从哪一版请求头开始生效钉死真正把它翻译给供应商的是里的路由声明时它直接把消息全部丢掉工具清单原样给出也就是说这条路由根本不允许中途改工具那就当无事发生路由支持时它按历史逐条重放只保留第一次出现的那个集合去重从已发放集合里删掉带的工具就是那套延迟加载默认不发放要等它第一次被增补过才进清单本次要发的工具清单上次反推的集合插入改写一条消息所有供应商收到同样的东西追加追加路由的能力丢掉消息工具按当前快照直发逐条重放增删只发已加载的对照一下改工具这件事认为是对话的一部分所以做成消息写进任何后端都看得见认为是路由能力问题所以先记账存证再按每条路由的容忍度投影出三种形态前者简单一致后者多一层但能让同一条会话在容忍中途改工具和不容忍的路由之间切换而不炸运行时插话用户在模型正在跑的时候又敲进来一句话是产品里最高频的操作两边的处理方式差异极大是轮询循环手里没有队列只有三个查询点进入时先拉一次注释写着每一轮开始前如果上一轮已完成调之后再拉一次拉到的东西在下一次请求之前逐条塞进上下文拉到的消息就是普通的用户消息跟历史消息一视同仁这里有一段注释很值得抄下来翻译压缩可能跑很久跑的时候用户说的话不能丢所以要补拉一次但如果第一次就拉到了这次就不要再拉否则一次一条的模式会一轮塞进两条这类细节只有在真实产品里被咬过才会写下来的插话还分两层语义在内层循环里消化下一轮请求前生效而内层已经要退出了才来的话由外层循环接住下一轮对话生效两种粒度不需要额外的靠循环结构天然分开是投递每个有一个决定消息插到哪个位置而三个公开方法把语义写死在了名字里方法含义是这一轮干完再说排队进下一轮是下一步之前插进去模型还没发下一句就先看到否只塞进上下文不唤起沉睡的循环的语义是如果正闲着要不要把它叫起来不唤起就是我先把这段话放进上下文等你下次自己醒过来时看见这个区分没有的插话只在循环活着的时候有意义还有两个更细的设计只有在并发中断场景下才看得出价值一是中止后的重新分类里有一句意思是如果这个刚刚被你按了正在收尾你这时候发的会被降级成因为当前这一轮已经废了硬插进下一步没有下一步可插二是取消时收件箱清不清默认但给了选项想保留用户排队的话只中止当前这一轮就传用户输入不唤醒正被中止是否下一步请求前注入本轮结束后开新轮一句话总结这段的插话是循环问用户有没有话说的插话是用户告诉循环该什么时候看前者实现极简一个回调三个查询点后者把何时生效变成了显式契约代价是接口变多压缩上下文撑爆时的处理是两套设计哲学分歧最刺眼的地方的触发条件是绝对量就一行默认也就是给最后的回复留其余都能用压缩的执行时机藏在里就是第节那个每轮开始前调用的回调的注释直接点名压缩结果写成会话里的一种条目之后构造上下文时遇到它就知道从这条往前的东西都被一段摘要替代了的触发条件是比例加两个预留先算再算最后默认三个数的含义是用掉就压但无论如何要给回复留出给突发留余量更关键的是执行位置的压缩挂在这个上超过阈值就整个进入相位这期间新的一轮开不起来压缩独占压完的产物是把选定的那段历史替换成一个摘要节点而且契约里专门规定了导出不许从工具调用与结果的中间切开否则下一条请求就是非法消息序列两边在这里的分野可以概括成一句话的压缩是对话内的一个条目位置由会话结构自己表达这里有个标记压缩跑在轮次边界上用户还能在它跑的时候插话第节那条注释就是为此写的的压缩是一次独占的维护作业位置由替换哪段显式指定跑的时候这个不接受新一轮但记录本身是原子的要么整段被替换要么完全没有发生代价也对称的模型更轻但压缩正在进行这件事对调用方是隐式的只是慢了点的重但外部能看见之外的一段上可以老实显示正在整理上下文内部消息怎么变成供应商能吃的格式两边的内部消息都比供应商消息富有这些只在内部存在的角色有角色块图片文件引用被的大图把它们变成某家能吃的是每次请求都要过的关是一个函数纯函数式地把每种内部消息映射成一个标准变成一段文本还顺手实现了前缀的不进上下文语义变成内容包上前缀后缀变成文本层只在每次请求前调它一次注释还写着每个只调一次所以这里没法校验它的契约只有一句但很硬意思是转换层是绝不会失败的降级层宁可把一个奇怪的内部消息变成一句占位文本也不许在请求路径上抛异常供应商特定的的块的字段的限制不在这里做而在的个实现里各自处理只负责内部通用通用某家是另一层是一条投影流水线在派发给之前依次做三次投影有文件引用把文件摊成文本模型里没有把图片降级成文字描述那一族工具变更第节然后才交给的实现或去变成真正的格式而且消息在离开循环时就被冻结了里对每条做并记进之后任何一层想改消息都改不动纯函数绝不抛错通用的实现个各自派生的消息图片引用按按路由能力这个差别的实际影响是可替换性想加一家供应商只要在里写一个实现不用动想加一家除了写还得回答这条路由的是什么支不支持图片要不要降级能力矩阵是显式的代价是每接一家都要填一张表顺便一提里有一个包叫它把的当作自己的层来用也就是说同一套供应商代码在里是我的层在里是我的实现之一这件事本身就是对第节最好的注解两家在通用消息这一层的边界划得不一样以至于一家的通用层可以直接嵌进另一家的专用层中止用户按或父被取消或进程要退出时最危险的不是停下来而是停在半路三个工具并发执行两个已经改了文件第三个还在跑会话记录里到底该记什么下次恢复时这条记录还能不能重放靠检查合成结果一路传到每个执行函数里开始执行工具前查已经开始执行的在结束时再查被中止的那一批里没跑的工具直接合成一个错误结果保证每个工具调用都有对应的结果消息这条不变量因为下一轮请求时一个只有调用没有结果的历史会被供应商直接判非法然后助手消息的是时循环把这一轮当作完成收尾返回靠显式收尾取消的入口是是一个封闭联合四种来源意味着四种不同的下游处理用户取消可以重试父取消要级联进程销毁不要试图写盘取消要保留原因这些信息最后会被写进而且代码里专门做了只拷贝能进的字段的处理因为上会被的挂一个属性直接进会被当成不可序列化的数据拒掉的注释写得很细工具侧的约定写在循环顶部的文档注释里中止会停止发起新工具把已发起的跑完然后为被跳过的调用提交合成失败结果这样重放仍然一致合成结果长这样跟的是同一个思路的两种说法中止不是什么都没发生而是发生了一次可记录的失败差别在于把它写成了有类型的合成事件还带指回原始调用只保证结果消息存在重试是把决定记下来再等还是等完再说供应商网关流到一半断了重试几乎是每套的标配但重试这件事记不记账分出了又一处分歧把重试包在产生一条助手消息这件事外面的契约是成功立刻返回是终态永不重试就算中止发生在退避睡眠途中也会被归一成一条消息调用方不需要关心取消发生在哪一步非重试错误含额度欠费立刻返回快速失败其余按指数退避并在三个位置抛出回调让上层能显示正在重试第次对主循环来说重试是透明的拿到的永远是一条最终的消息重试了几次它不关心把重试做成日志里的一件事的模块注释只有一句但信息量很大每一次打算重试的决定都在开始等待之前先落盘它挂在主循环的扩展点上也就是第节里那条恢复链退避是带抖动的指数退避封顶再乘策略必须配在每个下面明确禁止把它写在顶层并用把策略序列化成一个稳定身份这样同一条重试链在日志里能被认出来差别在崩溃边界上最明显的重试被打断就只是一次的重试被打断恢复后知道自己欠一次重试前者简单后者在跑一整夜的长任务里更靠谱这也解释了为什么把重试做成一个可插拔的扩展点是谁都可以接管而把它写死在里只留一个配置口顺带看两个维度并发调度的策略是整批一致一批工具调用里只要有一个声明了整批就走串行否则并行内置工具基本不声明所以默认并行写冲突靠按文件的串行队列兜住不同文件仍然并行是一个真正的调度器控制窗口逐条决定能否进并发组遇到非并行工具就断开当前组开始新组而且它是边跑边补的那段注释不是先切好批再跑状态落盘的会话是树第篇讲过压缩分支摘要都是树上的节点的会话是事件日志每一次请求头变化每一条开发者消息每一个工具结果都是日志里一条带的事件消息由从日志现推这个差别决定了恢复语义恢复靠重放树到某个节点恢复靠重放到最后一个的代价是日志只增不减要靠压缩把它变短收益是任何时刻的状态都能由日志唯一确定包括当时工具集合是什么当时是哪条路由一张对照总表维度循环形状两层条件是布尔量相位状态机工具集合变更后插一条消息盖章记再按路由投影运行时插话三个轮询点拉三种投递语义中止后的插话无特殊处理循环已退出靠外层重开自动降级为压缩触发压缩执行轮次边界可与插话交错独占相位压缩产物会话里一个条目原子替换一段摘要节点强制工具配对平衡消息转换单个纯函数绝不抛错三级投影消息可变性普通对象转换时现算出循环即记账中止语义合成结果封闭联合合成结果记工具并发批内一致有一个串行就整批串行调度器逐条判定窗口分组状态真相会话树只增事件日志两种世界观把上面每条差异摆在一起看会发现它们朝同一个方向倒认为对话就是全部真相工具集合的变化做成消息压缩做成会话里的一个条目转换是一个纯函数插话是循环主动去问所有东西最终都能落到这条对话里发生了什么好处是心智负担极小任何时刻你只要把摊开就能知道模型看见了什么代价是有些信息只能表达进对话比如这条路由不支持图片这种事没法写进历史只能在调用时临时投影认为日志就是全部真相请求头路由工具清单压缩取消原因全都是事件日志里的记录消息只是日志的一个投影好处是任何状态都可追溯可重放可审计而且同一条会话可以在能力不同的路由之间迁移因为能力是投影时才用的参数不是历史的一部分代价是层数多改一个工具列表要经过记账投影三道门没有哪边更对如果你在写一个给人用的终端那套轻量结构能让你两周内跑起来如果你在写一个要托管要多端要审计的平台那套日志优先的投影结构会让后面每一个需求都省力一点真正值得抄的是两边都做了而且做得很坚决的那一条中止不是停下来是记录一次失败并保持一致合成合成不管哪种下一轮请求拿到的历史都是合法的这一条比循环长什么样重要得多相关阅读的一次请求转几圈它凭什么知道该停了主循环一次请求转几圈的上下文工程每次请求模型到底看到了什么上下文装配全解一次模型请求到底是怎么拼出来的会话压缩策略详解',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-11-05 12:00:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="/images/theme/loading-avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/images/theme/reward-wechat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-wechat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/theme/reward-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>19</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 1.05rem;">Codemode<sup>1</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>4</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 1.05rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 1.05rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 1.05rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/LLM/" style="font-size: 1.05rem;">LLM<sup>1</sup></a><a href="/tags/MCP/" style="font-size: 1.05rem;">MCP<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 1.05rem;">Pi<sup>10</sup></a><a href="/tags/Prompt/" style="font-size: 1.05rem;">Prompt<sup>1</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 1.05rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 1.05rem;">Redis<sup>7</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 1.05rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 1.05rem;">Streaming<sup>1</sup></a><a href="/tags/Tool/" style="font-size: 1.05rem;">Tool<sup>1</sup></a><a href="/tags/TypeBox/" style="font-size: 1.05rem;">TypeBox<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 1.05rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 1.05rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 1.05rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 1.05rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">源码解析<sup>3</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/11/"><span class="card-archive-list-date">November 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">12</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Agent/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Agent</span></a><a class="article-meta__tags" href="/tags/Pi/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Pi</span></a><a class="article-meta__tags" href="/tags/DSH/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>DSH</span></a><a class="article-meta__tags" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>源码解析</span></a></span></div></div><h1 class="post-title" itemprop="name headline">同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-11-05T04:00:00.000Z" title="Created 2026-11-05 12:00:00">2026-11-05</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-11-05T04:00:00.000Z" title="Updated 2026-11-05 12:00:00">2026-11-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/"><header><a class="post-meta-categories" href="/categories/Agent/" itemprop="url">Agent</a><a href="/tags/Agent/" tabindex="-1" itemprop="url">Agent</a><a href="/tags/Pi/" tabindex="-1" itemprop="url">Pi</a><a href="/tags/DSH/" tabindex="-1" itemprop="url">DSH</a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" tabindex="-1" itemprop="url">源码解析</a><h1 id="CrawlerTitle" itemprop="name headline">同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-11-05T04:00:00.000Z" title="Created 2026-11-05 12:00:00">2026-11-05</time><time itemprop="dateCreated datePublished" datetime="2026-11-05T04:00:00.000Z" title="Updated 2026-11-05 12:00:00">2026-11-05</time></header><h2 id="0-一句话概括"><a href="#0-一句话概括" class="headerlink" title="0. 一句话概括"></a>0. 一句话概括</h2><p>Agent 的主循环，就是一句 <code>while (true)</code> 里面塞三件事：<strong>把上下文喂给模型、把模型吐出的工具调用执行掉、判断还要不要转下一圈</strong>。</p>
+<p>这句话两个项目都会背。真正的差异全在那些”看起来像边角料”的地方——工具集合在会话中途变了、用户在模型正在跑的时候又发了一句话、上下文快撑爆了、内部的消息结构要翻译成某家供应商的 wire 格式、用户按了 Esc。这些情况每一个都会把一个天真的 <code>while</code> 循环撕碎。</p>
+<p>我最近把 Pi（<code>earendil-works/pi</code>，MIT，HEAD <code>395f3e0</code>，<code>packages/coding-agent</code> v1.5.0）和 DSH（DeepSeek Harness，编译产物，从 <code>app.asar</code> 里解出来的 <code>@deepseek-ai/dsh-*</code>）两边的循环都读了一遍。它们是同一族设计的两支：都把模型调用抽成流、把工具执行抽成调度、都靠 abort signal 收场。但在这六件事上，两边给出的答案几乎每一条都不同——而且不同的方向高度一致，指向两种不同的世界观。</p>
+<p>下面按”问题”组织，每个问题先摆两边的做法，再给源码坐标，最后说这个选择换来了什么、代价是什么。</p>
+<h2 id="1-先把两副骨架摆出来"><a href="#1-先把两副骨架摆出来" class="headerlink" title="1. 先把两副骨架摆出来"></a>1. 先把两副骨架摆出来</h2><p>Pi 的循环在 <code>packages/agent/src/agent-loop.ts</code> 的 <code>runLoop</code>（<code>:171</code>）里，是<strong>两层嵌套</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">while (true) &#123;                    // 外层：还有没有人补话</span><br><span class="line">  while (hasMoreToolCalls || pendingMessages.length &gt; 0) &#123;   // 内层：工具与插话</span><br><span class="line">     …注入插话消息 → 发请求 → 流式收助手消息 → 执行工具…</span><br><span class="line">  &#125;</span><br><span class="line">  // 内层退出的唯一条件：没有工具调用、也没有待处理消息</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内层的条件写得很直白：<strong>只要还有工具调用，或者还有排队的话没说完，就再转一圈</strong>（<code>agent-loop.ts:192</code>）。外层的注释是 <code>continues when queued follow-up messages arrive after agent would stop</code>——内层已经打算停了，结果又有人说话，外层把它捞回来再转（<code>:187</code>、<code>:305</code>）。</p>
+<p>DSH 的循环长得像 React：一个 <code>kick()</code>（<code>dsh-agent-loop/lib/index.js:887</code>）里只有一句 <code>while (await this.turn());</code>（<code>:889</code>）——<strong>每一步返回”还有没有下一步”，循环本身不关心里面发生了工具调用还是别的</strong>。真正干活的是 <code>turn()</code>&#x2F;<code>step()</code>，以及一个显式的相位状态机：<code>idle | running | maintenance</code>（<code>:791</code>）。</p>
+<p>这个差别不是审美。Pi 把”要不要继续”编码成了循环条件里的两个布尔量；DSH 把它编码成了状态机的一次相变，并且额外给了第三个相位 <code>maintenance</code>——<strong>用于那些”我需要独占这个 agent 干一件不进对话的事”的场景，压缩就在里面跑</strong>（<code>:825-845</code>）。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  graph LR
+  subgraph PI[&quot;Pi：两层循环&quot;]
+    A1[&quot;外层 while(true)&quot;] --&gt; A2[&quot;内层&lt;br&#x2F;&gt;hasMoreToolCalls || pendingMessages&quot;]
+    A2 --&gt; A3[&quot;取插话 → 发请求 → 执行工具&quot;]
+    A3 --&gt; A2
+    A2 --&gt;|&quot;都空了&quot;| A1
+  end
+  subgraph DSH[&quot;DSH：相变循环&quot;]
+    B1[&quot;kick()&quot;] --&gt; B2[&quot;while (await turn())&quot;]
+    B2 --&gt; B3[&quot;phase &#x3D; running&lt;br&#x2F;&gt;step &#x2F; turn&quot;]
+    B3 --&gt; B4[&quot;phase &#x3D; maintenance&lt;br&#x2F;&gt;压缩、维护&quot;]
+    B4 --&gt; B2
+    B2 --&gt;|&quot;turn() 返回 false&quot;| B5[&quot;phase &#x3D; idle&quot;]
+  end
+  </pre></div>
+
+<p>一个后果可以先记下来：<strong>Pi 的插话是”轮询”进来的，DSH 的插话是”投递”进来的</strong>。这条差别会在第 3 节炸开。</p>
+<h2 id="2-工具集合在会话中途变了"><a href="#2-工具集合在会话中途变了" class="headerlink" title="2. 工具集合在会话中途变了"></a>2. 工具集合在会话中途变了</h2><p>这是最容易被忽略、但几乎必踩的一件事。会话跑到第十轮，某个插件注册了一个新工具，或者 <code>tool_search</code> 把一个工具从”延迟加载”变成”已加载”。此时<strong>请求里能带的工具清单变了</strong>。</p>
+<p>供应商那边对这件事的容忍度天差地别：有的允许你在对话中途改工具列表，有的要求工具声明在整段对话里保持稳定，还有的（比如某些走 prompt 缓存的路由）一旦声明变了就整段缓存失效。所以两个项目都必须回答三个问题：<strong>变化记在哪、谁来决定怎么表达、什么时候让模型知道</strong>。</p>
+<p><strong>Pi 的做法是盖章。</strong> <code>declareToolChanges(context, pendingMessages)</code>（<code>agent-loop.ts:342-372</code>）在每次发请求前，把”上下文里已经声明过的工具集合”（<code>getCurrentTools([...context.messages, ...pendingMessages])</code>，<code>:357</code>）和”当前真正生效的工具声明”（<code>context.tools.map(toToolDeclaration)</code>，<code>:358</code>）做一次 diff，得到 <code>toolsAdded</code> &#x2F; <code>toolsRemoved</code>；有变化就往消息流里<strong>插一条 <code>system</code> 消息</strong>，把这次变化盖上（<code>:368</code>）。如果待发的消息里本来就有 system 消息，就把它改写成带变化字段的那条（<code>:362-366</code>），保证一次请求里最多一条盖章消息、而且盖在用户消息前面（<code>:369-371</code>）。</p>
+<p>注意 <code>getCurrentTools</code> 是<strong>从 transcript 反推</strong>的——Pi 的”当前工具集”不是某个全局 registry 的即时快照，而是”这批消息一路声明下来的结果”。这跟它整个项目”会话记录是唯一真相”的取向一致。</p>
+<p><strong>DSH 的做法是记账 + 投影。</strong> 循环在 <code>buildRequest()</code> 里对比本次请求头与上一次落盘的 <code>request/header</code>（<code>dsh-agent-loop/lib/index.js:1219-1240</code>）：头变了就追加一条 <code>request/header</code>（<code>reason: &quot;change&quot;</code>），然后按名字 diff 出增删，<strong>追加一条 <code>developer/message</code></strong>，内容是 <code>tool-addition</code> &#x2F; <code>tool-removal</code> 块，来源标记为 <code>&#123; kind: &quot;tool-registry&quot; &#125;</code>（<code>:1240-1258</code>）。工具<strong>增加</strong>时还会把新 <code>headerSeq</code> 挂在这条消息上，用于把”从哪一版请求头开始生效”钉死。</p>
+<p>真正把它翻译给供应商的是 <code>dsh-llm</code> 里的 <code>projectToolUpdates(messages, tools, toolUpdate, history)</code>（<code>dsh-llm/lib/index.js:786-858</code>）：</p>
+<ul>
+<li>路由声明 <code>modelInfo.toolUpdate === undefined</code> 时，它直接把 <code>developer</code> 消息<strong>全部丢掉</strong>、工具清单原样给出（<code>:787-796</code>）——也就是说，<strong>这条路由根本不允许中途改工具</strong>，那就当无事发生；</li>
+<li>路由支持 <code>&quot;in-history&quot;</code> 时，它按历史逐条重放：<code>tool-addition</code> 只保留第一次出现的那个（<code>offered</code> 集合去重，<code>:812-817</code>），<code>tool-removal</code> 从已发放集合里删掉（<code>:818-819</code>）；</li>
+<li>带 <code>deferLoading</code> 的工具（就是 <code>tool_search</code> 那套延迟加载）默认<strong>不发放</strong>，要等它第一次被”增补”过才进清单（<code>:809</code>）。</li>
+</ul>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+  T[&quot;本次要发的工具清单&lt;br&#x2F;&gt;vs 上次&quot;] --&gt; P{&quot;Pi&quot;}
+  T --&gt; D{&quot;DSH&quot;}
+  P --&gt; P1[&quot;diff transcript 反推的集合&quot;]
+  P1 --&gt; P2[&quot;插入 &#x2F; 改写一条 system 消息&lt;br&#x2F;&gt;toolsAdded &#x2F; toolsRemoved&quot;]
+  P2 --&gt; P3[&quot;所有供应商收到同样的东西&quot;]
+  D --&gt; D1[&quot;追加 request&#x2F;header (reason: change)&quot;]
+  D1 --&gt; D2[&quot;追加 developer&#x2F;message&lt;br&#x2F;&gt;tool-addition &#x2F; tool-removal&quot;]
+  D2 --&gt; D3{&quot;路由的 toolUpdate 能力&quot;}
+  D3 --&gt;|&quot;undefined&quot;| D4[&quot;丢掉 developer 消息&lt;br&#x2F;&gt;工具按当前快照直发&quot;]
+  D3 --&gt;|&quot;in-history&quot;| D5[&quot;逐条重放增删&lt;br&#x2F;&gt;deferLoading 只发已加载的&quot;]
+  </pre></div>
+
+<p>对照一下：”改工具”这件事，Pi 认为是<strong>对话的一部分</strong>（所以做成消息、写进 transcript、任何后端都看得见），DSH 认为是<strong>路由能力问题</strong>（所以先记账存证，再按每条路由的容忍度投影出三种形态）。前者简单、一致；后者多一层，但能让同一条会话在”容忍中途改工具”和”不容忍”的路由之间切换而不炸。</p>
+<h2 id="3-运行时插话"><a href="#3-运行时插话" class="headerlink" title="3. 运行时插话"></a>3. 运行时插话</h2><p>用户在模型正在跑的时候又敲进来一句话，是 agent 产品里最高频的操作。两边的处理方式差异极大。</p>
+<p><strong>Pi 是轮询。</strong> 循环手里没有队列，只有三个查询点：进入 <code>runLoop</code> 时先拉一次（<code>agent-loop.ts:184</code>，注释写着 <code>Check for steering messages at start (user may have typed while waiting)</code>）；每一轮开始前，如果上一轮已完成，调 <code>prepareNextTurn</code> 之后<strong>再拉一次</strong>（<code>:210-217</code>）；拉到的东西在下一次请求<strong>之前</strong>逐条塞进上下文（<code>:219-226</code>）。拉到的消息就是普通的用户消息，跟历史消息一视同仁。</p>
+<p>这里有一段注释很值得抄下来（<code>:210-217</code>）：</p>
+<blockquote>
+<p>Preparation can be long-running (for example, compaction). Pick up steering queued while it ran. Only poll again if the earlier poll returned nothing; otherwise one-at-a-time mode would deliver two messages in this turn.</p>
+</blockquote>
+<p>翻译：压缩可能跑很久，跑的时候用户说的话不能丢，所以要补拉一次；但如果第一次就拉到了，这次就<strong>不要再拉</strong>，否则”一次一条”的模式会一轮塞进两条。这类细节只有在真实产品里被咬过才会写下来。</p>
+<p>Pi 的插话还分两层语义：<code>pendingMessages</code> 在内层循环里消化（<strong>下一轮请求前生效</strong>），而”内层已经要退出了才来的话”由外层循环接住（<code>:305</code>）——<strong>下一轮对话生效</strong>。两种粒度不需要额外的 API，靠循环结构天然分开。</p>
+<p><strong>DSH 是投递。</strong> 每个 agent 有一个 inbox，<code>send(message, target, wakeup)</code>（<code>dsh-agent-loop/lib/index.js:800-807</code>）决定消息插到哪个位置，而三个公开方法把语义写死在了名字里：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>target</th>
+<th>wakeup</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>followup(input)</code>（<code>:806</code>）</td>
+<td><code>next-turn</code></td>
+<td>是</td>
+<td>这一轮干完再说（排队进下一轮）</td>
+</tr>
+<tr>
+<td><code>steer(input)</code>（<code>:809</code>）</td>
+<td><code>next-step</code></td>
+<td>是</td>
+<td>下一步之前插进去（模型还没发下一句就先看到）</td>
+</tr>
+<tr>
+<td><code>inject(input)</code>（<code>:812</code>）</td>
+<td><code>next-step</code></td>
+<td>否</td>
+<td>只塞进上下文，<strong>不唤起</strong>沉睡的循环</td>
+</tr>
+</tbody></table>
+<p><code>wakeup</code> 的语义是”如果 agent 正闲着，要不要把它叫起来”。<code>inject</code> 不唤起，就是”我先把这段话放进上下文，等你下次自己醒过来时看见”。这个区分 Pi 没有——Pi 的插话只在循环活着的时候有意义。</p>
+<p>还有两个更细的设计，只有在并发&#x2F;中断场景下才看得出价值：</p>
+<p>一是<strong>中止后的重新分类</strong>。<code>send</code> 里有一句 <code>const wakingAfterAbort = wakeup &amp;&amp; this.phase.kind !== &quot;idle&quot; &amp;&amp; this.phase.abort.signal.aborted; const resolvedTarget = wakingAfterAbort ? &quot;next-turn&quot; : target;</code>（<code>:801-804</code>）。意思是：如果这个 agent 刚刚被你按了 Esc 正在收尾，你这时候发的”steer”会被降级成”next-turn”——因为当前这一轮已经废了，硬插进”下一步”没有下一步可插。</p>
+<p>二是<strong>取消时收件箱清不清</strong>。<code>cancel(cause, options)</code>（<code>:815-821</code>）默认 <code>this.inbox.clear()</code>，但给了 <code>keepInbox</code> 选项：想保留用户排队的话、只中止当前这一轮，就传 <code>&#123; keepInbox: true &#125;</code>。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  U[&quot;用户输入&quot;] --&gt; S{&quot;send(target, wakeup)&quot;}
+  S --&gt;|&quot;followup&quot;| Q1[&quot;inbox: next-turn&quot;]
+  S --&gt;|&quot;steer&quot;| Q2[&quot;inbox: next-step&quot;]
+  S --&gt;|&quot;inject&quot;| Q3[&quot;inbox: next-step, 不唤醒&quot;]
+  Q2 --&gt; W{&quot;agent 正被中止？&quot;}
+  W --&gt;|&quot;是&quot;| Q1
+  W --&gt;|&quot;否&quot;| R[&quot;下一步请求前注入&quot;]
+  Q1 --&gt; R2[&quot;本轮结束后开新轮&quot;]
+  Q3 --&gt; R
+  </pre></div>
+
+<p>一句话总结这段：<strong>Pi 的插话是”循环问用户有没有话说”，DSH 的插话是”用户告诉循环该什么时候看”</strong>。前者实现极简（一个回调、三个查询点），后者把”何时生效”变成了显式契约，代价是接口变多。</p>
+<h2 id="4-压缩"><a href="#4-压缩" class="headerlink" title="4. 压缩"></a>4. 压缩</h2><p>上下文撑爆时的处理，是两套设计哲学分歧最刺眼的地方。</p>
+<p><strong>Pi 的触发条件是绝对量</strong>：<code>shouldCompact(contextTokens, contextWindow, settings)</code> 就一行——<code>contextTokens &gt; contextWindow - settings.reserveTokens</code>（<code>packages/coding-agent/src/core/compaction/compaction.ts:267-269</code>），<code>reserveTokens</code> 默认 <strong>16384</strong>（<code>:128</code>）。也就是”给最后的回复留 16K，其余都能用”。</p>
+<p>压缩的执行时机藏在 <code>prepareNextTurn</code> 里——就是第 3 节那个每轮开始前调用的回调。<code>agent-loop.ts:210</code> 的注释直接点名 <code>for example, compaction</code>。压缩结果写成会话里的一种条目 <code>type: &quot;compaction&quot;</code>（<code>core/session-manager.ts:92</code>），之后构造上下文时遇到它就知道”从这条往前的东西都被一段摘要替代了”（<code>:302</code>、<code>:374</code>、<code>:461</code>）。</p>
+<p><strong>DSH 的触发条件是比例加两个预留</strong>：<code>resolveCompactSpec()</code> 先算 <code>messageBudgetTokens = contextWindow - reservedCompletionTokens</code>，再算 <code>pressureBudgetTokens = messageBudgetTokens - policy.headroomTokens</code>，最后 <code>thresholdTokens = min(contextWindow * thresholdRatio, pressureBudgetTokens)</code>（<code>dsh-compaction-basic/lib/index.js:124-132</code>）。默认 <code>thresholdRatio = 0.8</code>（<code>:15</code>）、<code>headroomTokens = 65536</code>（<code>:63</code>）。三个数的含义是：<strong>用掉 80% 就压；但无论如何要给回复留出 maxTokens、给突发留 64K 余量</strong>。</p>
+<p>更关键的是执行位置。DSH 的压缩挂在 <code>agent/pre-step</code> 这个 waterfall 上（<code>dsh-compaction-basic/lib/index.js:839</code>），超过阈值就 <code>agent.runMaintenance(...)</code>（<code>:988</code>）——<strong>整个 agent 进入 <code>maintenance</code> 相位</strong>，这期间新的一轮开不起来，压缩独占。压完的产物是”把选定的那段历史替换成一个摘要节点”，而且契约里专门规定了 <code>toolPairingBalancedBefore/After</code>（<code>dsh-compaction/lib/index.js</code> 导出）——<strong>不许从工具调用与结果的中间切开</strong>，否则下一条请求就是非法消息序列。</p>
+<p>两边在这里的分野可以概括成一句话：</p>
+<ul>
+<li>Pi 的压缩是<strong>对话内的一个条目</strong>，位置由会话结构自己表达（”这里有个 compaction 标记”），压缩跑在轮次边界上，用户还能在它跑的时候插话（第 3 节那条注释就是为此写的）。</li>
+<li>DSH 的压缩是<strong>一次独占的维护作业</strong>，位置由”替换哪段 surface”显式指定，跑的时候这个 agent 不接受新一轮，但记录本身是原子的——要么整段被替换，要么完全没有发生。</li>
+</ul>
+<p>代价也对称：Pi 的模型更轻，但”压缩正在进行”这件事对调用方是隐式的（只是 <code>prepareNextTurn</code> 慢了点）；DSH 的重，但外部能看见 <code>status: idle/running</code> 之外的一段 <code>maintenance</code>，UI 上可以老实显示”正在整理上下文”。</p>
+<h2 id="5-内部消息怎么变成供应商能吃的格式"><a href="#5-内部消息怎么变成供应商能吃的格式" class="headerlink" title="5. 内部消息怎么变成供应商能吃的格式"></a>5. 内部消息怎么变成供应商能吃的格式</h2><p>两边的内部消息都比”供应商消息”富：Pi 有 <code>bashExecution</code>、<code>custom</code>、<code>branchSummary</code> 这些只在 Pi 内部存在的角色；DSH 有 <code>developer</code> 角色、<code>tool-addition</code> 块、图片&#x2F;文件引用、被 offload 的大图。把它们变成某家 API 能吃的 <code>messages</code>，是每次请求都要过的关。</p>
+<p><strong>Pi 是一个函数。</strong> <code>convertToLlm(messages: AgentMessage[]): Message[]</code>（<code>packages/coding-agent/src/core/messages.ts:148</code>）纯函数式地把每种内部消息映射成一个标准 <code>Message</code>：<code>bashExecution</code> 变成一段 user 文本（还顺手实现了 <code>!!</code> 前缀的”不进上下文”语义）、<code>custom</code> 变成 user 内容、<code>branchSummary</code> 包上前缀后缀变成 user 文本。agent 层只在每次请求前调它一次：<code>const llmMessages = await config.convertToLlm(messages)</code>（<code>agent-loop.ts:404</code>），注释还写着”每个 turn 只调一次，所以这里没法校验”（<code>:77-78</code>）。</p>
+<p>它的契约只有一句，但很硬：<code>convertToLlm</code> <strong><code>must not throw or reject. Return a safe fallback value instead.</code></strong>（<code>packages/agent/src/types.ts:222</code>）。意思是转换层是”绝不会失败的降级层”，宁可把一个奇怪的内部消息变成一句占位文本，也不许在请求路径上抛异常。</p>
+<p>供应商特定的 shaping（Anthropic 的 thinking 块、OpenAI 的 reasoning 字段、Google 的 schema 限制）<strong>不在这里做</strong>，而在 <code>pi-ai</code> 的 43 个 api 实现里各自处理——<code>convertToLlm</code> 只负责”内部 → 通用”，”通用 → 某家 wire”是另一层。</p>
+<p><strong>DSH 是一条投影流水线。</strong> <code>LlmRuntime.stream()</code> 在派发给 adapter 之前，依次做三次投影（<code>dsh-llm/lib/index.js:2335-2338</code>）：</p>
+<ol>
+<li>有文件引用 → <code>projectFilesToText()</code> 把文件摊成文本；</li>
+<li>模型 <code>inputModalities</code> 里没有 <code>image</code> → <code>projectImagesForTextModel()</code> 把图片降级成文字描述（<code>offloadedImageText</code> &#x2F; <code>textOnlyImageText</code> 那一族）；</li>
+<li>工具变更 → <code>projectToolUpdates()</code>（第 2 节）。</li>
+</ol>
+<p>然后才交给 <code>LlmAdapter</code> 的实现（<code>dsh-llm-deepseek</code> 或 <code>dsh-llm-pi-ai</code>）去变成真正的 wire 格式。而且消息在离开循环时就被<strong>冻结</strong>了：<code>buildRequest</code> 里 <code>deepFreeze(header)</code>、对每条 boundary message 做 <code>deepFreeze</code> 并记进 <code>frozenMessages</code> WeakSet（<code>dsh-agent-loop/lib/index.js:1264-1271</code>）——之后任何一层想改消息都改不动。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+  subgraph PI2[&quot;Pi&quot;]
+    I1[&quot;AgentMessage&lt;br&#x2F;&gt;bashExecution &#x2F; custom &#x2F; branchSummary&quot;] --&gt; C1[&quot;convertToLlm()&lt;br&#x2F;&gt;纯函数，绝不抛错&quot;]
+    C1 --&gt; C2[&quot;Message&lt;br&#x2F;&gt;通用&quot;]
+    C2 --&gt; C3[&quot;pi-ai 的 api 实现&lt;br&#x2F;&gt;43 个，各自 shaping&quot;]
+  end
+  subgraph DSH2[&quot;DSH&quot;]
+    I2[&quot;Session 派生的消息&lt;br&#x2F;&gt;developer &#x2F; tool-addition &#x2F; 图片引用&quot;] --&gt; P1[&quot;projectFilesToText&quot;]
+    P1 --&gt; P2[&quot;projectImagesForTextModel&lt;br&#x2F;&gt;按 inputModalities&quot;]
+    P2 --&gt; P3[&quot;projectToolUpdates&lt;br&#x2F;&gt;按路由能力&quot;]
+    P3 --&gt; P4[&quot;LlmAdapter&lt;br&#x2F;&gt;deepseek &#x2F; pi-ai&quot;]
+  end
+  </pre></div>
+
+<p>这个差别的实际影响是<strong>可替换性</strong>。Pi 想加一家供应商，只要在 <code>pi-ai</code> 里写一个 api 实现——<code>convertToLlm</code> 不用动。DSH 想加一家，除了写 adapter，还得回答”这条路由的 <code>toolUpdate</code> 是什么、支不支持图片、要不要降级”——能力矩阵是显式的，代价是每接一家都要填一张表。</p>
+<p>顺便一提，DSH 里有一个包叫 <code>dsh-llm-pi-ai</code>——<strong>它把 Pi 的 <code>pi-ai</code> 当作自己的 provider 层来用</strong>。也就是说，同一套 Pi 供应商代码，在 Pi 里是”我的 api 层”，在 DSH 里是”我的 adapter 实现之一”。这件事本身就是对第 5 节最好的注解：两家在”通用消息 → wire”这一层的边界划得不一样，以至于一家的通用层可以直接嵌进另一家的专用层。</p>
+<h2 id="6-中止"><a href="#6-中止" class="headerlink" title="6. 中止"></a>6. 中止</h2><p>用户按 Esc（或父 agent 被取消、或进程要退出）时，最危险的不是”停下来”，而是<strong>停在半路</strong>：三个工具并发执行，两个已经改了文件、第三个还在跑，会话记录里到底该记什么？下次恢复时这条记录还能不能重放？</p>
+<p><strong>Pi 靠 signal 检查 + 合成结果。</strong></p>
+<p><code>signal: AbortSignal | undefined</code> 一路传到每个执行函数里。开始执行工具前查 <code>signal?.aborted</code>（<code>agent-loop.ts:585</code>、<code>:623</code>），已经开始执行的在结束时再查（<code>:630</code>），被中止的那一批里没跑的工具直接合成一个错误结果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result: createErrorToolResult(&quot;Operation aborted&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>（<code>:633</code>、<code>:751</code>、<code>:770</code>）——<strong>保证”每个工具调用都有对应的结果消息”这条不变量</strong>，因为下一轮请求时，一个只有调用没有结果的历史会被供应商直接判非法。</p>
+<p>然后助手消息的 <code>stopReason</code> 是 <code>&quot;aborted&quot;</code> 时，循环把这一轮当作完成收尾：<code>turn_end</code> → <code>agent_end</code> → 返回（<code>:254-262</code>）。</p>
+<p><strong>DSH 靠 cancel cause + 显式收尾。</strong></p>
+<p>取消的入口是 <code>cancel(cause, options)</code>，<code>cause</code> 是一个封闭联合：<code>&#123;kind: &quot;user&quot;&#125; | &#123;kind: &quot;parent&quot;&#125; | &#123;kind: &quot;disposed&quot;&#125; | &#123;kind: &quot;hook&quot;, reason&#125;</code>（<code>dsh-agent-loop/lib/index.js:731-748</code>）。四种来源意味着四种不同的下游处理：用户取消可以重试、父 agent 取消要级联、进程销毁不要试图写盘、hook 取消要保留原因。这些信息最后会被写进 <code>turn/end</code>，而且代码里专门做了”只拷贝能进 JSON 的字段”的处理，因为 <code>AbortSignal.reason</code> 上会被 Node 的 fetch 挂一个 <code>stack</code> 属性，直接进 <code>Session.append</code> 会被当成不可序列化的数据拒掉（<code>:725-729</code> 的注释写得很细）。</p>
+<p>工具侧的约定写在循环顶部的文档注释里（<code>:479-491</code>）：<strong>中止会停止发起新工具、把已发起的跑完、然后为被跳过的调用提交合成失败结果——这样重放仍然一致</strong>。合成结果长这样（<code>:665-676</code>）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;text&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Error: tool call aborted before dispatch&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;isError&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AbortError&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>跟 Pi 的 <code>&quot;Operation aborted&quot;</code> 是同一个思路的两种说法：<strong>中止不是”什么都没发生”，而是”发生了一次可记录的失败”</strong>。差别在于 DSH 把它写成了有类型的合成事件（还带 <code>sourceEventSeqs</code> 指回原始调用），Pi 只保证结果消息存在。</p>
+<h2 id="7-重试：是把决定记下来再等，还是等完再说"><a href="#7-重试：是把决定记下来再等，还是等完再说" class="headerlink" title="7. 重试：是把决定记下来再等，还是等完再说"></a>7. 重试：是把决定记下来再等，还是等完再说</h2><p>供应商 429、网关 502、流到一半断了——重试几乎是每套 agent 的标配，但”重试这件事记不记账”分出了又一处分歧。</p>
+<p><strong>Pi 把重试包在”产生一条助手消息”这件事外面。</strong> <code>retryAssistantCall(produce, policy, signal, callbacks)</code>（<code>packages/ai/src/utils/retry.ts:207</code>）的契约是：成功立刻返回；<code>stopReason === &quot;aborted&quot;</code> 是终态、<strong>永不重试</strong>（就算中止发生在退避睡眠途中，也会被归一成一条 aborted 消息，调用方不需要关心取消发生在哪一步，<code>:199-206</code>）；非重试错误（含额度&#x2F;欠费）立刻返回，快速失败；其余按 <code>maxRetries</code> 指数退避，并在三个位置抛出回调 <code>onRetryScheduled</code> &#x2F; <code>onRetryAttemptStart</code> &#x2F; <code>onRetryFinished</code>（<code>:214-218</code>），让上层能显示”正在重试第 2 次”。</p>
+<p>对主循环来说，重试是<strong>透明的</strong>：<code>streamAssistantResponse</code> 拿到的永远是”一条最终的 assistant 消息”，重试了几次它不关心。</p>
+<p><strong>DSH 把重试做成日志里的一件事。</strong> <code>dsh-llm-retry</code> 的模块注释只有一句，但信息量很大：</p>
+<blockquote>
+<p>Each scheduled retry is durable before its cancellable wait.</p>
+</blockquote>
+<p>（<code>dsh-llm-retry/lib/index.js:16-17</code>）——<strong>每一次”打算重试”的决定，都在开始等待之前先落盘</strong>。它挂在主循环的 <code>agent/request-error</code> 扩展点上（也就是第 3 节里 <code>kick</code> 那条恢复链），退避是带抖动的指数退避：<code>initialDelayMs * 2^(retry-1)</code> 封顶 <code>maxDelayMs</code>，再乘 <code>1 - jitterRatio + 2 * jitterRatio * random()</code>（<code>localDelay</code>，<code>:44-49</code>）。策略必须配在<strong>每个 provider 下面</strong>（<code>:28</code> 明确禁止把它写在顶层），并用 <code>retryPolicyKey()</code> 把策略序列化成一个稳定身份（<code>:50-60</code>），这样同一条重试链在日志里能被认出来。</p>
+<p>差别在崩溃边界上最明显：<strong>Pi 的重试被打断，就只是一次 aborted；DSH 的重试被打断，恢复后知道自己欠一次重试</strong>。前者简单，后者在”跑一整夜的长任务”里更靠谱。这也解释了为什么 DSH 把重试做成一个可插拔的扩展点（<code>agent/request-error</code> 是 waterfall，谁都可以接管），而 Pi 把它写死在 <code>retry.ts</code> 里、只留一个 <code>RetryPolicy</code> 配置口。</p>
+<h2 id="8-顺带看两个维度"><a href="#8-顺带看两个维度" class="headerlink" title="8. 顺带看两个维度"></a>8. 顺带看两个维度</h2><p><strong>并发调度。</strong> Pi 的策略是”整批一致”：一批工具调用里只要有一个声明了 <code>sequential</code>，整批就走串行（<code>agent-loop.ts:526-532</code>）；否则并行。内置工具基本不声明，所以默认并行，写冲突靠按文件的串行队列（<code>withFileMutationQueue</code>）兜住——<strong>不同文件仍然并行</strong>。</p>
+<p>DSH 是一个真正的调度器：<code>maxParallelToolCalls</code> 控制窗口（<code>:619</code>），<code>executionMode(call)</code> 逐条决定能否进并发组，遇到非并行工具就断开当前组、开始新组（<code>:621</code>）。而且它是”边跑边补”的（<code>replenishment</code>，<code>:479</code> 那段注释），不是先切好批再跑。</p>
+<p><strong>状态落盘。</strong> Pi 的会话是树（第 3 篇讲过），压缩、分支摘要都是树上的节点。DSH 的会话是<strong>事件日志</strong>：每一次请求头变化、每一条开发者消息、每一个工具结果，都是日志里一条带 seq 的事件，消息由 <code>session.deriveMessages()</code> 从日志现推（<code>dsh-agent-loop/lib/index.js:1265</code>）。</p>
+<p>这个差别决定了恢复语义：Pi 恢复靠”重放树到某个节点”，DSH 恢复靠”重放到最后一个 commit”。DSH 的代价是日志只增不减（要靠压缩把它变短），收益是<strong>任何时刻的状态都能由日志唯一确定</strong>——包括”当时工具集合是什么””当时是哪条路由”。</p>
+<h2 id="9-一张对照总表"><a href="#9-一张对照总表" class="headerlink" title="9. 一张对照总表"></a>9. 一张对照总表</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Pi</th>
+<th>DSH</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>循环形状</td>
+<td>两层 <code>while</code>，条件是布尔量（<code>agent-loop.ts:171</code>、<code>:192</code>、<code>:305</code>）</td>
+<td><code>while (await turn())</code> + 相位状态机 idle&#x2F;running&#x2F;maintenance（<code>index.js:889</code>、<code>:791</code>）</td>
+</tr>
+<tr>
+<td>工具集合变更</td>
+<td>diff 后插一条 system 消息盖章（<code>:342-372</code>）</td>
+<td>记 <code>request/header change</code> + <code>developer/message</code>，再按路由 <code>toolUpdate</code> 投影（<code>:1240-1258</code>、<code>dsh-llm:786</code>）</td>
+</tr>
+<tr>
+<td>运行时插话</td>
+<td>三个轮询点拉 <code>getSteeringMessages()</code>（<code>:184</code>、<code>:210</code>、<code>:219</code>）</td>
+<td>inbox + <code>followup/steer/inject</code> 三种投递语义（<code>:806-812</code>）</td>
+</tr>
+<tr>
+<td>中止后的插话</td>
+<td>无特殊处理（循环已退出，靠外层重开）</td>
+<td>自动降级为 <code>next-turn</code>（<code>:801-804</code>）</td>
+</tr>
+<tr>
+<td>压缩触发</td>
+<td><code>contextTokens &gt; window - 16384</code>（<code>compaction.ts:267-269</code>）</td>
+<td><code>min(window*0.8, window-reserved-65536)</code>（<code>compaction-basic:124-132</code>）</td>
+</tr>
+<tr>
+<td>压缩执行</td>
+<td><code>prepareNextTurn</code> 轮次边界，可与插话交错</td>
+<td><code>agent/pre-step</code> → <code>runMaintenance</code> 独占相位（<code>:839</code>、<code>:988</code>）</td>
+</tr>
+<tr>
+<td>压缩产物</td>
+<td>会话里一个 <code>type:&quot;compaction&quot;</code> 条目</td>
+<td>原子替换一段 surface + 摘要节点，强制工具配对平衡</td>
+</tr>
+<tr>
+<td>消息转换</td>
+<td>单个纯函数 <code>convertToLlm</code>，绝不抛错（<code>messages.ts:148</code>）</td>
+<td>三级投影 + adapter（<code>dsh-llm:2335-2338</code>）</td>
+</tr>
+<tr>
+<td>消息可变性</td>
+<td>普通对象，转换时现算</td>
+<td>出循环即 <code>deepFreeze</code>，WeakSet 记账（<code>:1273-1279</code>）</td>
+</tr>
+<tr>
+<td>中止语义</td>
+<td><code>AbortSignal</code> + 合成 <code>&quot;Operation aborted&quot;</code> 结果</td>
+<td>封闭 <code>cause</code> 联合 + 合成 <code>AbortError</code> 结果 + 记 seq</td>
+</tr>
+<tr>
+<td>工具并发</td>
+<td>批内一致：有一个串行就整批串行</td>
+<td>调度器逐条判定，窗口 + 分组</td>
+</tr>
+<tr>
+<td>状态真相</td>
+<td>会话树</td>
+<td>只增事件日志</td>
+</tr>
+</tbody></table>
+<h2 id="10-两种世界观"><a href="#10-两种世界观" class="headerlink" title="10. 两种世界观"></a>10. 两种世界观</h2><p>把上面每条差异摆在一起看，会发现它们朝同一个方向倒：</p>
+<p><strong>Pi 认为”对话就是全部真相”。</strong> 工具集合的变化做成消息、压缩做成会话里的一个条目、转换是一个纯函数、插话是循环主动去问——所有东西最终都能落到”这条对话里发生了什么”。好处是心智负担极小：任何时刻你只要把 transcript 摊开，就能知道模型看见了什么。代价是有些信息只能”表达进对话”，比如”这条路由不支持图片”这种事没法写进历史，只能在调用时临时投影。</p>
+<p><strong>DSH 认为”日志就是全部真相”。</strong> 请求头、路由、工具清单、压缩、取消原因，全都是事件日志里的记录，消息只是日志的一个投影。好处是任何状态都可追溯、可重放、可审计，而且同一条会话可以在能力不同的路由之间迁移（因为”能力”是投影时才用的参数，不是历史的一部分）。代价是层数多：改一个工具列表要经过记账、投影、adapter 三道门。</p>
+<p>没有哪边更”对”。如果你在写一个<strong>给人用的终端 agent</strong>，Pi 那套轻量结构能让你两周内跑起来；如果你在写一个<strong>要托管、要多端、要审计</strong>的 agent 平台，DSH 那套日志优先的投影结构会让后面每一个需求都省力一点。</p>
+<p>真正值得抄的是两边都做了、而且做得很坚决的那一条：<strong>中止不是”停下来”，是”记录一次失败并保持一致”</strong>。Pi 合成 <code>&quot;Operation aborted&quot;</code>，DSH 合成 <code>&quot;tool call aborted before dispatch&quot;</code>——不管哪种，下一轮请求拿到的历史都是合法的。这一条比循环长什么样重要得多。</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="/2026/11/05/Pi-Loop/">Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了</a></li>
+<li><a href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/">DSH Agent 主循环：一次请求转几圈</a></li>
+<li><a href="/2026/11/05/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/">Pi 的上下文工程：每次请求，模型到底看到了什么</a></li>
+<li><a href="/2026/10/30/DSH-%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A3%85%E9%85%8D%E5%85%A8%E8%A7%A3/">DSH 上下文装配全解：一次模型请求到底是怎么拼出来的</a></li>
+<li><a href="/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">DSH 会话压缩策略详解</a></li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/')">同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖&amp;url=https://benedicttom.github.io/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/&amp;pic=/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Agent/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Agent<span class="tagsPageCount">19</span></a><a class="post-meta__box__tags" href="/tags/Pi/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Pi<span class="tagsPageCount">10</span></a><a class="post-meta__box__tags" href="/tags/DSH/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>DSH<span class="tagsPageCount">4</span></a><a class="post-meta__box__tags" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>源码解析<span class="tagsPageCount">3</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2026/11/05/Pi-Codemode/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Codemode/cover.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Pi-Codemode：让模型写一段脚本去调工具</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/11/05/Pi-Loop/" title="Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Loop/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 的 Agent Loop：一次请求转几圈，它凭什么知道该停了</div></div></a></div><div><a href="/2026/11/05/Pi-%E5%85%A5%E9%97%A8/" title="Pi 入门：从一条命令，到一个会改代码的 agent"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E5%85%A5%E9%97%A8/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 入门：从一条命令，到一个会改代码的 agent</div></div></a></div><div><a href="/2026/11/02/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/" title="DSH 沙箱设计：一次 bash 调用，到底被关进了什么"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E6%B2%99%E7%AE%B1%E8%AE%BE%E8%AE%A1/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-02</div><div class="title">DSH 沙箱设计：一次 bash 调用，到底被关进了什么</div></div></a></div><div><a href="/2026/10/30/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/" title="DSH Agent 主循环：一条用户消息的完整旅程"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-10-30</div><div class="title">DSH Agent 主循环：一条用户消息的完整旅程</div></div></a></div><div><a href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8A/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi Durable（上）：先落盘，再显示</div></div></a></div><div><a href="/2026/11/05/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/" title="Pi 的上下文工程：每次请求，模型到底看到了什么"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-%E4%B8%8A%E4%B8%8B%E6%96%87/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">Pi 的上下文工程：每次请求，模型到底看到了什么</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%A6%82%E6%8B%AC"><span class="toc-number">1.</span> <span class="toc-text">0. 一句话概括</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%88%E6%8A%8A%E4%B8%A4%E5%89%AF%E9%AA%A8%E6%9E%B6%E6%91%86%E5%87%BA%E6%9D%A5"><span class="toc-number">2.</span> <span class="toc-text">1. 先把两副骨架摆出来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B7%A5%E5%85%B7%E9%9B%86%E5%90%88%E5%9C%A8%E4%BC%9A%E8%AF%9D%E4%B8%AD%E9%80%94%E5%8F%98%E4%BA%86"><span class="toc-number">3.</span> <span class="toc-text">2. 工具集合在会话中途变了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8F%92%E8%AF%9D"><span class="toc-number">4.</span> <span class="toc-text">3. 运行时插话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%8E%8B%E7%BC%A9"><span class="toc-number">5.</span> <span class="toc-text">4. 压缩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%86%85%E9%83%A8%E6%B6%88%E6%81%AF%E6%80%8E%E4%B9%88%E5%8F%98%E6%88%90%E4%BE%9B%E5%BA%94%E5%95%86%E8%83%BD%E5%90%83%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">5. 内部消息怎么变成供应商能吃的格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%B8%AD%E6%AD%A2"><span class="toc-number">7.</span> <span class="toc-text">6. 中止</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E9%87%8D%E8%AF%95%EF%BC%9A%E6%98%AF%E6%8A%8A%E5%86%B3%E5%AE%9A%E8%AE%B0%E4%B8%8B%E6%9D%A5%E5%86%8D%E7%AD%89%EF%BC%8C%E8%BF%98%E6%98%AF%E7%AD%89%E5%AE%8C%E5%86%8D%E8%AF%B4"><span class="toc-number">8.</span> <span class="toc-text">7. 重试：是把决定记下来再等，还是等完再说</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%A1%BA%E5%B8%A6%E7%9C%8B%E4%B8%A4%E4%B8%AA%E7%BB%B4%E5%BA%A6"><span class="toc-number">9.</span> <span class="toc-text">8. 顺带看两个维度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E4%B8%80%E5%BC%A0%E5%AF%B9%E7%85%A7%E6%80%BB%E8%A1%A8"><span class="toc-number">10.</span> <span class="toc-text">9. 一张对照总表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%B8%A4%E7%A7%8D%E4%B8%96%E7%95%8C%E8%A7%82"><span class="toc-number">11.</span> <span class="toc-text">10. 两种世界观</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-number">12.</span> <span class="toc-text">相关阅读</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/" title="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"/></a><div class="content"><a class="title" href="/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/" title="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖">同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖</a><time datetime="2026-11-05T04:00:00.000Z" title="Created 2026-11-05 12:00:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Codemode/" title="Pi-Codemode：让模型写一段脚本去调工具"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Codemode/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi-Codemode：让模型写一段脚本去调工具"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Codemode/" title="Pi-Codemode：让模型写一段脚本去调工具">Pi-Codemode：让模型写一段脚本去调工具</a><time datetime="2026-11-04T19:55:00.000Z" title="Created 2026-11-05 03:55:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Durable-%E4%B8%8B/" title="Pi Durable（下）：谁在跑，谁在看"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8B/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi Durable（下）：谁在跑，谁在看"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Durable-%E4%B8%8B/" title="Pi Durable（下）：谁在跑，谁在看">Pi Durable（下）：谁在跑，谁在看</a><time datetime="2026-11-04T19:20:00.000Z" title="Created 2026-11-05 03:20:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-Durable-%E4%B8%8A/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pi Durable（上）：先落盘，再显示"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-Durable-%E4%B8%8A/" title="Pi Durable（上）：先落盘，再显示">Pi Durable（上）：先落盘，再显示</a><time datetime="2026-11-04T18:45:00.000Z" title="Created 2026-11-05 02:45:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-ai/" title="pi-ai：43 个供应商，10 种协议，一套流"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-ai/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="pi-ai：43 个供应商，10 种协议，一套流"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-ai/" title="pi-ai：43 个供应商，10 种协议，一套流">pi-ai：43 个供应商，10 种协议，一套流</a><time datetime="2026-11-04T18:10:00.000Z" title="Created 2026-11-05 02:10:00">2026-11-05</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-theme.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">117</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">66</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">32</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>19</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 0.88rem;">Codemode<sup>1</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>4</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 0.88rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 0.88rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 0.88rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/LLM/" style="font-size: 0.88rem;">LLM<sup>1</sup></a><a href="/tags/MCP/" style="font-size: 0.88rem;">MCP<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 0.88rem;">Pi<sup>10</sup></a><a href="/tags/Prompt/" style="font-size: 0.88rem;">Prompt<sup>1</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>2</sup></a><a href="/tags/Python/" style="font-size: 0.88rem;">Python<sup>5</sup></a><a href="/tags/Redis/" style="font-size: 0.88rem;">Redis<sup>7</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 0.88rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 0.88rem;">Streaming<sup>1</sup></a><a href="/tags/Tool/" style="font-size: 0.88rem;">Tool<sup>1</sup></a><a href="/tags/TypeBox/" style="font-size: 0.88rem;">TypeBox<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 0.88rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 0.88rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 0.88rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 0.88rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 0.88rem;">源码解析<sup>3</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("/images/theme/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
