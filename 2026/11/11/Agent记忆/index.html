@@ -1,0 +1,968 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>Agent 的记忆怎么做：四份开源实现的拆解与取舍 | Joie's Blog</title><meta name="keywords" content="Agent,记忆,Memory,知识库"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="Agent 的记忆怎么做：四份开源实现的拆解与取舍"><meta name="application-name" content="Agent 的记忆怎么做：四份开源实现的拆解与取舍"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="Agent 的记忆怎么做：四份开源实现的拆解与取舍"><meta property="og:url" content="https://benedicttom.github.io/2026/11/11/Agent%E8%AE%B0%E5%BF%86/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="0. 三个现场第一个现场：昨天你花了二十分钟跟我确认”这个项目的日志规范是 log.info(event, &amp;#123;id&amp;#125;)“，今天新开一个会话，我第一句话又是”你的项目用什么语言”。 第二个现场：你说过两句话——“我用 TypeScript”和”帮我查一下明天杭州的天气”。在上下文里"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/Agent%E8%AE%B0%E5%BF%86/cover.jpg"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/Agent%E8%AE%B0%E5%BF%86/cover.jpg"><meta name="description" content="0. 三个现场第一个现场：昨天你花了二十分钟跟我确认”这个项目的日志规范是 log.info(event, &amp;#123;id&amp;#125;)“，今天新开一个会话，我第一句话又是”你的项目用什么语言”。 第二个现场：你说过两句话——“我用 TypeScript”和”帮我查一下明天杭州的天气”。在上下文里"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/11/11/Agent%E8%AE%B0%E5%BF%86/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'Agent 的记忆怎么做：四份开源实现的拆解与取舍',
+  postAI: '',
+  pageFillDescription: '0. 三个现场, 1. 记忆系统其实只有四个动作, 2. 腾讯 TencentDB Agent Memory：把记忆做成一栋楼, 3. Mem0：把记忆更新做成一条流水线, 3.1 写入的六个阶段, 3.2 读取的四路信号, 3.3 数字与代价, 4. OpenViking：把记忆做成一个能 ls 的目录, 4.1 四种上下文一个 URI 空间, 4.2 目录级 sidecar：L0 x2F L1 x2F L2, 4.3 会话提交：同步归档 + 异步提取, 5. Hindsight：把事实和推断分开, 6. 四家放到一张表里, 7. 四种哲学, 8. 六个坑, 9. 怎么选, 10. 如果你要自己做一个, 11. 最后, 相关阅读三个现场第一个现场昨天你花了二十分钟跟我确认这个项目的日志规范是今天新开一个会话我第一句话又是你的项目用什么语言第二个现场你说过两句话我用和帮我查一下明天杭州的天气在上下文里它们是平等的两条消息长度差不多都会被塞进同一个窗口但对一个助手来说一句是长期有效的偏好一句是一次性的查询价值差了三个数量级第三个现场一个跑了三小时的重构任务上下文里堆着四十次工具调用的完整输出真正决定下一步的那个结论在第八次调用里但它已经被淹没了模型的注意力在几千行日志上摊薄成一片这三个现场其实是同一个问题的三种表现模型本身是无状态的而工作是有历史的所谓的记忆要解决的不是把聊天记录存下来而是在正确的时刻用正确的粒度取回正确的那一小块存是手段取才是目的这半年里四套开源实现把这件事做出了四种明显不同的答案它们的分歧不在工程细节而在一个更前置的问题上你相信记忆应该长成什么形状记忆系统其实只有四个动作不管哪家拆开看都是同一组动作动作要回答的问题各家的分歧点写什么一段对话里哪几句值得留下模型抽还是显式调用怎么组织存成一条条事实还是一棵树平铺图分层目录怎么取下次靠什么把它捞回来向量关键词图时间怎么维护旧的错了过时了怎么办覆盖只增下钻分信念对话流用户说工具返回写入抽取归并去重组织结构事实分层目录网络检索语义关键词实体时间注入上下文按预算裁剪使用后的反馈哪条被用上了维护覆盖衰减溯源删除四个动作里真正拉开差距的是第二和第四个写和取是怎么把信息搬进搬出只要工程做扎实各家的效果不会差一个量级而怎么组织决定了你的记忆能不能长大怎么维护决定了它会不会烂掉一个只会往里塞不会清理和纠错的记忆系统用三个月一定比不用更糟它会把三周前的一个错误结论当成永久事实反复喂给模型下面四家我按它们各自把赌注押在哪个动作上来拆腾讯把记忆做成一栋楼第一家的直觉最朴素也最好懂人对一件事的理解本来就是分层的你现在能立刻说出我同事老张不吃辣这是从很多次吃饭点菜他推掉川菜馆的具体事件里提炼出来的你不会记得每一次点菜的菜单但你保留了结论需要的时候你也能回想起上次聚餐他换成了清汤锅这类细节腾讯这套就是把这件事工程化层存什么用来干什么原始对话完整对话工具日志原文核对原话时间戳出处原子记忆从对话里抽出的事实偏好约束事件精确召回可执行的信息场景记忆按项目或场景聚合的知识块快速恢复当时在干什么用户画像长期稳定的画像模式高层认知让一步进入你的语境四层之间不是并列的四个库而是一条提取聚合蒸馏的管道会话结束后进异步流水线先落再抽出原子事实同类事实聚成场景跨场景稳定出现的模式蒸馏成会话任务结束原始对话全量保留抽取原子记忆事实偏好约束事件按场景聚合场景记忆项目上下文高频路径跨场景蒸馏用户画像稳定模式核心结论起手就注入下一次请求需要细节时下钻要原话时再下钻它最值得学的一点检索也是分层的日常请求先用起手这层信息密度最高最省相当于先给你一份工作简报只有当问题需要具体事实时才落回做向量检索再用把两路结果融合排序再不行才下钻到的原话这个先给结论按需下钻的顺序和处理人类问题的方式一模一样而且它天然解决了第二个现场不同粒度的信息不再被平等对待的画像每次都在的碎事实只在需要时被捞同时检索结果还要过三道闸条数上限字符预算超时这句话看着不起眼但它是记忆系统能不能上生产的分水岭没有预算的记忆等于一个不受控的上下文注入器第二件值得学的事省的不只是记忆本身官方博客里提到两个配套机制上下文卸载把原始工具结果搬到外部文件上下文里只留摘要和索引和无限画布把任务结构折叠成可导航的一张图这两件事严格说不属于记忆但它们和记忆是同一个问题的两面上下文里只该放指针不该放全文我在会话压缩策略详解里写过同一件事的另一半压缩是把旧的搬走记忆是把有用的留住工程形态这套东西不是个库是三个服务记忆内核团队资产协议适配接入方式很有意思不动客户端把的指向就行这些都不用装插件不用配数字上官方博客给出的插件评测是超长会话场景下最多省通过率从到相对从到从到长期记忆在上把准确率从提到它的赌注押在哪组织和治理四层是组织结构那一套资产登记加上版本可见性是维护结构这也决定了它的气质偏团队偏企业偏重它默认你不是一个人在用而是一队人和一队在共享经验顺带一提它的层自己写明了灵感来自那篇也就是我上一篇不再每次去查而是把知识编译成一座维基讲的思路这个巧合本身就说明把知识编译成结构和把记忆分层是同一种冲动的两个出口把记忆更新做成一条流水线如果说腾讯的赌注是层级的赌注是增量它的接口只有两个动作简单到有点简陋存和取所有复杂性都藏在这两个动作后面写入的六个阶段一条消息进来背后跑的是这样一条流水线你的应用抽取三套存储查相关旧记忆去重用候选旧事实抽取输入旧事实新事实只哈希去重向量化实体链接人项目组织时间推理何时发生是否仍在持续写事实与元数据写向量库写实体图关系拆开就是六步异步入库上下文查重单次抽取哈希去重并向量化实体链接时间推理这里最反直觉的一个决定是只增不改用户说我从奥斯汀搬到西雅图了不会去把用户住在奥斯汀那条改掉而是新增一条用户住在西雅图想改调用方显式或为什么这么设计因为覆盖是最容易撒谎的操作一旦允许新事实覆盖旧事实你就丢掉了曾经是这样的信息也丢掉了发现矛盾的机会只增不改保住了完整时间线代价是要在检索时处理冲突这个代价在它自己的评测里看得很清楚的一类只有是它所有类别里最弱的一项单会话类已经做到旧事实还留着语义相近的新旧两条会一起浮上来三个存储各管一段存事实与元数据真相源审计日志滚动消息窗口向量库管语义检索实体图把和我同事连起来读取的四路信号一次四路并行的信号信号干什么擅长语义向量相似度我怎么看远程办公这种概念题关键词做词形还原人名上周三的会实体命中记忆链上的实体加权关于我们知道什么时间写入时抽的时间元数据查询的时间意图第一次提到是什么时候四路打分融合成最终注意时间这一路的设计它是加法项不参与过滤语义相关性永远占主导时间只是在若干条里把日期对的那条往前挪一点这个细节很讲究如果时间做成硬过滤上周三的会这种问题一旦日期抽错就彻底查不到做成加法最坏情况也只是排位差一点数字与代价论文的核心结论相对的记忆方案指标上高带图记忆的版本比基础版再高约相比全量上下文延迟低省以上现在的文档给出的数更实平均每次检索后面这组数特别值得看因为它把记忆到底能撑多大摊开了规模还能打规模整体掉到其中只剩多会话推理这不是一家的问题是整个赛道的现状记忆系统在百万级上下文里还站得住在千万级里基本失效还有一个要命的细节文档里写得很老实上面这些分数是平台版的开源没有图记忆和平台侧的融合逻辑开源版的实体信号只是实体重叠加权你抄的是开源版拿到的是另一套数这是选型时最容易被忽略的一行小字它的气质轻嵌入友好极简你想在应用里加个记住用户偏好一行就够想深挖也能换向量库换模型加把记忆做成一个能的目录前两家都把记忆当成数据库里的行火山引擎这套字节团队开源反过来记忆就是一个文件系统它在上的自我介绍只有一句用文件系统组织资源记忆和技能供浏览检索按需读取这个选择一旦定了后面所有设计都跟着变四种上下文一个空间类型是什么谁在写原始知识与参考资料文档代码库用户主动导入偏好事实任务经验从会话提取或主动记录一类任务的步骤约束脚本用户或系统条件下必须遵守的强约束主动编译按需召回全部挂在的命名空间下在文件系统里记忆和知识就不再是两个系统了它们只是同一棵树上的不同节点用同一套去访问这一点比前两家都激进它的检索不是从记忆库里捞事实而是在目录树里定位再往下读目录级文件系统有个天然的毛病不知道一个目录里有什么只能一个个的解法是给目录不是文件配两个隐藏的伴生文件层级文件内容预算摘要一段话说明这个目录是什么字符概览更完整的目录导览文件清单字符详情原始文件正文不限字符给检索用字符给导航用向量召回命中的目录与判断要不要继续读按需生成是自底向上的文件先出摘要叶子目录的叶子目录的聚到父目录一层层往上冒这里有个工程细节我特别喜欢因为它把别乱刷新写成了机制父目录的带一份元数据记录直接子项总数本轮采样了多少还有多少变化没反映上来直接子项超过个时用确定性采样同一棵树重复刷新选到同一批减少正文抖动子项变化比例达到才触发父目录刷新换句话说它承认概览一定是落后的并且把这个落后量化了出来表示正文还读得但已知滞后这种诚实在记忆系统里很少见大多数方案假装自己的摘要永远是最新的会话提交同步归档异步提取一次分两个阶段请求内加路径锁分配归档编号写更新当前消息列表入持久化队列返回后台生成结构化摘要写提取长期记忆写记忆变更审计写是这套设计里最有审计味的产物本次提交新增了哪些记忆文件改了什么带删了什么带被删内容哪些操作被策略跳过了带稳定原因码记忆的每一次变化都能倒查内置的记忆类型也很人基本信息按主题的偏好人物项目组织决策与里程碑助手自己的名字与形象核心原则与风格任务案例执行轨迹提炼出的经验最后三个是联动的开启会激活完整的流程任务先组织成执行记为再提炼成可复用的这是少数把从做过的事里学东西写进产品的实现它的代价要起服务要维护目录树的一致性对商业嵌入有约束而且可浏览意味着人会去看会去改改了之后摘要可能和正文不一致它用写保护来兜正文可改元数据受保护改正文只重建该目录的向量不重新生成语义它的气质透明可读可改适合我想知道我的助手到底记住了什么的人把事实和推断分开前三家都在回答记忆该怎么组织问了一个更尖锐的问题记忆里哪些是证据哪些是结论它的论文标题就把话说全了它批评现有方案模糊了证据与推断的边界把模型推理出来的总结和用户亲口说的事实混在一个向量库里最后你没法解释你凭什么这么答所以它把记忆拆成四张网网络装什么世界事实客观发生过的事说过的原话经验自己做过什么结果如何实体摘要关于某个人项目的综合认识演进中的信念会随时间修正的判断对话流抽取结构化事实实体消解时间索引世界事实经验实体摘要由事实合成演进中的信念会随新证据修正四路检索重排跨记忆推理会自动更新的活文档四张网之上是三个操作存取想不做存原文而是抽事实做实体消解和工程部的是同一个人打时间索引生成向量四路并行语义实体图遍历时间过滤再用重排重排这一步是它和前几家的关键差异向量召回只保证大致相关交叉编码器才保证真的相关拿记忆去推理回答基于你知道的建议我用什么技术栈这类需要连点成线的问题是我觉得最实用的设计会自动更新的活文档你说建一个叫我的技术栈的模型跟踪我用哪些语言和框架之后每来一条新记忆它就在后台更新等于把每次都要重新一遍变成预计算增量维护数字很硬论文里同一套下用的开源模型整体准确率从全量上下文基线提到并且超过全上下文的把再放大到到此前最强的开源方案是工程形态一条命令起全套内嵌本地端点任何客户端改几行就能接记忆按隔离一个就是一颗脑子人和项目可以各用一个它的坑也写在明处之后事实抽取和索引是异步的存完立刻查可能查不到默认只回历史很长时会裁掉旧的低相关记忆和的生成也是异步的第一次调用只给你一个它的气质像一个独立的记忆服务而不是一个库它的强项是能解释事实经验摘要信念分开存答错了能定位到是哪张网哪条证据四家放到一张表里维度腾讯核心隐喻一栋楼分层一条流水线增量一棵目录树四张网证据分层组织结构对话原子场景画像平铺事实实体图时间元数据的文件系统世界事实经验实体摘要信念写入异步管道提取聚合蒸馏抽取去重实体时间会话两阶段摘要提取抽事实消解索引检索分层起手向量三道预算闸语义实体时间四路融合目录定位向量按层读取四路并行重排冲突处理上层蒸馏保留向下溯源只增不改新旧共存记录独立成演进中的信念溯源四层逐级下钻元数据历史日志全文审计证据网络与推断分离遗忘分层老化显式目录删除隐私配置信念修正形态三服务改接入嵌进应用服务一条命令许可证星标四种哲学把表收起来四家的分歧其实可以压缩成四句话腾讯记忆的价值在于粒度同一件事在不同抽象层上有不同的价值的一句话能省掉的五千字而的一条事实可能是整个任务的转折点它把该记多细变成了结构问题记忆的真相是时间线不许覆盖因为覆盖是一次不可逆的信息销毁它宁愿让新旧两条并存让检索去处理冲突也不肯替你判断哪条是对的记忆应该能被看见如果人不能一下看到助手记住了什么不能出来改一行那这份记忆就不可信它把可解释做成了文件系统的基本属性记忆里必须分清证据和推断用户说的话是证据的总结是推断两者混在一起你就永远说不清你凭什么这么答再往下追一层这四种哲学其实对应四种失败模式怕记太细用不上的选分层怕覆盖掉真相的选增量怕黑箱不可控的选文件系统怕答错没法解释的选证据分离六个坑这六个坑不是我编的是四家的取舍里长出来的每一个都是某一家的强项换到另一个场景就变成坑把摘要当事实分层和蒸馏都在生产摘要而摘要一旦成为检索的终点下钻链断了它就变成了谣言腾讯的之所以强是因为它能逐级下钻回你要是只抄了分层没抄下钻抄到的就是一本没有脚注的教科书静默覆盖反过来覆盖看起来干净实际是销毁证据的分数全场最弱就是在提醒你只增不改的代价是冲突共存而这个代价是显式的可观测的比悄悄覆盖好得多时间丢失一条没有时间戳的偏好会变成永久错误用户三个月前说我们还在用今天已经迁到了你的记忆库里那条还挂着事实的标签专门开一张时间网专门做时间推理都是在补这个洞检索预算失控记忆最容易犯的错不是没记住是记住太多每次都全塞进去腾讯按条数字符超时三重限制的默认都是在给注入设上限没有预算的记忆系统等于给上下文窗口装了一个不受控的水龙头把记得当懂了是在记忆上推理产出的是新推断不是新证据如果不把它标成推断下一轮它就会作为事实再被检索出来这就是记忆系统里的回音室评测饱和和已经快被打满了单会话类在这两个榜上刷分意义不大在上掉到才是真实水位看一个记忆系统别看它在小榜上的分数看它在千万级上下文里还剩多少怎么选你的情况建议理由已经在用这类现成腾讯改个就接上不用改客户端在自己的应用里加记忆能力最轻两个动作存储可换想看清助手到底记住了什么还要能改一切都是文件能能能审计只要一个记忆服务想让记忆会思考即插即用事实与推断分离能解释企业多租户要权限与审计腾讯的团队记忆或自己按它的四层重做资产这一套它做全了三句提醒别把星标当质量四家都在万级星以上但解决的是不同问题星最多不代表它适合做团队知识库别只看平台版数字开源版和托管版的差距往往就藏在图记忆融合排序这种一句带过的功能里先想清楚你的失败模式你最怕助手犯哪种错忘事记错说不清还是太贵答案基本就决定了选哪家如果你要自己做一个不写代码只给五个决定顺序不能乱先定记什么三类就够事实谁在什么时候做了什么偏好长期有效的倾向经验这件事该怎么干三类混在一起存检索一定乱再定谁负责写模型自动抽省事但会抽歪还是显式调用准但没人愿意写大多数生产系统是两条路都开自动抽进候选池显式调用直接落库选一种组织结构平铺图简单检索强分层省要维护下钻链目录可读要维护一致性三选一别混检索至少两路并且接受它不完美向量管概念关键词管精确再加时间维度预算一定要设条数字符超时留一条溯源链和一条删除路径没有溯源的记忆是谣言没有删除的记忆是负债用户说忘掉这件事的时候你必须真的能忘掉最后回头看那三个现场第一个跨会话断裂靠写入组织解决第二个事实与偏好混淆靠分层或分类解决第三个上下文膨胀靠检索预算卸载解决四家给出的答案形状不同但它们都在回答同一个问题在模型无状态的前提下什么样的外部结构能让经验真的积累起来我自己的判断是这一代方案的分水岭不在存储技术而在你敢不敢让系统自己决定什么值得记四家都在不同程度上交出了这个决定权腾讯交给分层管道交给抽取交给目录约定交给四张网交出去越多省事越多失控的风险也越大这大概就是记忆这件事最像人的地方你选择记住什么也就选择了你会变成谁相关阅读不再每次去查而是把知识编译成一座维基知识编译与记忆分层是同一种冲动的两个出口如何设计一个数字员工记忆是数字员工的第三个决定会话压缩策略详解压缩是搬走旧的记忆是留住有用的与先拒绝为什么又加回来记忆作为服务接入时的取舍参考资料正式开源腾讯云开发者社区官方文档与概念与原理官方文档文档',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-11-11 20:00:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="/images/theme/loading-avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/images/theme/reward-wechat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-wechat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/theme/reward-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>23</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 1.05rem;">Codemode<sup>2</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>4</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 1.05rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 1.05rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 1.05rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/Karpathy/" style="font-size: 1.05rem;">Karpathy<sup>1</sup></a><a href="/tags/LLM/" style="font-size: 1.05rem;">LLM<sup>2</sup></a><a href="/tags/MCP/" style="font-size: 1.05rem;">MCP<sup>3</sup></a><a href="/tags/Memory/" style="font-size: 1.05rem;">Memory<sup>1</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 1.05rem;">Pi<sup>11</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>2</sup></a><a href="/tags/RAG/" style="font-size: 1.05rem;">RAG<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 1.05rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 1.05rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 1.05rem;">Streaming<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 1.05rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 1.05rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 1.05rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 1.05rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">源码解析<sup>3</sup></a><a href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" style="font-size: 1.05rem;">知识库<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%AE%B0%E5%BF%86/" style="font-size: 1.05rem;">记忆<sup>1</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/11/"><span class="card-archive-list-date">November 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">16</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%B0%E5%BF%86/" itemprop="url">记忆</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Agent/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Agent</span></a><a class="article-meta__tags" href="/tags/%E8%AE%B0%E5%BF%86/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>记忆</span></a><a class="article-meta__tags" href="/tags/Memory/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Memory</span></a><a class="article-meta__tags" href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>知识库</span></a></span></div></div><h1 class="post-title" itemprop="name headline">Agent 的记忆怎么做：四份开源实现的拆解与取舍</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-11-11T12:00:00.000Z" title="Created 2026-11-11 20:00:00">2026-11-11</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-11-11T12:00:00.000Z" title="Updated 2026-11-11 20:00:00">2026-11-11</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/Agent%E8%AE%B0%E5%BF%86/cover.jpg"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/11/11/Agent%E8%AE%B0%E5%BF%86/"><header><a class="post-meta-categories" href="/categories/%E8%AE%B0%E5%BF%86/" itemprop="url">记忆</a><a href="/tags/Agent/" tabindex="-1" itemprop="url">Agent</a><a href="/tags/%E8%AE%B0%E5%BF%86/" tabindex="-1" itemprop="url">记忆</a><a href="/tags/Memory/" tabindex="-1" itemprop="url">Memory</a><a href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" tabindex="-1" itemprop="url">知识库</a><h1 id="CrawlerTitle" itemprop="name headline">Agent 的记忆怎么做：四份开源实现的拆解与取舍</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-11-11T12:00:00.000Z" title="Created 2026-11-11 20:00:00">2026-11-11</time><time itemprop="dateCreated datePublished" datetime="2026-11-11T12:00:00.000Z" title="Updated 2026-11-11 20:00:00">2026-11-11</time></header><h2 id="0-三个现场"><a href="#0-三个现场" class="headerlink" title="0. 三个现场"></a>0. 三个现场</h2><p>第一个现场：昨天你花了二十分钟跟我确认”这个项目的日志规范是 <code>log.info(event, &#123;id&#125;)</code>“，今天新开一个会话，我第一句话又是”你的项目用什么语言”。</p>
+<p>第二个现场：你说过两句话——“我用 TypeScript”和”帮我查一下明天杭州的天气”。在上下文里它们是平等的两条消息，长度差不多，都会被塞进同一个窗口；但对一个助手来说，一句是长期有效的偏好，一句是一次性的查询，价值差了三个数量级。</p>
+<p>第三个现场：一个跑了三小时的重构任务，上下文里堆着四十次工具调用的完整输出。真正决定下一步的那个结论在第八次调用里，但它已经被淹没了，模型的注意力在几千行日志上摊薄成一片。</p>
+<p>这三个现场其实是同一个问题的三种表现：<strong>模型本身是无状态的，而工作是有历史的。</strong></p>
+<p>所谓的”Agent 记忆”，要解决的不是”把聊天记录存下来”，而是在正确的时刻，用正确的粒度，取回正确的那一小块。存是手段，取才是目的。</p>
+<p>这半年里，四套开源实现把这件事做出了四种明显不同的答案。它们的分歧不在工程细节，而在一个更前置的问题上：<strong>你相信”记忆”应该长成什么形状。</strong></p>
+<hr>
+<h2 id="1-记忆系统其实只有四个动作"><a href="#1-记忆系统其实只有四个动作" class="headerlink" title="1. 记忆系统其实只有四个动作"></a>1. 记忆系统其实只有四个动作</h2><p>不管哪家，拆开看都是同一组动作：</p>
+<table>
+<thead>
+<tr>
+<th>动作</th>
+<th>要回答的问题</th>
+<th>各家的分歧点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>写什么</td>
+<td>一段对话里，哪几句值得留下？</td>
+<td>模型抽，还是显式调用</td>
+</tr>
+<tr>
+<td>怎么组织</td>
+<td>存成一条条事实，还是一棵树？</td>
+<td>平铺 + 图 &#x2F; 分层 &#x2F; 目录</td>
+</tr>
+<tr>
+<td>怎么取</td>
+<td>下次靠什么把它捞回来？</td>
+<td>向量 &#x2F; 关键词 &#x2F; 图 &#x2F; 时间</td>
+</tr>
+<tr>
+<td>怎么维护</td>
+<td>旧的错了、过时了怎么办？</td>
+<td>覆盖 &#x2F; 只增 &#x2F; 下钻 &#x2F; 分信念</td>
+</tr>
+</tbody></table>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+    A[&quot;对话流&lt;br&#x2F;&gt;用户说、工具返回&quot;] --&gt; B[&quot;写入&lt;br&#x2F;&gt;抽取 · 归并 · 去重&quot;]
+    B --&gt; C[&quot;组织结构&lt;br&#x2F;&gt;事实 · 分层 · 目录 · 网络&quot;]
+    C --&gt; D[&quot;检索&lt;br&#x2F;&gt;语义 · 关键词 · 实体 · 时间&quot;]
+    D --&gt; E[&quot;注入上下文&lt;br&#x2F;&gt;按预算裁剪&quot;]
+    E --&gt; F[&quot;使用后的反馈&lt;br&#x2F;&gt;哪条被用上了&quot;]
+    F --&gt; B
+    C --&gt; G[&quot;维护&lt;br&#x2F;&gt;覆盖 · 衰减 · 溯源 · 删除&quot;]
+  </pre></div>
+
+<p>四个动作里，真正拉开差距的是<strong>第二和第四个</strong>。</p>
+<p>写和取是”怎么把信息搬进搬出”，只要工程做扎实，各家的效果不会差一个量级；而”怎么组织”决定了你的记忆能不能长大，”怎么维护”决定了它会不会烂掉。一个只会往里塞、不会清理和纠错的记忆系统，用三个月一定比不用更糟——它会把三周前的一个错误结论当成永久事实反复喂给模型。</p>
+<p>下面四家，我按”它们各自把赌注押在哪个动作上”来拆。</p>
+<hr>
+<h2 id="2-腾讯-TencentDB-Agent-Memory：把记忆做成一栋楼"><a href="#2-腾讯-TencentDB-Agent-Memory：把记忆做成一栋楼" class="headerlink" title="2. 腾讯 TencentDB Agent Memory：把记忆做成一栋楼"></a>2. 腾讯 TencentDB Agent Memory：把记忆做成一栋楼</h2><p>第一家的直觉最朴素，也最好懂：<strong>人对一件事的理解本来就是分层的。</strong></p>
+<p>你现在能立刻说出”我同事老张不吃辣”，这是从很多次吃饭、点菜、他推掉川菜馆的具体事件里提炼出来的。你不会记得每一次点菜的菜单，但你保留了结论；需要的时候，你也能回想起”上次聚餐他换成了清汤锅”这类细节。</p>
+<p>腾讯这套就是把这件事工程化：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>存什么</th>
+<th>用来干什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>L0 原始对话</td>
+<td>完整对话、工具日志、原文</td>
+<td>核对原话、时间戳、出处</td>
+</tr>
+<tr>
+<td>L1 原子记忆</td>
+<td>从对话里抽出的事实、偏好、约束、事件</td>
+<td>精确召回可执行的信息</td>
+</tr>
+<tr>
+<td>L2 场景记忆</td>
+<td>按项目或场景聚合的知识块</td>
+<td>快速恢复”当时在干什么”</td>
+</tr>
+<tr>
+<td>L3 用户画像</td>
+<td>长期稳定的画像、模式、高层认知</td>
+<td>让 Agent 一步进入你的语境</td>
+</tr>
+</tbody></table>
+<p>四层之间不是并列的四个库，而是一条<strong>提取 → 聚合 → 蒸馏</strong>的管道：会话结束后进异步流水线，先落 L0，再抽出 L1 原子事实，同类事实聚成 L2 场景，跨场景稳定出现的模式蒸馏成 L3。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    S[&quot;会话 &#x2F; 任务结束&quot;] --&gt; L0[&quot;L0 原始对话&lt;br&#x2F;&gt;全量保留&quot;]
+    L0 --&gt;|&quot;抽取&quot;| L1[&quot;L1 原子记忆&lt;br&#x2F;&gt;事实 · 偏好 · 约束 · 事件&quot;]
+    L1 --&gt;|&quot;按场景聚合&quot;| L2[&quot;L2 场景记忆&lt;br&#x2F;&gt;项目上下文 · 高频路径&quot;]
+    L2 --&gt;|&quot;跨场景蒸馏&quot;| L3[&quot;L3 用户画像&lt;br&#x2F;&gt;稳定模式 · 核心结论&quot;]
+    L3 -.-&gt;|&quot;起手就注入&quot;| Q[&quot;下一次请求&quot;]
+    L2 -.-&gt;|&quot;需要细节时下钻&quot;| Q
+    L1 -.-&gt;|&quot;要原话时再下钻&quot;| L0
+  </pre></div>
+
+<p><strong>它最值得学的一点：检索也是分层的。</strong></p>
+<p>日常请求先用 L2&#x2F;L3 起手——这层信息密度最高、token 最省，相当于”先给你一份工作简报”。只有当问题需要具体事实时，才落回 L1 做 BM25 + 向量检索，再用 RRF 把两路结果融合排序；再不行，才下钻到 L0 的原话。</p>
+<p>这个”先给结论、按需下钻”的顺序，和处理人类问题的方式一模一样。而且它天然解决了第二个现场——<strong>不同粒度的信息不再被平等对待</strong>：L3 的画像每次都在，L1 的碎事实只在需要时被捞。</p>
+<p>同时，检索结果还要过三道闸：条数上限、字符预算、超时。这句话看着不起眼，但它是记忆系统能不能上生产的分水岭——没有预算的记忆，等于一个不受控的上下文注入器。</p>
+<p><strong>第二件值得学的事：省 token 的不只是记忆本身。</strong></p>
+<p>官方博客里提到两个配套机制：上下文卸载（把原始工具结果搬到外部文件，上下文里只留摘要和索引）和”Mermaid 无限画布”（把任务结构折叠成可导航的一张图）。这两件事严格说不属于”记忆”，但它们和记忆是同一个问题的两面：<strong>上下文里只该放指针，不该放全文。</strong>（我在 <a href="https://benedicttom.github.io/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">DSH 会话压缩（Compaction）策略详解</a> 里写过同一件事的另一半：压缩是”把旧的搬走”，记忆是”把有用的留住”。）</p>
+<p><strong>工程形态</strong>：这套东西不是个库，是三个服务——<code>memory-core</code>（记忆内核）、<code>memory-hub</code>（团队资产）、<code>proxy</code>（协议适配）。接入方式很有意思：<strong>不动客户端，把 Agent 的 base URL 指向 proxy 就行</strong>，Claude Code、Codex、OpenCode、Hermes、OpenClaw 这些都不用装插件、不用配 MCP。</p>
+<p>数字上，官方博客给出的 OpenClaw 插件评测是：超长会话场景下 Token 最多省 <strong>61.38%</strong>，WideSearch 通过率从 33% 到 50%（相对 +51.52%），SWE-bench 从 58.4% 到 64.2%，AA-LCR 从 44.0% 到 47.5%；长期记忆在 PersonaMem 上把准确率从 48% 提到 76%。</p>
+<p><strong>它的赌注押在哪</strong>：组织和治理。四层是”组织结构”，Memory Hub 那一套资产登记（Chat Memory &#x2F; Skill &#x2F; Wiki &#x2F; CodeGraph，加上 Owner、版本、可见性、ACL）是”维护结构”。这也决定了它的气质——<strong>偏团队、偏企业、偏重</strong>。它默认你不是一个人在用，而是一队人和一队 Agent 在共享经验。</p>
+<p>顺带一提，它的 Wiki 层自己写明了灵感来自 Karpathy 那篇 LLM Wiki——也就是我上一篇 <a href="https://benedicttom.github.io/2026/11/09/LLM-Wiki/">LLM Wiki：不再每次去查，而是把知识编译成一座维基</a> 讲的思路。这个巧合本身就说明：<strong>“把知识编译成结构”和”把记忆分层”是同一种冲动的两个出口。</strong></p>
+<hr>
+<h2 id="3-Mem0：把记忆更新做成一条流水线"><a href="#3-Mem0：把记忆更新做成一条流水线" class="headerlink" title="3. Mem0：把记忆更新做成一条流水线"></a>3. Mem0：把记忆更新做成一条流水线</h2><p>如果说腾讯的赌注是”层级”，Mem0 的赌注是**”增量”**。</p>
+<p>它的接口只有两个动作，简单到有点简陋：<code>add</code>（存）和 <code>search</code>（取）。所有复杂性都藏在这两个动作后面。</p>
+<h3 id="3-1-写入的六个阶段"><a href="#3-1-写入的六个阶段" class="headerlink" title="3.1 写入的六个阶段"></a>3.1 写入的六个阶段</h3><p>一条消息进来，<code>add</code> 背后跑的是这样一条流水线：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  sequenceDiagram
+    participant A as 你的应用
+    participant M as Mem0
+    participant L as 抽取 LLM
+    participant S as 三套存储
+    A-&gt;&gt;M: add(messages, user_id)
+    M-&gt;&gt;S: 查相关旧记忆（去重用）
+    S--&gt;&gt;M: 候选旧事实
+    M-&gt;&gt;L: 抽取（输入 + 旧事实）
+    L--&gt;&gt;M: 新事实（只 ADD）
+    M-&gt;&gt;M: 哈希去重 + 向量化
+    M-&gt;&gt;L: 实体链接（人 &#x2F; 项目 &#x2F; 组织）
+    M-&gt;&gt;L: 时间推理（何时发生、是否仍在持续）
+    M-&gt;&gt;S: 写 SQL（事实与元数据）
+    M-&gt;&gt;S: 写向量库（embedding）
+    M-&gt;&gt;S: 写实体图（关系）
+  </pre></div>
+
+<p>拆开就是六步：异步入库 → 上下文查重 → 单次 LLM 抽取 → 哈希去重并向量化 → 实体链接 → 时间推理。</p>
+<p><strong>这里最反直觉的一个决定是：只增不改（ADD-only）。</strong></p>
+<p>用户说”我从奥斯汀搬到西雅图了”，Mem0 不会去把”用户住在奥斯汀”那条改掉，而是新增一条”用户住在西雅图”。想改？调用方显式 <code>update</code> 或 <code>delete</code>。</p>
+<p>为什么这么设计？因为<strong>覆盖是最容易撒谎的操作</strong>。一旦允许”新事实覆盖旧事实”，你就丢掉了”曾经是这样”的信息，也丢掉了发现矛盾的机会。只增不改保住了完整时间线，代价是要在检索时处理冲突。</p>
+<p>这个代价在它自己的评测里看得很清楚：LongMemEval 的 knowledge update 一类只有 <strong>93.6</strong>，是它所有类别里最弱的一项（单会话类已经做到 98.6）——旧事实还留着，语义相近的新旧两条会一起浮上来。</p>
+<p><strong>三个存储，各管一段</strong>：SQL 存事实与元数据（真相源、审计日志、滚动消息窗口），向量库管语义检索，实体图把”Alice”和”我同事 Alice”连起来。</p>
+<h3 id="3-2-读取的四路信号"><a href="#3-2-读取的四路信号" class="headerlink" title="3.2 读取的四路信号"></a>3.2 读取的四路信号</h3><p>一次 <code>search</code>，四路并行的信号：</p>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>干什么</th>
+<th>擅长</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>语义</td>
+<td>向量相似度</td>
+<td>“我怎么看远程办公”这种概念题</td>
+</tr>
+<tr>
+<td>关键词</td>
+<td>BM25，做词形还原</td>
+<td>人名、ID、”上周三的会”</td>
+</tr>
+<tr>
+<td>实体</td>
+<td>命中记忆链上的实体加权</td>
+<td>“关于 Alice 我们知道什么”</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>写入时抽的时间元数据 vs 查询的时间意图</td>
+<td>“第一次提到是什么时候”</td>
+</tr>
+</tbody></table>
+<p>四路打分融合成最终 top-K。注意时间这一路的设计：<strong>它是加法项，不参与过滤</strong>——语义相关性永远占主导，时间只是”在若干条里把日期对的那条往前挪一点”。这个细节很讲究：如果时间做成硬过滤，”上周三的会”这种问题一旦日期抽错就彻底查不到；做成加法，最坏情况也只是排位差一点。</p>
+<h3 id="3-3-数字与代价"><a href="#3-3-数字与代价" class="headerlink" title="3.3 数字与代价"></a>3.3 数字与代价</h3><p>论文（arXiv 2504.19413）的核心结论：相对 OpenAI 的记忆方案，LLM-as-a-Judge 指标上<strong>高 26%</strong>；带图记忆的版本比基础版再高约 2%；相比全量上下文，p95 延迟低 <strong>91%</strong>、token 省 <strong>90% 以上</strong>。</p>
+<p>现在的文档给出的数更实：LoCoMo <strong>92.5</strong>（平均每次检索 6,956 token）、LongMemEval <strong>94.4</strong>（6,787 token）、BEAM 1M <strong>64.1</strong>、BEAM 10M <strong>48.6</strong>。</p>
+<p>后面这组数特别值得看，因为它把”记忆到底能撑多大”摊开了：**1M token 规模还能打，10M 规模整体掉到 48.6，其中 temporal reasoning 只剩 16.3、多会话推理 26.1。**这不是 Mem0 一家的问题，是整个赛道的现状——<strong>记忆系统在百万级上下文里还站得住，在千万级里基本失效。</strong></p>
+<p>还有一个要命的细节，文档里写得很老实：上面这些分数是<strong>平台版</strong>的，开源 SDK 没有图记忆和平台侧的融合逻辑，开源版的实体信号只是”实体重叠加权”。**你抄的是开源版，拿到的是另一套数。**这是选型时最容易被忽略的一行小字。</p>
+<p><strong>它的气质</strong>：轻、嵌入友好、API 极简。你想在应用里加个”记住用户偏好”，<code>add</code> 一行就够；想深挖，也能换向量库、换模型、加 reranker。</p>
+<hr>
+<h2 id="4-OpenViking：把记忆做成一个能-ls-的目录"><a href="#4-OpenViking：把记忆做成一个能-ls-的目录" class="headerlink" title="4. OpenViking：把记忆做成一个能 ls 的目录"></a>4. OpenViking：把记忆做成一个能 <code>ls</code> 的目录</h2><p>前两家都把记忆当成”数据库里的行”，火山引擎这套（字节 Viking 团队开源）反过来：<strong>记忆就是一个文件系统。</strong></p>
+<p>它在 GitHub 上的自我介绍只有一句——用文件系统组织资源、记忆和技能，供 Agent 浏览、检索、按需读取。</p>
+<p>这个选择一旦定了，后面所有设计都跟着变。</p>
+<h3 id="4-1-四种上下文，一个-URI-空间"><a href="#4-1-四种上下文，一个-URI-空间" class="headerlink" title="4.1 四种上下文，一个 URI 空间"></a>4.1 四种上下文，一个 URI 空间</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>是什么</th>
+<th>谁在写</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Resource</td>
+<td>原始知识与参考资料（文档、代码库、PDF）</td>
+<td>用户主动导入</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>偏好、事实、任务经验</td>
+<td>从会话提取，或主动记录</td>
+</tr>
+<tr>
+<td>Skill</td>
+<td>一类任务的步骤、约束、脚本（<code>SKILL.md</code>）</td>
+<td>用户或系统</td>
+</tr>
+<tr>
+<td>Rule（Beta）</td>
+<td>条件下必须遵守的强约束</td>
+<td>主动编译，按需召回</td>
+</tr>
+</tbody></table>
+<p>全部挂在 <code>viking://</code> 的命名空间下：<code>viking://resources/...</code>、<code>viking://user/&#123;id&#125;/memories/...</code>、<code>viking://user/&#123;id&#125;/skills/...</code>。</p>
+<p><strong>在文件系统里，”记忆”和”知识”就不再是两个系统了</strong>——它们只是同一棵树上的不同节点，用同一套 <code>find</code>&#x2F;<code>read</code> 去访问。这一点比前两家都激进：它的检索不是”从记忆库里捞事实”，而是”在目录树里定位，再往下读”。</p>
+<h3 id="4-2-目录级-sidecar：L0-L1-L2"><a href="#4-2-目录级-sidecar：L0-L1-L2" class="headerlink" title="4.2 目录级 sidecar：L0 &#x2F; L1 &#x2F; L2"></a>4.2 目录级 sidecar：L0 &#x2F; L1 &#x2F; L2</h3><p>文件系统有个天然的毛病：Agent 不知道一个目录里有什么，只能一个个 <code>read</code>。OpenViking 的解法是给<strong>目录</strong>（不是文件）配两个隐藏的伴生文件：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>文件</th>
+<th>内容</th>
+<th>预算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>L0 摘要</td>
+<td><code>.abstract.md</code></td>
+<td>一段话说明这个目录是什么</td>
+<td>256 字符</td>
+</tr>
+<tr>
+<td>L1 概览</td>
+<td><code>.overview.md</code></td>
+<td>更完整的目录导览 + 文件清单</td>
+<td>4,000 字符</td>
+</tr>
+<tr>
+<td>L2 详情</td>
+<td>原始文件</td>
+<td>正文</td>
+<td>不限</td>
+</tr>
+</tbody></table>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    subgraph DIR[&quot;viking:&#x2F;&#x2F;resources&#x2F;docs&#x2F;auth&#x2F;&quot;]
+        A[&quot;.abstract.md · L0&lt;br&#x2F;&gt;256 字符，给检索用&quot;]
+        B[&quot;.overview.md · L1&lt;br&#x2F;&gt;4000 字符，给导航用&quot;]
+        C[&quot;oauth.md · L2&quot;]
+        D[&quot;jwt.md · L2&quot;]
+        E[&quot;api-keys.md · L2&quot;]
+    end
+    A --&gt;|&quot;向量召回&quot;| Q[&quot;命中的目录&quot;]
+    B --&gt;|&quot;rerank 与判断要不要继续读&quot;| Q
+    Q --&gt;|&quot;按需 read&quot;| C
+    Q --&gt; D
+    Q --&gt; E
+  </pre></div>
+
+<p>生成是自底向上的：文件先出摘要 → 叶子目录的 L1 → 叶子目录的 L0 → 聚到父目录，一层层往上冒。</p>
+<p>这里有个工程细节我特别喜欢，因为它把”别乱刷新”写成了机制：父目录的 sidecar 带一份 <code>freshness</code> 元数据，记录直接子项总数、本轮采样了多少、还有多少变化没反映上来。直接子项超过 32 个时，用确定性采样（同一棵树重复刷新选到同一批，减少正文抖动）；子项变化比例达到 10% 才触发父目录刷新。</p>
+<p><strong>换句话说，它承认”概览一定是落后的”，并且把这个落后量化了出来</strong>（<code>pending_child_changes &gt; 0</code> 表示正文还读得，但已知滞后）。这种诚实在记忆系统里很少见——大多数方案假装自己的摘要永远是最新的。</p>
+<h3 id="4-3-会话提交：同步归档-异步提取"><a href="#4-3-会话提交：同步归档-异步提取" class="headerlink" title="4.3 会话提交：同步归档 + 异步提取"></a>4.3 会话提交：同步归档 + 异步提取</h3><p>一次 <code>commit()</code> 分两个阶段：</p>
+<ul>
+<li><strong>Phase 1（请求内）</strong>：加路径锁 → 分配归档编号 → 写 <code>messages.jsonl</code> → 更新当前消息列表 → 入持久化队列 → 返回 <code>task_id</code></li>
+<li><strong>Phase 2（后台）</strong>：生成结构化摘要 → 写 L0&#x2F;L1 → 提取长期记忆 → 写 <code>memory_diff.json</code>（记忆变更审计）→ 写 <code>.done</code></li>
+</ul>
+<p><code>memory_diff.json</code> 是这套设计里最有审计味的产物：本次提交新增了哪些记忆文件、改了什么（带 before&#x2F;after）、删了什么（带被删内容）、哪些操作被策略跳过了（带稳定原因码）。<strong>记忆的每一次变化都能倒查。</strong></p>
+<p>内置的记忆类型也很”人”：<code>profile</code>（基本信息）、<code>preferences</code>（按主题的偏好）、<code>entities</code>（人物&#x2F;项目&#x2F;组织）、<code>events</code>（决策与里程碑）、<code>identity</code>（助手自己的名字与形象）、<code>soul</code>（核心原则与风格）、<code>cases</code> &#x2F; <code>trajectories</code> &#x2F; <code>experiences</code>（任务案例、执行轨迹、提炼出的经验）。</p>
+<p>最后三个是联动的：开启 <code>experiences</code> 会激活完整的 Agent Evolution 流程——任务先组织成 case，执行记为 trajectory，再提炼成可复用的 experience。<strong>这是少数把”从做过的事里学东西”写进产品的实现。</strong></p>
+<p><strong>它的代价</strong>：要起服务、要维护目录树的一致性、AGPL-3.0 对商业嵌入有约束；而且”可浏览”意味着人会去看、会去改，改了之后摘要可能和正文不一致（它用写保护来兜：正文可改，元数据受保护，改正文只重建该目录的向量、不重新生成语义）。</p>
+<p><strong>它的气质</strong>：透明、可读、可改。适合”我想知道我的助手到底记住了什么”的人。</p>
+<hr>
+<h2 id="5-Hindsight：把”事实”和”推断”分开"><a href="#5-Hindsight：把”事实”和”推断”分开" class="headerlink" title="5. Hindsight：把”事实”和”推断”分开"></a>5. Hindsight：把”事实”和”推断”分开</h2><p>前三家都在回答”记忆该怎么组织”，Hindsight 问了一个更尖锐的问题：<strong>记忆里哪些是证据，哪些是结论？</strong></p>
+<p>它的论文标题就把话说全了：<em>Hindsight is 20&#x2F;20: Building Agent Memory that Retains, Recalls, and Reflects</em>。它批评现有方案”模糊了证据与推断的边界”——把模型推理出来的总结和用户亲口说的事实混在一个向量库里，最后你没法解释”你凭什么这么答”。</p>
+<p>所以它把记忆拆成<strong>四张网</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>网络</th>
+<th>装什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>World facts（世界事实）</td>
+<td>客观发生过的事、说过的原话</td>
+</tr>
+<tr>
+<td>Agent experiences（Agent 经验）</td>
+<td>Agent 自己做过什么、结果如何</td>
+</tr>
+<tr>
+<td>Entity summaries（实体摘要）</td>
+<td>关于某个人&#x2F;项目的综合认识</td>
+</tr>
+<tr>
+<td>Evolving beliefs（演进中的信念）</td>
+<td>会随时间修正的判断</td>
+</tr>
+</tbody></table>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart LR
+    C[&quot;对话流&quot;] --&gt; X[&quot;抽取&lt;br&#x2F;&gt;结构化事实 + 实体消解 + 时间索引&quot;]
+    X --&gt; N1[&quot;世界事实&quot;]
+    X --&gt; N2[&quot;Agent 经验&quot;]
+    N1 --&gt; N3[&quot;实体摘要&lt;br&#x2F;&gt;由事实合成&quot;]
+    N2 --&gt; N4[&quot;演进中的信念&lt;br&#x2F;&gt;会随新证据修正&quot;]
+    N3 --&gt; R[&quot;recall&lt;br&#x2F;&gt;四路检索 + 重排&quot;]
+    N4 --&gt; R
+    N1 --&gt; R
+    N2 --&gt; R
+    R --&gt; RF[&quot;reflect&lt;br&#x2F;&gt;跨记忆推理&quot;]
+    RF --&gt; M[&quot;mental models&lt;br&#x2F;&gt;会自动更新的活文档&quot;]
+    M -.-&gt; R
+  </pre></div>
+
+<p>四张网之上是三个操作：<code>retain</code>（存）、<code>recall</code>（取）、<code>reflect</code>（想）。</p>
+<ul>
+<li><code>retain</code> 不做”存原文”，而是抽事实、做实体消解（”Alice” 和 “工程部的 Alice” 是同一个人）、打时间索引、生成向量；</li>
+<li><code>recall</code> 四路并行——语义、BM25、实体图遍历、时间过滤——<strong>再用 cross-encoder 重排</strong>。重排这一步是它和前几家的关键差异：向量召回只保证”大致相关”，交叉编码器才保证”真的相关”；</li>
+<li><code>reflect</code> 拿记忆去推理，回答”基于你知道的，建议我用什么技术栈”这类需要连点成线的问题。</li>
+</ul>
+<p><code>mental models</code> 是我觉得最实用的设计：<strong>会自动更新的活文档</strong>。你说”建一个叫『我的技术栈』的模型，跟踪我用哪些语言和框架”，之后每来一条新记忆它就在后台更新。等于把”每次都要重新 reflect 一遍”变成”预计算 + 增量维护”。</p>
+<p><strong>数字很硬</strong>：论文里，同一套 backbone 下，用 20B 的开源模型，LongMemEval &#x2F; LoCoMo 整体准确率从 39%（全量上下文基线）提到 <strong>83.6%</strong>，并且超过全上下文的 GPT-4o；把 backbone 再放大，LongMemEval 到 <strong>91.4%</strong>、LoCoMo 到 <strong>89.61%</strong>（此前最强的开源方案是 75.78%）。</p>
+<p><strong>工程形态</strong>：一条 docker 命令起全套（API + 内嵌 PostgreSQL&#x2F;pgvector + 本地 embedding + MCP 端点），任何 MCP 客户端改几行 JSON 就能接；记忆按 <code>bank</code> 隔离（<code>/mcp/&lt;bank_id&gt;/</code>），一个 bank 就是一颗脑子，人和项目可以各用一个。</p>
+<p><strong>它的坑也写在明处</strong>：<code>retain</code> 之后事实抽取和索引是异步的，<strong>存完立刻查可能查不到</strong>；<code>recall</code> 默认只回 4096 token，历史很长时会裁掉旧的低相关记忆；<code>reflect</code> 和 mental model 的生成也是异步的，第一次调用只给你一个 <code>operation_id</code>。</p>
+<p><strong>它的气质</strong>：像一个独立的记忆服务，而不是一个库。它的强项是”能解释”——事实、经验、摘要、信念分开存，答错了能定位到是哪张网、哪条证据。</p>
+<hr>
+<h2 id="6-四家放到一张表里"><a href="#6-四家放到一张表里" class="headerlink" title="6. 四家放到一张表里"></a>6. 四家放到一张表里</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>腾讯 Agent Memory</th>
+<th>Mem0</th>
+<th>OpenViking</th>
+<th>Hindsight</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心隐喻</td>
+<td>一栋楼（分层）</td>
+<td>一条流水线（增量）</td>
+<td>一棵目录树</td>
+<td>四张网（证据分层）</td>
+</tr>
+<tr>
+<td>组织结构</td>
+<td>L0 对话 → L1 原子 → L2 场景 → L3 画像</td>
+<td>平铺事实 + 实体图 + 时间元数据</td>
+<td>resource &#x2F; memory &#x2F; skill &#x2F; rule 的文件系统</td>
+<td>世界事实 &#x2F; 经验 &#x2F; 实体摘要 &#x2F; 信念</td>
+</tr>
+<tr>
+<td>写入</td>
+<td>异步管道，提取-聚合-蒸馏</td>
+<td><code>add</code>：抽取 + 去重 + 实体 + 时间</td>
+<td>会话 commit 两阶段，摘要 + 提取</td>
+<td><code>retain</code>：抽事实 + 消解 + 索引</td>
+</tr>
+<tr>
+<td>检索</td>
+<td>分层起手，BM25 + 向量 + RRF，三道预算闸</td>
+<td>语义 + BM25 + 实体 + 时间，四路融合</td>
+<td>目录定位 + 向量 + 按层读取</td>
+<td>四路并行 + cross-encoder 重排</td>
+</tr>
+<tr>
+<td>冲突处理</td>
+<td>上层蒸馏，保留向下溯源</td>
+<td>只增不改，新旧共存</td>
+<td><code>memory_diff</code> 记录 add&#x2F;update&#x2F;delete</td>
+<td>独立成”演进中的信念”</td>
+</tr>
+<tr>
+<td>溯源</td>
+<td>四层逐级下钻</td>
+<td>元数据 + 历史日志</td>
+<td><code>memory_diff.json</code> 全文审计</td>
+<td>证据网络与推断分离</td>
+</tr>
+<tr>
+<td>遗忘</td>
+<td>分层老化</td>
+<td>显式 delete</td>
+<td>目录删除 + 隐私配置</td>
+<td>信念修正</td>
+</tr>
+<tr>
+<td>形态</td>
+<td>三服务（core &#x2F; hub &#x2F; proxy），改 base URL 接入</td>
+<td>SDK，嵌进应用</td>
+<td>服务 + SDK + CLI</td>
+<td>docker 一条命令 + MCP</td>
+</tr>
+<tr>
+<td>许可证</td>
+<td>MIT</td>
+<td>Apache-2.0</td>
+<td>AGPL-3.0</td>
+<td>MIT</td>
+</tr>
+<tr>
+<td>星标（2026-11-11）</td>
+<td>30.8k</td>
+<td>68.8k</td>
+<td>42.0k</td>
+<td>60.4k</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="7-四种哲学"><a href="#7-四种哲学" class="headerlink" title="7. 四种哲学"></a>7. 四种哲学</h2><p>把表收起来，四家的分歧其实可以压缩成四句话：</p>
+<p><strong>腾讯：记忆的价值在于粒度。</strong> 同一件事，在不同抽象层上有不同的价值。L3 的一句话能省掉 L0 的五千字，而 L1 的一条事实可能是整个任务的转折点。它把”该记多细”变成了结构问题。</p>
+<p><strong>Mem0：记忆的真相是时间线。</strong> 不许覆盖——因为覆盖是一次不可逆的信息销毁。它宁愿让新旧两条并存、让检索去处理冲突，也不肯替你判断哪条是对的。</p>
+<p><strong>OpenViking：记忆应该能被看见。</strong> 如果人不能 <code>ls</code> 一下看到助手记住了什么、不能 <code>cat</code> 出来改一行，那这份记忆就不可信。它把”可解释”做成了文件系统的基本属性。</p>
+<p><strong>Hindsight：记忆里必须分清证据和推断。</strong> 用户说的话是证据，Agent 的总结是推断，两者混在一起，你就永远说不清”你凭什么这么答”。</p>
+<p>再往下追一层：<strong>这四种哲学其实对应四种失败模式。</strong></p>
+<p>怕”记太细用不上”的，选分层；怕”覆盖掉真相”的，选增量；怕”黑箱不可控”的，选文件系统；怕”答错没法解释”的，选证据分离。</p>
+<hr>
+<h2 id="8-六个坑"><a href="#8-六个坑" class="headerlink" title="8. 六个坑"></a>8. 六个坑</h2><p>这六个坑不是我编的，是四家的取舍里长出来的——每一个都是某一家的强项，换到另一个场景就变成坑。</p>
+<p><strong>① 把摘要当事实。</strong> 分层和蒸馏都在生产摘要，而摘要一旦成为检索的终点、下钻链断了，它就变成了谣言。腾讯的 L2&#x2F;L3 之所以强，是因为它能逐级下钻回 L0；你要是只抄了分层、没抄下钻，抄到的就是”一本没有脚注的教科书”。</p>
+<p><strong>② 静默覆盖。</strong> 反过来，覆盖看起来干净，实际是销毁证据。Mem0 的 knowledge update 分数（93.6，全场最弱）就是在提醒你：只增不改的代价是冲突共存，而这个代价是<strong>显式</strong>的、可观测的——比悄悄覆盖好得多。</p>
+<p><strong>③ 时间丢失。</strong> 一条没有时间戳的偏好会变成永久错误。用户三个月前说”我们还在用 MySQL”，今天已经迁到 PG 了，你的记忆库里那条还挂着”事实”的标签。Hindsight 专门开一张时间网、Mem0 专门做时间推理，都是在补这个洞。</p>
+<p><strong>④ 检索预算失控。</strong> 记忆最容易犯的错不是”没记住”，是”记住太多、每次都全塞进去”。腾讯按条数&#x2F;字符&#x2F;超时三重限制、Hindsight 的 recall 默认 4096 token，都是在给注入设上限。<strong>没有预算的记忆系统，等于给上下文窗口装了一个不受控的水龙头。</strong></p>
+<p><strong>⑤ 把”记得”当”懂了”。</strong> <code>reflect</code> 是 LLM 在记忆上推理，产出的是新推断，不是新证据。如果不把它标成推断，下一轮它就会作为”事实”再被检索出来——这就是记忆系统里的回音室。</p>
+<p><strong>⑥ 评测饱和。</strong> LoCoMo 和 LongMemEval 已经快被打满了（单会话类 98%+），在这两个榜上刷分意义不大。Mem0 在 BEAM 10M 上掉到 48.6 才是真实水位。<strong>看一个记忆系统，别看它在小榜上的分数，看它在千万级上下文里还剩多少。</strong></p>
+<hr>
+<h2 id="9-怎么选"><a href="#9-怎么选" class="headerlink" title="9. 怎么选"></a>9. 怎么选</h2><table>
+<thead>
+<tr>
+<th>你的情况</th>
+<th>建议</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>已经在用 Claude Code &#x2F; Codex &#x2F; DSH 这类现成 agent</td>
+<td>腾讯 Agent Memory</td>
+<td>改个 base URL 就接上，不用改客户端</td>
+</tr>
+<tr>
+<td>在自己的应用里加”记忆”能力</td>
+<td>Mem0</td>
+<td>SDK 最轻，<code>add</code> &#x2F; <code>search</code> 两个动作，存储可换</td>
+</tr>
+<tr>
+<td>想看清助手到底记住了什么、还要能改</td>
+<td>OpenViking</td>
+<td>一切都是文件，能 <code>ls</code>、能 <code>cat</code>、能审计</td>
+</tr>
+<tr>
+<td>只要一个记忆服务、想让记忆”会思考”</td>
+<td>Hindsight</td>
+<td>MCP 即插即用，事实与推断分离，能解释</td>
+</tr>
+<tr>
+<td>企业多租户、要权限与审计</td>
+<td>腾讯的团队记忆，或自己按它的四层重做</td>
+<td>ACL、资产、Owner 这一套它做全了</td>
+</tr>
+</tbody></table>
+<p>三句提醒：</p>
+<ul>
+<li><strong>别把星标当质量。</strong> 四家都在万级星以上，但解决的是不同问题；Mem0 星最多，不代表它适合做团队知识库。</li>
+<li><strong>别只看平台版数字。</strong> 开源版和托管版的差距，往往就藏在”图记忆””融合排序”这种一句带过的功能里。</li>
+<li><strong>先想清楚你的失败模式。</strong> 你最怕助手犯哪种错——忘事、记错、说不清、还是太贵？答案基本就决定了选哪家。</li>
+</ul>
+<hr>
+<h2 id="10-如果你要自己做一个"><a href="#10-如果你要自己做一个" class="headerlink" title="10. 如果你要自己做一个"></a>10. 如果你要自己做一个</h2><p>不写代码，只给五个决定，顺序不能乱：</p>
+<ol>
+<li><strong>先定”记什么”。</strong> 三类就够：事实（谁在什么时候做了什么）、偏好（长期有效的倾向）、经验（这件事该怎么干）。三类混在一起存，检索一定乱。</li>
+<li><strong>再定”谁负责写”。</strong> 模型自动抽（省事，但会抽歪）还是显式调用（准，但没人愿意写）？大多数生产系统是两条路都开：自动抽进候选池，显式调用直接落库。</li>
+<li><strong>选一种组织结构。</strong> 平铺 + 图（简单、检索强）、分层（省 token、要维护下钻链）、目录（可读、要维护一致性）——三选一，别混。</li>
+<li><strong>检索至少两路，并且接受它不完美。</strong> 向量管概念、关键词管精确，再加时间维度。预算一定要设：条数、字符、超时。</li>
+<li><strong>留一条溯源链和一条删除路径。</strong> 没有溯源的记忆是谣言；没有删除的记忆是负债——用户说”忘掉这件事”的时候，你必须真的能忘掉。</li>
+</ol>
+<hr>
+<h2 id="11-最后"><a href="#11-最后" class="headerlink" title="11. 最后"></a>11. 最后</h2><p>回头看那三个现场：</p>
+<p>第一个（跨会话断裂）靠”写入 + 组织”解决；<br>第二个（事实与偏好混淆）靠”分层或分类”解决；<br>第三个（上下文膨胀）靠”检索预算 + 卸载”解决。</p>
+<p>四家给出的答案形状不同，但它们都在回答同一个问题：<strong>在模型无状态的前提下，什么样的外部结构，能让”经验”真的积累起来。</strong></p>
+<p>我自己的判断是：这一代方案的分水岭不在存储技术，而在<strong>你敢不敢让系统自己决定什么值得记</strong>。四家都在不同程度上交出了这个决定权——腾讯交给分层管道，Mem0 交给抽取 LLM，OpenViking 交给目录约定，Hindsight 交给四张网。</p>
+<p>交出去越多，省事越多，失控的风险也越大。这大概就是记忆这件事最像人的地方：<strong>你选择记住什么，也就选择了你会变成谁。</strong></p>
+<hr>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://benedicttom.github.io/2026/11/09/LLM-Wiki/">LLM Wiki：不再每次去查，而是把知识编译成一座维基</a> —— 知识编译与记忆分层是同一种冲动的两个出口</li>
+<li><a href="https://benedicttom.github.io/2026/11/05/%E6%95%B0%E5%AD%97%E5%91%98%E5%B7%A5%E6%9E%B6%E6%9E%84/">如何设计一个数字员工</a> —— 记忆是数字员工的第三个决定</li>
+<li><a href="https://benedicttom.github.io/2026/10/30/DSH-%E4%BC%9A%E8%AF%9D%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/">DSH 会话压缩（Compaction）策略详解</a> —— 压缩是搬走旧的，记忆是留住有用的</li>
+<li><a href="https://benedicttom.github.io/2026/11/05/Pi-MCP%E4%B8%8ECodemode/">Codemode 与 MCP：先拒绝，为什么又加回来</a> —— 记忆作为 MCP 服务接入时的取舍</li>
+</ul>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com.cn/developer/article/2668579">TencentDB Agent Memory 正式开源（腾讯云开发者社区）</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TencentCloud/TencentDB-Agent-Memory">TencentDB-Agent-Memory（GitHub）</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.mem0.ai/core-concepts/how-it-works">How Mem0 Works（官方文档）</a> 与 <a target="_blank" rel="noopener" href="https://docs.mem0.ai/core-concepts/memory-evaluation">Memory Evaluation</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2504.19413">Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory（arXiv:2504.19413）</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.openviking.ai/zh/concepts/00-overview">OpenViking 概念与原理（官方文档）</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2512.12818">Hindsight is 20&#x2F;20: Building Agent Memory that Retains, Recalls, and Reflects（arXiv:2512.12818）</a></li>
+<li><a target="_blank" rel="noopener" href="https://hindsight.vectorize.io/">Hindsight 文档</a></li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/11/11/Agent%E8%AE%B0%E5%BF%86/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/11/11/Agent%E8%AE%B0%E5%BF%86/')">Agent 的记忆怎么做：四份开源实现的拆解与取舍</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/11/11/Agent%E8%AE%B0%E5%BF%86/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=Agent 的记忆怎么做：四份开源实现的拆解与取舍&amp;url=https://benedicttom.github.io/2026/11/11/Agent%E8%AE%B0%E5%BF%86/&amp;pic=/images/Agent%E8%AE%B0%E5%BF%86/cover.jpg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Agent/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Agent<span class="tagsPageCount">23</span></a><a class="post-meta__box__tags" href="/tags/%E8%AE%B0%E5%BF%86/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>记忆<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/Memory/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Memory<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>知识库<span class="tagsPageCount">2</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/Agent%E8%AE%B0%E5%BF%86/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2026/11/09/LLM-Wiki/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/LLM-Wiki/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">LLM Wiki：不再每次去查，而是把知识编译成一座维基</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/11/09/LLM-Wiki/" title="LLM Wiki：不再每次去查，而是把知识编译成一座维基"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/LLM-Wiki/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-09</div><div class="title">LLM Wiki：不再每次去查，而是把知识编译成一座维基</div></div></a></div><div><a href="/2026/05/11/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/A2A-Agent%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-11</div><div class="title">A2A 协议：让 AI Agent 学会&quot;对话&quot;的通信标准</div></div></a></div><div><a href="/2026/04/25/AI_MCP/" title="FunctionCall、Agent、Mcp"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/AI_MCP/cover.webp" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">FunctionCall、Agent、Mcp</div></div></a></div><div><a href="/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/" title="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-11-05</div><div class="title">同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖</div></div></a></div><div><a href="/2026/04/25/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/" title="Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Harness-%E5%85%AD%E7%BB%B4%E8%A7%A3%E6%9E%84/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-25</div><div class="title">Agent Harness 六维解构：Prompt、Context、Skills、Orchestration、Tools 与 Memory</div></div></a></div><div><a href="/2026/04/28/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/" title="Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent-Sandbox-%E5%AE%89%E5%85%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-04-28</div><div class="title">Agent Sandbox：为什么 AI Agent 需要一个安全的执行环境</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E4%B8%89%E4%B8%AA%E7%8E%B0%E5%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">0. 三个现场</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%E5%85%B6%E5%AE%9E%E5%8F%AA%E6%9C%89%E5%9B%9B%E4%B8%AA%E5%8A%A8%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">1. 记忆系统其实只有四个动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%85%BE%E8%AE%AF-TencentDB-Agent-Memory%EF%BC%9A%E6%8A%8A%E8%AE%B0%E5%BF%86%E5%81%9A%E6%88%90%E4%B8%80%E6%A0%8B%E6%A5%BC"><span class="toc-number">3.</span> <span class="toc-text">2. 腾讯 TencentDB Agent Memory：把记忆做成一栋楼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Mem0%EF%BC%9A%E6%8A%8A%E8%AE%B0%E5%BF%86%E6%9B%B4%E6%96%B0%E5%81%9A%E6%88%90%E4%B8%80%E6%9D%A1%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">4.</span> <span class="toc-text">3. Mem0：把记忆更新做成一条流水线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%86%99%E5%85%A5%E7%9A%84%E5%85%AD%E4%B8%AA%E9%98%B6%E6%AE%B5"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 写入的六个阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E8%AF%BB%E5%8F%96%E7%9A%84%E5%9B%9B%E8%B7%AF%E4%BF%A1%E5%8F%B7"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 读取的四路信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%95%B0%E5%AD%97%E4%B8%8E%E4%BB%A3%E4%BB%B7"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 数字与代价</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-OpenViking%EF%BC%9A%E6%8A%8A%E8%AE%B0%E5%BF%86%E5%81%9A%E6%88%90%E4%B8%80%E4%B8%AA%E8%83%BD-ls-%E7%9A%84%E7%9B%AE%E5%BD%95"><span class="toc-number">5.</span> <span class="toc-text">4. OpenViking：把记忆做成一个能 ls 的目录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%9B%9B%E7%A7%8D%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%8C%E4%B8%80%E4%B8%AA-URI-%E7%A9%BA%E9%97%B4"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 四种上下文，一个 URI 空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%9B%AE%E5%BD%95%E7%BA%A7-sidecar%EF%BC%9AL0-L1-L2"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 目录级 sidecar：L0 &#x2F; L1 &#x2F; L2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E4%BC%9A%E8%AF%9D%E6%8F%90%E4%BA%A4%EF%BC%9A%E5%90%8C%E6%AD%A5%E5%BD%92%E6%A1%A3-%E5%BC%82%E6%AD%A5%E6%8F%90%E5%8F%96"><span class="toc-number">5.3.</span> <span class="toc-text">4.3 会话提交：同步归档 + 异步提取</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Hindsight%EF%BC%9A%E6%8A%8A%E2%80%9D%E4%BA%8B%E5%AE%9E%E2%80%9D%E5%92%8C%E2%80%9D%E6%8E%A8%E6%96%AD%E2%80%9D%E5%88%86%E5%BC%80"><span class="toc-number">6.</span> <span class="toc-text">5. Hindsight：把”事实”和”推断”分开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%9B%9B%E5%AE%B6%E6%94%BE%E5%88%B0%E4%B8%80%E5%BC%A0%E8%A1%A8%E9%87%8C"><span class="toc-number">7.</span> <span class="toc-text">6. 四家放到一张表里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%9B%9B%E7%A7%8D%E5%93%B2%E5%AD%A6"><span class="toc-number">8.</span> <span class="toc-text">7. 四种哲学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%85%AD%E4%B8%AA%E5%9D%91"><span class="toc-number">9.</span> <span class="toc-text">8. 六个坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">10.</span> <span class="toc-text">9. 怎么选</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%A6%82%E6%9E%9C%E4%BD%A0%E8%A6%81%E8%87%AA%E5%B7%B1%E5%81%9A%E4%B8%80%E4%B8%AA"><span class="toc-number">11.</span> <span class="toc-text">10. 如果你要自己做一个</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E6%9C%80%E5%90%8E"><span class="toc-number">12.</span> <span class="toc-text">11. 最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-number">13.</span> <span class="toc-text">相关阅读</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/11/Agent%E8%AE%B0%E5%BF%86/" title="Agent 的记忆怎么做：四份开源实现的拆解与取舍"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent%E8%AE%B0%E5%BF%86/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent 的记忆怎么做：四份开源实现的拆解与取舍"/></a><div class="content"><a class="title" href="/2026/11/11/Agent%E8%AE%B0%E5%BF%86/" title="Agent 的记忆怎么做：四份开源实现的拆解与取舍">Agent 的记忆怎么做：四份开源实现的拆解与取舍</a><time datetime="2026-11-11T12:00:00.000Z" title="Created 2026-11-11 20:00:00">2026-11-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/09/LLM-Wiki/" title="LLM Wiki：不再每次去查，而是把知识编译成一座维基"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/LLM-Wiki/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LLM Wiki：不再每次去查，而是把知识编译成一座维基"/></a><div class="content"><a class="title" href="/2026/11/09/LLM-Wiki/" title="LLM Wiki：不再每次去查，而是把知识编译成一座维基">LLM Wiki：不再每次去查，而是把知识编译成一座维基</a><time datetime="2026-11-09T13:00:00.000Z" title="Created 2026-11-09 21:00:00">2026-11-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Pi-MCP%E4%B8%8ECodemode/" title="Codemode 与 MCP：先拒绝，为什么又加回来"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Pi-MCP%E4%B8%8ECodemode/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Codemode 与 MCP：先拒绝，为什么又加回来"/></a><div class="content"><a class="title" href="/2026/11/05/Pi-MCP%E4%B8%8ECodemode/" title="Codemode 与 MCP：先拒绝，为什么又加回来">Codemode 与 MCP：先拒绝，为什么又加回来</a><time datetime="2026-11-05T12:00:00.000Z" title="Created 2026-11-05 20:00:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/%E6%95%B0%E5%AD%97%E5%91%98%E5%B7%A5%E6%9E%B6%E6%9E%84/" title="如何设计一个数字员工"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/%E6%95%B0%E5%AD%97%E5%91%98%E5%B7%A5%E6%9E%B6%E6%9E%84/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何设计一个数字员工"/></a><div class="content"><a class="title" href="/2026/11/05/%E6%95%B0%E5%AD%97%E5%91%98%E5%B7%A5%E6%9E%B6%E6%9E%84/" title="如何设计一个数字员工">如何设计一个数字员工</a><time datetime="2026-11-05T10:00:00.000Z" title="Created 2026-11-05 18:00:00">2026-11-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/" title="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖"/></a><div class="content"><a class="title" href="/2026/11/05/Agent%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%AF%B9%E6%AF%94-Pi%E4%B8%8EDSH/" title="同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖">同一个 Agent 主循环，两种工程答案：Pi 与 DSH 对照解剖</a><time datetime="2026-11-05T04:00:00.000Z" title="Created 2026-11-05 12:00:00">2026-11-05</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-theme.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">121</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">73</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">34</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>23</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 0.88rem;">Codemode<sup>2</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>3</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>4</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 0.88rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Extension/" style="font-size: 0.88rem;">Extension<sup>1</sup></a><a href="/tags/JSONL/" style="font-size: 0.88rem;">JSONL<sup>1</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/Karpathy/" style="font-size: 0.88rem;">Karpathy<sup>1</sup></a><a href="/tags/LLM/" style="font-size: 0.88rem;">LLM<sup>2</sup></a><a href="/tags/MCP/" style="font-size: 0.88rem;">MCP<sup>3</sup></a><a href="/tags/Memory/" style="font-size: 0.88rem;">Memory<sup>1</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/Pi/" style="font-size: 0.88rem;">Pi<sup>11</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>2</sup></a><a href="/tags/RAG/" style="font-size: 0.88rem;">RAG<sup>1</sup></a><a href="/tags/Rpc/" style="font-size: 0.88rem;">Rpc<sup>2</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>2</sup></a><a href="/tags/Session/" style="font-size: 0.88rem;">Session<sup>1</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/Streaming/" style="font-size: 0.88rem;">Streaming<sup>1</sup></a><a href="/tags/agent-loop/" style="font-size: 0.88rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-ai/" style="font-size: 0.88rem;">pi-ai<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 0.88rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 0.88rem;">sandbox<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 0.88rem;">源码解析<sup>3</sup></a><a href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" style="font-size: 0.88rem;">知识库<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%AE%B0%E5%BF%86/" style="font-size: 0.88rem;">记忆<sup>1</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("/images/theme/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
