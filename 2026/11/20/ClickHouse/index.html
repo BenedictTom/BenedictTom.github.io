@@ -1,0 +1,974 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>ClickHouse 入门：一个分析型数据库为什么长这样 | Joie's Blog</title><meta name="keywords" content="数据库,ClickHouse,OLAP,列式存储"><meta name="author" content="Joie"><meta name="copyright" content="Joie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="ClickHouse 入门：一个分析型数据库为什么长这样"><meta name="application-name" content="ClickHouse 入门：一个分析型数据库为什么长这样"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="ClickHouse 入门：一个分析型数据库为什么长这样"><meta property="og:url" content="https://benedicttom.github.io/2026/11/20/ClickHouse/index.html"><meta property="og:site_name" content="Joie's Blog"><meta property="og:description" content="从“分析查询长什么样”出发，把 ClickHouse 的三个核心设计、MergeTree 的数据组织、分布式形态、建模四步和常见坑串成一条线，附本机实测数字。"><meta property="og:locale" content="en"><meta property="og:image" content="https://benedicttom.github.io/images/ClickHouse%E5%85%A5%E9%97%A8/cover.jpg"><meta property="article:author" content="Joie"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://benedicttom.github.io/images/ClickHouse%E5%85%A5%E9%97%A8/cover.jpg"><meta name="description" content="从“分析查询长什么样”出发，把 ClickHouse 的三个核心设计、MergeTree 的数据组织、分布式形态、建模四步和常见坑串成一条线，附本机实测数字。"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://benedicttom.github.io/2026/11/20/ClickHouse/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"Here","backTitle":"Welcome"},
+  LA51: undefined,
+  greetingBox: {"enable":true,"default":"晚上好👋","list":[{"greeting":"晚安😴","startTime":0,"endTime":5},{"greeting":"早上好鸭👋, 祝你一天好心情！","startTime":6,"endTime":9},{"greeting":"上午好👋, 状态很好，鼓励一下～","startTime":10,"endTime":10},{"greeting":"11点多啦, 在坚持一下就吃饭啦～","startTime":11,"endTime":11},{"greeting":"午安👋, 宝贝","startTime":12,"endTime":14},{"greeting":"🌈充实的一天辛苦啦！","startTime":14,"endTime":18},{"greeting":"19点喽, 奖励一顿丰盛的大餐吧🍔。","startTime":19,"endTime":19},{"greeting":"晚上好👋, 在属于自己的时间好好放松😌~","startTime":20,"endTime":24}]},
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: {"mode":"api","api":"https://img2color-go.vercel.app/api?img=","cover_change":true},
+  authorStatus: {"skills":["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🏠 智能家居小能手","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多"]},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"Author: Joie","link":"Link: ","source":"Source: Joie's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.","copySuccess":"Copy success, copy and reprint please mark the address of this article"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'Joie\'s Blog',
+  title: 'ClickHouse 入门：一个分析型数据库为什么长这样',
+  postAI: '',
+  pageFillDescription: '一、先说它是什么不是什么, 二、三个现场, 三、物理现实：为什么行存在这里吃亏, 四、三个核心决定, 决定一：列存 + 按列压缩, 决定二：向量化执行, 决定三：稀疏主键索引, 代价：三个决定放弃了什么, 五、MergeTree：它的灵魂, 一次写入发生了什么, 坑一：小批量写入会产生海量 part, 坑二：OPTIMIZE ... FINAL 不是日常操作, 引擎家族：同一个骨架不同的合并逻辑, 物化视图：把每次重算变成写入时增量算, 六、分布式：一张表怎么变成集群, 七、怎么用：一条最小路径, 第一步：跑起来, 第二步：建模四步, 第三步：写入, 第四步：查询习惯, 第五步：运维要看什么, 八、什么时候用什么时候别用, 和其他分析引擎怎么选, 九、心智模型：一句话记住它, 附：本文实测环境, 参考资料, 相关阅读如果你只用过或第一次看到会有种错位感建表要指定排序键改一行数据要重写整个按主键查一条居然比全表还慢而几乎是原罪这些都不是怪癖是同一个取舍在不同地方的投影这篇文章不罗列功能只讲一条因果链分析型查询的物理现实用三个决定回应它这些决定带来了什么用法和什么坑读完之后你应该能自己判断一个场景该不该用它文中所有数字都在本机实测单机容器亿字节级的小数据集不是从别人的里抄的条件也一并写在括号里一先说它是什么不是什么是一个列式存储向量化执行的数据库面向扫一大片数据只取少数几列算聚合的查询它擅长的事和它不擅长的事其实是同一套设计的正反面它擅长它不擅长原因后文展开亿级行的聚合分组去重单行点查主键查一条稀疏索引只定位到批量导入每秒几十万到上百万行高频小事务写入每次写入产生一个靠后台合并消化大宽表的列裁剪扫描大量复杂子查询没有全局查询计划靠自己扛内存保留原始明细随时换维度重算行级更新删除事务更新等于重写它不是更快的也不是带的更不是搜索引擎把它当用会死得很难看把它当能存明细的报表引擎用会很舒服二三个现场现场一埋点表产品的行为埋点一天几亿条字段固定只追加不修改业务要问的永远是过去天各渠道各版本的转化率是多少这类查询会扫过几千万到几十亿行但只用到四列而表里可能有四十列现场二报表跑不动同样的查询放到上二十列里读四列也要把整行读出来放大五倍以上再加要在内存里维护几十万个分组很快就碰内存墙现场三口径天天变分析师今天要看漏斗明天要看留存后天要按新埋点重算这意味着原始明细必须留着不能提前聚合死这一点决定了列存便宜存储是刚需而不是顺便优化三个现场的共同点是读得多写得少从不改而且要的列远少于存的列记住这句话后面所有设计都是它的推论三物理现实为什么行存在这里吃亏数据库读盘的最小单位是一个块不是一行行存把同一行的所有列放在一起于是读四列实际读的是二十列拼成的整行行存行存一行连续存放共列共列共列列存列存一列连续存放全部行的全部行的全部行的其余列本次查询根本不读行存读列读列放大倍列存读列读列精确列存还顺带解决了三件事压缩率同一列的数据类型相同分布相似相邻行常常重复压缩算法才有东西可压向量化一列在内存里是连续数组可以对一批值做同样的运算上而不是一行一行解释只读需要的列查询优化器在扫描前就知道这次只碰列其余列一个字节都不用读最后这条不是理论我在本机建了张列万行的表磁盘上跑了几种查询读数取自是未压缩逻辑字节耗时是热缓存下三次取最小值查询读取字节扫描行数耗时只读元数据万万排序键前缀万非排序键扫整列万只花字节是因为每个的元数据里已经记了行数它连一个数据块都不用碰而只读是那张表磁盘尺寸的四分之一同一个表查询读多少完全由你碰了哪些列命中了哪些索引决定这和行存读一行就是读一行的直觉完全不同四三个核心决定决定一列存按列压缩列存本身不难难的是让压缩真的有效给每一列独立选择编码和压缩算法并且提供这个类型把低基数字符串比如只有种取值的事件类型换成字典编码的整数我实测了这张表各列的压缩比口径压缩前后列类型压缩前压缩后压缩比注意最后两列和我用随机生成是纯随机数压缩比只有倍压缩吃的从来不是列存这个形式而是列内数据的规律真实业务数据里用户会反复出现金额会有大量重复时间戳单调递增压缩比通常远好于随机数据低基数字符串列则是另一个量级少了两个数量级的报表能快十倍不奇怪决定二向量化执行列存让读得少成立向量化让算得快成立传统执行器一次处理一行每行都要判断类型做虚函数调用一次处理一整列通常是行的块循环体是紧凑的数组运算编译器能自动向量化的通道才用得上官方架构文档里写得很直白它也承认向量化不是银弹临时向量要写回缓存超出会退化所以现实中的好系统会混合向量化与运行时代码生成决定三稀疏主键索引这是最容易被误解的一点它没有树那样的稠密索引而是每行记一个标记的稀疏索引一个的数据按排序键排好序切成每行一个每个的第一行排序键值写进查询排序键二分找到可能包含的只读这些的列文件最多多读行的额外数据稀疏索引的妙处在于它小到可以常驻内存所以哪怕表有几百亿行索引也不会撑爆代价是只能定位到可能包含的行区间剩下的靠扫描所以它适合范围扫描聚合不适合主键查一条本机验证我用做排序键查最近秒的采购事件返回行读取扫了行正好是个也就是说数据库读了个行的块从里面筛出行这就是稀疏索引的真实粒度感它不给你精确到一行它给你少读几个块代价三个决定放弃了什么放弃的东西具体表现什么时候会咬你行级更新会重写整个行实测因为只碰个高频改状态改库存事务不支持跨表事务写入是批语义需要强一致的账务稠密索引主键查一条也要读一个会话表字典表成熟没有全局查询计划右表要装进内存多表关联的大查询五它的灵魂有几十种表引擎但日常只用家族理解它要抓住四个概念排序键主键每次写入生成一个不可变的目录内部按排序键排好序按表达式常见是月份或天把数据分开不同分区的永远不会合并分区主要用于数据生命周期管理删旧数据直接分区不是为了查询加速排序键主键决定内部的物理顺序也决定稀疏索引能跳过什么主键可以只是排序键的前缀甚至可以没有主键一次写入发生了什么一批数据生成一个新按排序键排好序写列文件标记文件后台合并线程挑选若干小合并成更大的同样是排好序的不同分区的不合并分区边界关键点是写入只追加从不原地修改合并是后台异步做的这让读写可以并发多版本查询看到的是查询开始时的那组不需要加锁也让写入吞吐非常高我万行一次性导入实测秒生成个坑一小批量写入会产生海量不是免费的每个都有元数据索引文件标记文件查询时要打开所有如果每秒写一次每次写一行数会指数级增长直到触发保护我在本机做了个可控实验先停掉后台合并然后灌次单行插入数从涨到恢复合并后等秒回到个这就是为什么有这两个阈值的默认值用查的设置默认值含义活跃超过这个数开始主动变慢超过这个数直接拒绝写入这两个默认值在旧版本里是升级到后放宽了你查自己机器的值最靠谱正确做法批量写每批几万行到几十万行或者用让服务端攒批或者用引擎物化视图做缓冲坑二不是日常操作它会强制把所有合并成一个大非常耗日常不需要它后台合并会自动收敛只有刚导入完等不及或要保证去重结果立刻可见时才用引擎家族同一个骨架不同的合并逻辑引擎合并时做什么典型场景只合并不去重不聚合明细表同排序键保留最后一条版本号大的订单状态同步同排序键的数值列求和预聚合指标同排序键执行的合并去重计数分位数靠列抵消行可撤销的流式更新在上述基础上走副本复制生产集群一个常被误解的点的去重是合并时发生的不是写入时所以在两次合并之间同一条订单可能查出两行想立刻拿到唯一结果要么查的时候加慢要么用聚合要么接受最终一致物化视图把每次重算变成写入时增量算物化视图本质是触发器目标表原始表来了数据立即算一遍增量写进目标表查询改成查目标表就变成了几百行的点查代价是它只对新写入的数据生效历史数据要手动补而且插入过程的失败会影响原始写入所以生产上常配物化视图或消息队列解耦是另一条路在表内定义按另一种顺序物化的副本查询时优化器自动选比物化视图更省心自动维护一致性但也更吃存储六分布式一张表怎么变成集群单机已经能扛很多场景它单机性能极其强悍但真正上生产总归要分片客户端表不存数据只是路由视图分片本地表分片本地表副本副本副本副本复制日志元数据分布式几个要点本地表表是标准形态本地表负责存数据表只负责路由查询写数据要写本地表或者配好分片键写表副本是异步多主复制写入任意一个副本通过里的复制日志同步给其他副本默认没有写仲裁所以刚写完的节点挂掉可能丢数据需要强一致就开查询是下发合并表把查询改写成发给各分片的子查询各分片算完中间结果最后汇总它没有全局查询计划所以跨分片的高基数会很吃力这类查询往往需要先或者干脆改成宽表预聚合是新的单点风险生产上至少三个节点从起内置了用实现可以不依赖了七怎么用一条最小路径第一步跑起来命令行客户端接口可以直接用查两个端口的分工是原生协议客户端驱动用是接口各种语言用做数据探索时接口很方便因为查询就是一条第二步建模四步这是整篇文章最实用的部分拿到一个业务需求按这个顺序想先问哪些列会出现在和里排序键就选这些列顺序按过滤频率选择性排意味着先按事件类型分块块内按时间排所以某类型时间范围的查询能跳过大量数据反过来只按过滤就跳不动再问数据要不要按时间淘汰要就月度或日度分区粒度千万别太细按分区是反模式会产生几十万个分区每个分区又有一堆元数据就压垮了官方建议是大多数情况按月可观测性场景按天永远不要按客户端标识分区选引擎明细用要按主键去重最新值用要预聚合用选编码低基数字符串用时间戳用必要时金额别用精确计算用能用整数就别用字符串一个完整的种取值字典编码过滤时间范围半年后自动删靠合并触发第三步写入批量写每批几万行以上一次一行是自找麻烦流式数据用引擎表物化视图或者先落到消息队列再批量灌服务端攒批可以开让帮你把小批合并成大块再落盘导入大文件用或者直接读本地文件第四步查询习惯习惯原因只需要的列列存下少读一列就少一次别写用提前过滤让过滤在读取其他列之前发生减少解压量避免在主键列上套函数用不上索引改成范围条件大表前先想清楚右表多大右表默认要装进内存超了会报错用时注意没有排序的很快但结果没意义聚合前先缩小范围能靠分区和索引砍掉的数据别留到里第五步运维要看什么数量大小分区分布数失控是头号故障每次查询读了多少字节扫了多少行耗时多少调优的第一手证据正在进行的合并的进度卡住的会一直堆积副本延迟复制队列八什么时候用什么时候别用场景适不适合说明日志埋点明细非常适合只追加按时间查列裁剪收益巨大报表大宽表聚合非常适合典型时序指标配合适合指标预聚合用户行为分析漏斗留存适合明细保留口径随便变用直接查文件适合表函数不用导入订单账户等不适合需要事务和行级更新高频点查按查一条不适合稀疏索引帮不上每次读一个全文检索模糊搜索不适合有但不专业用频繁单行不适合每次都是重写的小数据量几百万行以内没必要更省事和其他分析引擎怎么选系统一句话定位和的差别架构的分析数据库对和多表关联更友好运维组件更多嵌入式分析数据库单机零运维适合本地分析文件并发和集群不行搜索引擎全文检索强聚合精度和成本不如列存通用关系库事务点查生态强大宽表扫描性能差一个数量级计算引擎不是存储通常和上面某个组合使用选型判据其实就一句你的查询是扫一大片算聚合还是查几条要事务前者后者别用九心智模型一句话记住它把数据按列切成不可变的按排序键排好序用稀疏索引跳着读后台不断把小合并成大它用放弃行级更新和事务换来了极致的扫描与聚合速度如果你只能记住三件事排序键决定一切查询能不能跳过数据全看你把什么列放在的前面写入要批量是合并出来的不是写出来的小批量写入会让后台合并追不上它是存明细的报表引擎不是能算的数据库原始明细留着聚合随时重算这才是它最舒服的用法附本文实测环境单机容器内存分配数据集列万行磁盘占用个耗时统一取服务端执行时间热缓存下三次取最小冷读首次通常是热缓存的倍同机比较有意义绝对值不要当用尤其不要拿容器里的数字去对比裸机版本相关数字请以你机器上的为准参考资料官方文档官方文档官方文档官方文档仓库相关阅读如何设计一个数字员工的记忆怎么做四份开源实现的拆解与取舍从人与人到与',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-11-20 20:00:00',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="/images/theme/loading-avatar.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">Joie's Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/images/theme/reward-wechat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-wechat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/theme/reward-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/reward-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> Newest Comments</span></div><div class="aside-list"><span>loading...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 1.05rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 1.05rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 1.05rem;">Agent<sup>25</sup></a><a href="/tags/CI-CD/" style="font-size: 1.05rem;">CI/CD<sup>1</sup></a><a href="/tags/ClickHouse/" style="font-size: 1.05rem;">ClickHouse<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 1.05rem;">Codemode<sup>2</sup></a><a href="/tags/Context/" style="font-size: 1.05rem;">Context<sup>4</sup></a><a href="/tags/DSH/" style="font-size: 1.05rem;">DSH<sup>5</sup></a><a href="/tags/DeepSeek/" style="font-size: 1.05rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 1.05rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 1.05rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 1.05rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 1.05rem;">K8S<sup>2</sup></a><a href="/tags/Karpathy/" style="font-size: 1.05rem;">Karpathy<sup>1</sup></a><a href="/tags/LLM/" style="font-size: 1.05rem;">LLM<sup>2</sup></a><a href="/tags/MCP/" style="font-size: 1.05rem;">MCP<sup>3</sup></a><a href="/tags/Memory/" style="font-size: 1.05rem;">Memory<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 1.05rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 1.05rem;">Mysql<sup>2</sup></a><a href="/tags/OLAP/" style="font-size: 1.05rem;">OLAP<sup>1</sup></a><a href="/tags/Pi/" style="font-size: 1.05rem;">Pi<sup>11</sup></a><a href="/tags/Protocol/" style="font-size: 1.05rem;">Protocol<sup>2</sup></a><a href="/tags/RAG/" style="font-size: 1.05rem;">RAG<sup>1</sup></a><a href="/tags/Sandbox/" style="font-size: 1.05rem;">Sandbox<sup>2</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 1.05rem;">Spring Cloud<sup>5</sup></a><a href="/tags/agent-loop/" style="font-size: 1.05rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 1.05rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 1.05rem;">sandbox<sup>1</sup></a><a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B/" style="font-size: 1.05rem;">上下文工程<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 1.05rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 1.05rem;">列式存储<sup>1</sup></a><a href="/tags/%E5%8D%8F%E4%BD%9C/" style="font-size: 1.05rem;">协作<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.05rem;">数据库<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 1.05rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">源码解析<sup>4</sup></a><a href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" style="font-size: 1.05rem;">知识库<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>3</sup></a><a href="/tags/%E8%AE%B0%E5%BF%86/" style="font-size: 1.05rem;">记忆<sup>2</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.05rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/11/"><span class="card-archive-list-date">November 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">19</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/10/"><span class="card-archive-list-date">October 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">May 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">82</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/12/"><span class="card-archive-list-date">December 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/08/"><span class="card-archive-list-date">August 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/07/"><span class="card-archive-list-date">July 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url">数据库</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>数据库</span></a><a class="article-meta__tags" href="/tags/ClickHouse/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>ClickHouse</span></a><a class="article-meta__tags" href="/tags/OLAP/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>OLAP</span></a><a class="article-meta__tags" href="/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>列式存储</span></a></span></div></div><h1 class="post-title" itemprop="name headline">ClickHouse 入门：一个分析型数据库为什么长这样</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-11-20T12:00:00.000Z" title="Created 2026-11-20 20:00:00">2026-11-20</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-11-20T12:00:00.000Z" title="Updated 2026-11-20 20:00:00">2026-11-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为北京"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>北京</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="/images/ClickHouse%E5%85%A5%E9%97%A8/cover.jpg"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="https://benedicttom.github.io/2026/11/20/ClickHouse/"><header><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url">数据库</a><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" tabindex="-1" itemprop="url">数据库</a><a href="/tags/ClickHouse/" tabindex="-1" itemprop="url">ClickHouse</a><a href="/tags/OLAP/" tabindex="-1" itemprop="url">OLAP</a><a href="/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8/" tabindex="-1" itemprop="url">列式存储</a><h1 id="CrawlerTitle" itemprop="name headline">ClickHouse 入门：一个分析型数据库为什么长这样</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Joie</span><time itemprop="dateCreated datePublished" datetime="2026-11-20T12:00:00.000Z" title="Created 2026-11-20 20:00:00">2026-11-20</time><time itemprop="dateCreated datePublished" datetime="2026-11-20T12:00:00.000Z" title="Updated 2026-11-20 20:00:00">2026-11-20</time></header><p>如果你只用过 MySQL 或 PostgreSQL，第一次看到 ClickHouse 会有种错位感：建表要指定排序键，改一行数据要重写整个 part，按主键查一条居然比全表 <code>count()</code> 还慢，而 <code>select *</code> 几乎是原罪。</p>
+<p>这些都不是怪癖，是同一个取舍在不同地方的投影。这篇文章不罗列功能，只讲一条因果链：<strong>分析型查询的物理现实 → ClickHouse 用三个决定回应它 → 这些决定带来了什么用法和什么坑</strong>。读完之后，你应该能自己判断一个场景该不该用它。</p>
+<p>文中所有数字都在本机实测（macOS &#x2F; OrbStack &#x2F; ClickHouse 26.8.41.14 LTS，单机容器，10 亿字节级的小数据集），不是从别人的 benchmark 里抄的，条件也一并写在括号里。</p>
+<h2 id="一、先说它是什么，不是什么"><a href="#一、先说它是什么，不是什么" class="headerlink" title="一、先说它是什么，不是什么"></a>一、先说它是什么，不是什么</h2><p>ClickHouse 是一个<strong>列式存储 + 向量化执行</strong>的 OLAP 数据库，面向“扫一大片数据、只取少数几列、算聚合”的查询。</p>
+<p>它擅长的事和它不擅长的事，其实是同一套设计的正反面：</p>
+<table>
+<thead>
+<tr>
+<th>它擅长</th>
+<th>它不擅长</th>
+<th>原因（后文展开）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>亿级行的聚合、分组、去重</td>
+<td>单行点查、主键查一条</td>
+<td>稀疏索引只定位到 granule</td>
+</tr>
+<tr>
+<td>批量导入（每秒几十万到上百万行）</td>
+<td>高频小事务写入</td>
+<td>每次写入产生一个 part，靠后台合并消化</td>
+</tr>
+<tr>
+<td>大宽表的列裁剪扫描</td>
+<td>大量 <code>JOIN</code>、复杂子查询</td>
+<td>没有全局查询计划，join 靠自己扛内存</td>
+</tr>
+<tr>
+<td>保留原始明细，随时换维度重算</td>
+<td>行级更新、删除、事务</td>
+<td>更新等于重写 part</td>
+</tr>
+</tbody></table>
+<p>它不是“更快的 MySQL”，也不是“带 SQL 的 KV”，更不是搜索引擎。把它当 OLTP 用，会死得很难看；把它当“能存明细的报表引擎”用，会很舒服。</p>
+<h2 id="二、三个现场"><a href="#二、三个现场" class="headerlink" title="二、三个现场"></a>二、三个现场</h2><p><strong>现场一：埋点表。</strong> 产品的行为埋点一天几亿条，字段固定、只追加、不修改。业务要问的永远是“过去 30 天，各渠道各版本的转化率是多少”。这类查询会扫过几千万到几十亿行，但只用到 <code>channel</code>、<code>version</code>、<code>event</code>、<code>ts</code> 四列，而表里可能有四十列。</p>
+<p><strong>现场二：报表跑不动。</strong> 同样的查询放到 MySQL 上，二十列里读四列也要把整行读出来，IO 放大五倍以上；再加 <code>group by</code> 要在内存里维护几十万个分组，很快就碰内存墙。</p>
+<p><strong>现场三：口径天天变。</strong> 分析师今天要看漏斗，明天要看留存，后天要按新埋点重算。<strong>这意味着原始明细必须留着</strong>，不能提前聚合死——这一点决定了列存 + 便宜存储是刚需，而不是”顺便优化”。</p>
+<p>三个现场的共同点是：<strong>读得多、写得少、从不改，而且要的列远少于存的列</strong>。记住这句话，后面所有设计都是它的推论。</p>
+<h2 id="三、物理现实：为什么行存在这里吃亏"><a href="#三、物理现实：为什么行存在这里吃亏" class="headerlink" title="三、物理现实：为什么行存在这里吃亏"></a>三、物理现实：为什么行存在这里吃亏</h2><p>数据库读盘的最小单位是一个块（block&#x2F;page），不是一行。行存把同一行的所有列放在一起，于是”读四列”实际读的是”二十列拼成的整行”。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  graph LR
+    subgraph 行存[&quot;行存：一行连续存放&quot;]
+        R1[&quot;id|ts|channel|version|event|...共20列|&quot;] 
+        R2[&quot;id|ts|channel|version|event|...共20列&quot;]
+        R3[&quot;id|ts|channel|version|event|...共20列&quot;]
+    end
+    subgraph 列存[&quot;列存：一列连续存放&quot;]
+        C1[&quot;ts: 全部行的 ts&quot;]
+        C2[&quot;channel: 全部行的 channel&quot;]
+        C3[&quot;event: 全部行的 event&quot;]
+        C4[&quot;其余17列: 本次查询根本不读&quot;]
+    end
+    行存 --&gt;|&quot;读4列 &#x3D; 读20列&quot;| IO1[&quot;IO 放大 5 倍&quot;]
+    列存 --&gt;|&quot;读4列 &#x3D; 读4列&quot;| IO2[&quot;IO 精确&quot;]
+  </pre></div>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/ClickHouse%E5%85%A5%E9%97%A8/scan.gif" alt="行存扫全列 vs 列存只扫需要的列" style="display:block;margin:18px auto;max-width:100%;border-radius:8px;">
+
+
+<p>列存还顺带解决了三件事：</p>
+<ol>
+<li><strong>压缩率</strong>。同一列的数据类型相同、分布相似、相邻行常常重复，压缩算法才有东西可压。</li>
+<li><strong>向量化</strong>。一列在内存里是连续数组，CPU 可以对一批值做同样的运算，上 SIMD，而不是一行一行解释。</li>
+<li><strong>只读需要的列</strong>。查询优化器在扫描前就知道”这次只碰 4 列”，其余 16 列一个字节都不用读。</li>
+</ol>
+<p>最后这条不是理论。我在本机建了张 6 列、1000 万行的表（<code>events</code>，磁盘上 146.47 MiB），跑了几种查询，读数取自 <code>system.query_log</code>（<code>read_bytes</code> 是未压缩逻辑字节，耗时是热缓存下三次取最小值）：</p>
+<table>
+<thead>
+<tr>
+<th>查询</th>
+<th>读取字节</th>
+<th>扫描行数</th>
+<th>耗时</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SELECT count() FROM events</code></td>
+<td><strong>16 B</strong></td>
+<td>0（只读 part 元数据）</td>
+<td>1 ms</td>
+</tr>
+<tr>
+<td><code>SELECT sum(duration_ms) FROM events</code></td>
+<td>38.15 MiB</td>
+<td>1000 万</td>
+<td>18 ms</td>
+</tr>
+<tr>
+<td><code>SELECT sum(duration_ms), sum(amount), count(DISTINCT page)</code></td>
+<td>198.18 MiB</td>
+<td>1000 万</td>
+<td>67 ms</td>
+</tr>
+<tr>
+<td><code>... WHERE event_type=&#39;purchase&#39;</code>（排序键前缀）</td>
+<td>128.02 KiB</td>
+<td>13.1 万</td>
+<td>5 ms</td>
+</tr>
+<tr>
+<td><code>... WHERE user_id=42</code>（非排序键）</td>
+<td>38.15 MiB（扫 <code>user_id</code> 整列）</td>
+<td>1000 万</td>
+<td>11 ms</td>
+</tr>
+</tbody></table>
+<p><code>count()</code> 只花 16 字节，是因为每个 part 的元数据里已经记了行数——它连一个数据块都不用碰。而 <code>sum(duration_ms)</code> 只读 38 MB，是那张表磁盘尺寸的四分之一。<strong>同一个表，查询读多少，完全由你碰了哪些列、命中了哪些索引决定</strong>，这和行存”读一行就是读一行”的直觉完全不同。</p>
+<h2 id="四、三个核心决定"><a href="#四、三个核心决定" class="headerlink" title="四、三个核心决定"></a>四、三个核心决定</h2><h3 id="决定一：列存-按列压缩"><a href="#决定一：列存-按列压缩" class="headerlink" title="决定一：列存 + 按列压缩"></a>决定一：列存 + 按列压缩</h3><p>列存本身不难，难的是让压缩真的有效。ClickHouse 给每一列独立选择编码和压缩算法，并且提供 <code>LowCardinality</code> 这个类型——把低基数字符串（比如只有 4 种取值的事件类型）换成字典编码的整数。</p>
+<p>我实测了这张表各列的压缩比（<code>system.parts_columns</code> 口径，压缩前&#x2F;后）：</p>
+<table>
+<thead>
+<tr>
+<th>列</th>
+<th>类型</th>
+<th>压缩前</th>
+<th>压缩后</th>
+<th>压缩比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>event_type</code></td>
+<td><code>LowCardinality(String)</code></td>
+<td>9.56 MiB</td>
+<td><strong>48.99 KiB</strong></td>
+<td><strong>199.7×</strong></td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td><code>String</code></td>
+<td>131.42 MiB</td>
+<td>23.59 MiB</td>
+<td>5.6×</td>
+</tr>
+<tr>
+<td><code>ts</code></td>
+<td><code>DateTime</code></td>
+<td>38.15 MiB</td>
+<td>20.03 MiB</td>
+<td>1.9×</td>
+</tr>
+<tr>
+<td><code>duration_ms</code></td>
+<td><code>UInt32</code></td>
+<td>38.15 MiB</td>
+<td>25.68 MiB</td>
+<td>1.5×</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td><code>UInt32</code></td>
+<td>38.15 MiB</td>
+<td>35.58 MiB</td>
+<td>1.1×</td>
+</tr>
+<tr>
+<td><code>amount</code></td>
+<td><code>Float64</code></td>
+<td>76.29 MiB</td>
+<td>41.42 MiB</td>
+<td>1.8×</td>
+</tr>
+</tbody></table>
+<p>注意最后两列：<code>user_id</code> 和 <code>amount</code> 我用 <code>rand()</code> 随机生成，是纯随机数，压缩比只有 1.1–1.8 倍。<strong>压缩吃的从来不是”列存”这个形式，而是”列内数据的规律”</strong>——真实业务数据里，用户 ID 会反复出现、金额会有大量重复、时间戳单调递增，压缩比通常远好于随机数据。低基数字符串列则是另一个量级：少了两个数量级的 IO，报表能快十倍不奇怪。</p>
+<h3 id="决定二：向量化执行"><a href="#决定二：向量化执行" class="headerlink" title="决定二：向量化执行"></a>决定二：向量化执行</h3><p>列存让”读得少”成立，向量化让”算得快”成立。传统执行器一次处理一行（tuple-at-a-time），每行都要判断类型、做虚函数调用；ClickHouse 一次处理一整列（通常是 8192 行的块），循环体是紧凑的数组运算，编译器能自动向量化，CPU 的 SIMD 通道才用得上。</p>
+<p>官方架构文档里写得很直白：<em>“Data is stored by columns, and processed in arrays (vectors or chunks of columns) during query execution. Whenever possible, operations are dispatched on arrays, rather than on individual values.”</em> 它也承认向量化不是银弹——临时向量要写回缓存，超出 L2 会退化，所以现实中的好系统会混合向量化与运行时代码生成。</p>
+<h3 id="决定三：稀疏主键索引"><a href="#决定三：稀疏主键索引" class="headerlink" title="决定三：稀疏主键索引"></a>决定三：稀疏主键索引</h3><p>这是 ClickHouse 最容易被误解的一点：<strong>它没有 B+ 树那样的稠密索引，而是”每 8192 行记一个标记”的稀疏索引</strong>。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  graph TD
+    A[&quot;一个 part 的数据，按排序键排好序&quot;] --&gt; B[&quot;切成 granule，每 8192 行一个（index_granularity）&quot;]
+    B --&gt; C[&quot;每个 granule 的第一行排序键值，写进 primary.idx&quot;]
+    C --&gt; D[&quot;查询 WHERE 排序键 &#x3D; x&quot;]
+    D --&gt; E[&quot;二分找到可能包含 x 的 granule&quot;]
+    E --&gt; F[&quot;只读这些 granule 的列文件&quot;]
+    F --&gt; G[&quot;最多多读 index_granularity × 2 行的额外数据&quot;]
+  </pre></div>
+
+<p>稀疏索引的妙处在于<strong>它小到可以常驻内存</strong>，所以哪怕表有几百亿行，索引也不会撑爆 RAM。代价是：只能定位到”可能包含”的 8192 行区间，剩下的靠扫描。所以它适合”范围扫描 + 聚合”，不适合”主键查一条”。</p>
+<p>本机验证：我用 <code>event_type</code> + <code>ts</code> 做排序键，查”最近 600 秒的采购事件”，返回 559 行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">读取 140.50 KiB，扫了 32,768 行，6 ms</span><br></pre></td></tr></table></figure>
+
+<p>32,768 正好是 4 个 granule。也就是说，数据库读了 4 个 8192 行的块，从里面筛出 559 行。<strong>这就是稀疏索引的真实粒度感</strong>：它不给你”精确到一行”，它给你”少读几个块”。</p>
+<h3 id="代价：三个决定放弃了什么"><a href="#代价：三个决定放弃了什么" class="headerlink" title="代价：三个决定放弃了什么"></a>代价：三个决定放弃了什么</h3><table>
+<thead>
+<tr>
+<th>放弃的东西</th>
+<th>具体表现</th>
+<th>什么时候会咬你</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>行级更新</td>
+<td><code>ALTER UPDATE</code> 会重写整个 part（10M 行实测 0.45 s，因为只碰 11 个 part）</td>
+<td>高频改状态、改库存</td>
+</tr>
+<tr>
+<td>事务</td>
+<td>不支持跨表事务，写入是”批”语义</td>
+<td>需要强一致的账务</td>
+</tr>
+<tr>
+<td>稠密索引</td>
+<td>主键查一条也要读一个 granule</td>
+<td>会话表、字典表</td>
+</tr>
+<tr>
+<td>成熟 JOIN</td>
+<td>没有全局查询计划，右表要装进内存</td>
+<td>多表关联的大查询</td>
+</tr>
+</tbody></table>
+<h2 id="五、MergeTree：它的灵魂"><a href="#五、MergeTree：它的灵魂" class="headerlink" title="五、MergeTree：它的灵魂"></a>五、MergeTree：它的灵魂</h2><p>ClickHouse 有几十种表引擎，但日常只用 <code>MergeTree</code> 家族。理解它要抓住四个概念：<strong>part、partition、排序键、主键</strong>。</p>
+<ul>
+<li><strong>part</strong>：每次写入生成一个不可变的目录，内部按排序键排好序。</li>
+<li><strong>partition</strong>：按 <code>PARTITION BY</code> 表达式（常见是月份或天）把数据分开，<strong>不同分区的 part 永远不会合并</strong>。分区主要用于数据生命周期管理（删旧数据直接 drop 分区），不是为了查询加速。</li>
+<li><strong>排序键 &#x2F; 主键</strong>：决定 part 内部的物理顺序，也决定稀疏索引能跳过什么。<strong>主键可以只是排序键的前缀，甚至可以没有主键</strong>（<code>ORDER BY tuple()</code>）。</li>
+</ul>
+<h3 id="一次写入发生了什么"><a href="#一次写入发生了什么" class="headerlink" title="一次写入发生了什么"></a>一次写入发生了什么</h3><div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  graph LR
+    W[&quot;INSERT 一批数据&quot;] --&gt; P[&quot;生成一个新 part（按排序键排好序，写列文件 + 标记文件）&quot;]
+    P --&gt; M[&quot;后台合并线程挑选若干小 part&quot;]
+    M --&gt; B[&quot;合并成更大的 part（同样是排好序的）&quot;]
+    B --&gt; M
+    M -.-&gt;|&quot;不同分区的 part 不合并&quot;| X[&quot;分区边界&quot;]
+  </pre></div>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/ClickHouse%E5%85%A5%E9%97%A8/merge.gif" alt="后台合并：小 part 合并成大 part" style="display:block;margin:18px auto;max-width:100%;border-radius:8px;">
+
+
+<p>关键点是<strong>写入只追加、从不原地修改</strong>，合并是后台异步做的。这让读写可以并发（多版本：查询看到的是”查询开始时的那组 part”，不需要加锁），也让写入吞吐非常高——我 1000 万行一次性导入，实测 2.6 秒，生成 8 个 part。</p>
+<h3 id="坑一：小批量写入会产生海量-part"><a href="#坑一：小批量写入会产生海量-part" class="headerlink" title="坑一：小批量写入会产生海量 part"></a>坑一：小批量写入会产生海量 part</h3><p>part 不是免费的：每个 part 都有元数据、索引文件、标记文件，查询时要打开所有 part。如果每秒写一次、每次写一行，part 数会指数级增长，直到触发保护。</p>
+<p>我在本机做了个可控实验：先 <code>SYSTEM STOP MERGES</code> 停掉后台合并，然后灌 100 次单行插入——<strong>part 数从 8 涨到 109</strong>。恢复合并（<code>SYSTEM START MERGES</code>）后等 5 秒，回到 11 个。</p>
+<p>这就是为什么 ClickHouse 有这两个阈值（26.8.41 的默认值，用 <code>system.merge_tree_settings</code> 查的）：</p>
+<table>
+<thead>
+<tr>
+<th>设置</th>
+<th>默认值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>parts_to_delay_insert</code></td>
+<td>1000</td>
+<td>活跃 part 超过这个数，INSERT 开始主动变慢</td>
+</tr>
+<tr>
+<td><code>parts_to_throw_insert</code></td>
+<td>3000</td>
+<td>超过这个数直接拒绝写入</td>
+</tr>
+</tbody></table>
+<p>（这两个默认值在旧版本里是 150 &#x2F; 300，升级到 26.x 后放宽了。你查自己机器的值最靠谱。）</p>
+<p><strong>正确做法</strong>：批量写。每批几万行到几十万行，或者用 <code>async_insert</code> 让服务端攒批，或者用 Kafka 引擎 &#x2F; 物化视图做缓冲。</p>
+<h3 id="坑二：OPTIMIZE-FINAL-不是日常操作"><a href="#坑二：OPTIMIZE-FINAL-不是日常操作" class="headerlink" title="坑二：OPTIMIZE ... FINAL 不是日常操作"></a>坑二：<code>OPTIMIZE ... FINAL</code> 不是日常操作</h3><p>它会强制把所有 part 合并成一个大 part，非常耗 IO。日常不需要它——后台合并会自动收敛。只有”刚导入完等不及”或”要保证 <code>ReplacingMergeTree</code> 去重结果立刻可见”时才用。</p>
+<h3 id="引擎家族：同一个骨架，不同的合并逻辑"><a href="#引擎家族：同一个骨架，不同的合并逻辑" class="headerlink" title="引擎家族：同一个骨架，不同的合并逻辑"></a>引擎家族：同一个骨架，不同的合并逻辑</h3><table>
+<thead>
+<tr>
+<th>引擎</th>
+<th>合并时做什么</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MergeTree</code></td>
+<td>只合并，不去重不聚合</td>
+<td>明细表</td>
+</tr>
+<tr>
+<td><code>ReplacingMergeTree</code></td>
+<td>同排序键保留最后一条（版本号大的）</td>
+<td>订单状态、CDC 同步</td>
+</tr>
+<tr>
+<td><code>SummingMergeTree</code></td>
+<td>同排序键的数值列求和</td>
+<td>预聚合指标</td>
+</tr>
+<tr>
+<td><code>AggregatingMergeTree</code></td>
+<td>同排序键执行 <code>AggregateFunction</code> 的合并</td>
+<td>去重计数、分位数</td>
+</tr>
+<tr>
+<td><code>CollapsingMergeTree</code></td>
+<td>靠 <code>sign</code> 列抵消 +&#x2F;- 行</td>
+<td>可撤销的流式更新</td>
+</tr>
+<tr>
+<td><code>ReplicatedMergeTree</code></td>
+<td>在上述基础上走副本复制</td>
+<td>生产集群</td>
+</tr>
+</tbody></table>
+<p><strong>一个常被误解的点</strong>：<code>ReplacingMergeTree</code> 的去重是”合并时”发生的，不是写入时。所以在两次合并之间，同一条订单可能查出两行——想立刻拿到唯一结果，要么查的时候加 <code>FINAL</code>（慢），要么用 <code>argMax</code> 聚合，要么接受最终一致。</p>
+<h3 id="物化视图：把”每次重算”变成”写入时增量算”"><a href="#物化视图：把”每次重算”变成”写入时增量算”" class="headerlink" title="物化视图：把”每次重算”变成”写入时增量算”"></a>物化视图：把”每次重算”变成”写入时增量算”</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> MATERIALIZED <span class="keyword">VIEW</span> demo.events_by_hour</span><br><span class="line">ENGINE <span class="operator">=</span> SummingMergeTree</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> (event_type, <span class="keyword">hour</span>)</span><br><span class="line"><span class="keyword">AS</span> <span class="keyword">SELECT</span></span><br><span class="line">    event_type,</span><br><span class="line">    toStartOfHour(ts) <span class="keyword">AS</span> <span class="keyword">hour</span>,</span><br><span class="line">    <span class="built_in">count</span>() <span class="keyword">AS</span> cnt,</span><br><span class="line">    <span class="built_in">sum</span>(amount) <span class="keyword">AS</span> amt</span><br><span class="line"><span class="keyword">FROM</span> demo.events</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> event_type, <span class="keyword">hour</span>;</span><br></pre></td></tr></table></figure>
+
+<p>物化视图本质是”<strong>INSERT 触发器 + 目标表</strong>“：原始表来了数据，立即算一遍增量写进目标表。查询改成查目标表，就变成了几百行的点查。代价是它只对<strong>新写入</strong>的数据生效，历史数据要手动补，而且插入过程的失败会影响原始写入（所以生产上常配 <code>async</code> 物化视图或消息队列解耦）。</p>
+<p><code>Projection</code> 是另一条路：在表内定义”按另一种顺序物化的副本”，查询时优化器自动选。比物化视图更省心（自动维护一致性），但也更吃存储。</p>
+<h2 id="六、分布式：一张表怎么变成集群"><a href="#六、分布式：一张表怎么变成集群" class="headerlink" title="六、分布式：一张表怎么变成集群"></a>六、分布式：一张表怎么变成集群</h2><p>单机 ClickHouse 已经能扛很多场景（它单机性能极其强悍），但真正上生产总归要分片。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  graph LR
+    C[&quot;客户端&quot;] --&gt; D[&quot;Distributed 表（不存数据，只是路由视图）&quot;]
+    D --&gt; S1[&quot;分片 1：本地 MergeTree 表&quot;]
+    D --&gt; S2[&quot;分片 2：本地 MergeTree 表&quot;]
+    S1 --&gt; R1[&quot;副本 1a&quot;]
+    S1 --&gt; R2[&quot;副本 1b&quot;]
+    S2 --&gt; R3[&quot;副本 2a&quot;]
+    S2 --&gt; R4[&quot;副本 2b&quot;]
+    K[&quot;ClickHouse Keeper &#x2F; ZooKeeper&quot;] -.-&gt;|&quot;复制日志、元数据、分布式 DDL&quot;| S1
+    K -.-&gt; S2
+  </pre></div>
+
+<p>几个要点：</p>
+<ol>
+<li><strong>本地表 + Distributed 表</strong>是标准形态。本地表（<code>ReplicatedMergeTree</code>）负责存数据，<code>Distributed</code> 表只负责路由查询。写数据要写本地表（或者配好分片键写 Distributed 表）。</li>
+<li><strong>副本是异步多主复制</strong>。写入任意一个副本，通过 Keeper 里的复制日志同步给其他副本；默认没有写仲裁，所以刚写完的节点挂掉可能丢数据——需要强一致就开 <code>insert_quorum</code>。</li>
+<li><strong>查询是”下发 + 合并”</strong>。<code>Distributed</code> 表把查询改写成发给各分片的子查询，各分片算完中间结果，最后汇总。它没有全局查询计划，所以跨分片的 <code>JOIN</code>、高基数 <code>GROUP BY</code> 会很吃力——这类查询往往需要先 <code>reshuffle</code>，或者干脆改成”宽表预聚合”。</li>
+<li><strong>Keeper 是新的单点风险</strong>。生产上至少三个节点。ClickHouse 从 21.x 起内置了 Keeper（用 Raft 实现），可以不依赖 ZooKeeper 了。</li>
+</ol>
+<h2 id="七、怎么用：一条最小路径"><a href="#七、怎么用：一条最小路径" class="headerlink" title="七、怎么用：一条最小路径"></a>七、怎么用：一条最小路径</h2><h3 id="第一步：跑起来"><a href="#第一步：跑起来" class="headerlink" title="第一步：跑起来"></a>第一步：跑起来</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name clickhouse \</span><br><span class="line">  -p 8123:8123 -p 9000:9000 \</span><br><span class="line">  clickhouse/clickhouse-server:26.8</span><br><span class="line"></span><br><span class="line"><span class="comment"># 命令行客户端</span></span><br><span class="line">docker <span class="built_in">exec</span> -it clickhouse clickhouse-client</span><br><span class="line"></span><br><span class="line"><span class="comment"># HTTP 接口（8123）：可以直接用 curl 查</span></span><br><span class="line">curl <span class="string">&#x27;http://localhost:8123/?query=SELECT%20version()&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>两个端口的分工：<strong>9000 是原生 TCP 协议</strong>（客户端、驱动用），<strong>8123 是 HTTP 接口</strong>（<code>curl</code>、JDBC、各种语言 SDK 用）。做数据探索时 HTTP 接口很方便，因为查询就是一条 URL。</p>
+<h3 id="第二步：建模四步"><a href="#第二步：建模四步" class="headerlink" title="第二步：建模四步"></a>第二步：建模四步</h3><p>这是整篇文章最实用的部分。拿到一个业务需求，按这个顺序想：</p>
+<p><strong>① 先问：哪些列会出现在 <code>WHERE</code> 和 <code>GROUP BY</code> 里？</strong><br>排序键就选这些列，顺序按”过滤频率 × 选择性”排。<code>ORDER BY (event_type, ts)</code> 意味着”先按事件类型分块，块内按时间排”，所以”某类型 + 时间范围”的查询能跳过大量数据；反过来只按 <code>ts</code> 过滤就跳不动。</p>
+<p><strong>② 再问：数据要不要按时间淘汰？</strong><br>要，就 <code>PARTITION BY toYYYYMM(ts)</code>（月度）或 <code>toYYYYMMDD(ts)</code>（日度）。<strong>分区粒度千万别太细</strong>：按 <code>user_id</code> 分区是反模式，会产生几十万个分区，每个分区又有一堆 part，元数据就压垮了。官方建议是”大多数情况按月，可观测性场景按天，永远不要按客户端标识分区”。</p>
+<p><strong>③ 选引擎</strong>：明细用 <code>MergeTree</code>，要按主键去重最新值用 <code>ReplacingMergeTree</code>，要预聚合用 <code>SummingMergeTree</code> &#x2F; <code>AggregatingMergeTree</code>。</p>
+<p><strong>④ 选编码</strong>：低基数字符串用 <code>LowCardinality(String)</code>；时间戳用 <code>DateTime</code>（必要时 <code>DateTime64</code>）；金额别用 <code>Float64</code>（精确计算用 <code>Decimal</code>）；能用整数就别用字符串。</p>
+<p>一个完整的 DDL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> analytics.events (</span><br><span class="line">    ts           DateTime,</span><br><span class="line">    user_id      UInt64,</span><br><span class="line">    event_type   LowCardinality(String),   <span class="comment">-- 4 种取值，字典编码</span></span><br><span class="line">    channel      LowCardinality(String),</span><br><span class="line">    page         String,</span><br><span class="line">    duration_ms  UInt32,</span><br><span class="line">    amount       <span class="type">Decimal</span>(<span class="number">18</span>, <span class="number">2</span>)</span><br><span class="line">)</span><br><span class="line">ENGINE <span class="operator">=</span> MergeTree</span><br><span class="line"><span class="keyword">PARTITION</span> <span class="keyword">BY</span> toYYYYMM(ts)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> (event_type, ts)          <span class="comment">-- 过滤 + 时间范围</span></span><br><span class="line">TTL ts <span class="operator">+</span> <span class="type">INTERVAL</span> <span class="number">180</span> <span class="keyword">DAY</span>;         <span class="comment">-- 半年后自动删，靠合并触发</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：写入"><a href="#第三步：写入" class="headerlink" title="第三步：写入"></a>第三步：写入</h3><ul>
+<li><strong>批量写</strong>，每批几万行以上。一次 <code>INSERT</code> 一行是自找麻烦。</li>
+<li>流式数据用 <code>Kafka</code> 引擎表 + 物化视图，或者先落到消息队列再批量灌。</li>
+<li>服务端攒批可以开 <code>async_insert=1, wait_for_async_insert=1</code>，让 ClickHouse 帮你把小批合并成大块再落盘。</li>
+<li>导入大文件用 <code>clickhouse-client --query &quot;INSERT INTO ... FORMAT CSV&quot; &lt; data.csv</code>，或者直接 <code>SELECT * FROM file(...)</code> 读本地文件。</li>
+</ul>
+<h3 id="第四步：查询习惯"><a href="#第四步：查询习惯" class="headerlink" title="第四步：查询习惯"></a>第四步：查询习惯</h3><table>
+<thead>
+<tr>
+<th>习惯</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只 <code>SELECT</code> 需要的列</td>
+<td>列存下少读一列就少一次 IO，别写 <code>SELECT *</code></td>
+</tr>
+<tr>
+<td>用 <code>PREWHERE</code> 提前过滤</td>
+<td>让过滤在读取其他列之前发生，减少解压量</td>
+</tr>
+<tr>
+<td>避免在主键列上套函数</td>
+<td><code>WHERE toDate(ts) = &#39;2026-11-20&#39;</code> 用不上索引，改成范围条件</td>
+</tr>
+<tr>
+<td>大表 <code>JOIN</code> 前先想清楚右表多大</td>
+<td>右表默认要装进内存，超了会报错</td>
+</tr>
+<tr>
+<td>用 <code>LIMIT</code> 时注意 <code>ORDER BY</code></td>
+<td>没有排序的 <code>LIMIT</code> 很快，但结果没意义</td>
+</tr>
+<tr>
+<td>聚合前先缩小范围</td>
+<td>能靠分区和索引砍掉的数据，别留到 <code>GROUP BY</code> 里</td>
+</tr>
+</tbody></table>
+<h3 id="第五步：运维要看什么"><a href="#第五步：运维要看什么" class="headerlink" title="第五步：运维要看什么"></a>第五步：运维要看什么</h3><ul>
+<li><code>system.parts</code>：part 数量、大小、分区分布。part 数失控是头号故障。</li>
+<li><code>system.query_log</code>：每次查询读了多少字节、扫了多少行、耗时多少。调优的第一手证据。</li>
+<li><code>system.merges</code>：正在进行的合并。</li>
+<li><code>system.mutations</code>：<code>ALTER UPDATE/DELETE</code> 的进度，卡住的 mutation 会一直堆积。</li>
+<li><code>system.replicas</code>：副本延迟、复制队列。</li>
+</ul>
+<h2 id="八、什么时候用，什么时候别用"><a href="#八、什么时候用，什么时候别用" class="headerlink" title="八、什么时候用，什么时候别用"></a>八、什么时候用，什么时候别用</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>适不适合</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>日志、埋点、APM 明细</td>
+<td>非常适合</td>
+<td>只追加、按时间查、列裁剪收益巨大</td>
+</tr>
+<tr>
+<td>BI 报表、大宽表聚合</td>
+<td>非常适合</td>
+<td>典型 OLAP</td>
+</tr>
+<tr>
+<td>时序指标（配合 <code>AggregatingMergeTree</code>）</td>
+<td>适合</td>
+<td>指标预聚合</td>
+</tr>
+<tr>
+<td>用户行为分析、漏斗、留存</td>
+<td>适合</td>
+<td>明细保留，口径随便变</td>
+</tr>
+<tr>
+<td>用 SQL 直接查 S3 &#x2F; 文件</td>
+<td>适合</td>
+<td><code>s3()</code>、<code>file()</code> 表函数，不用导入</td>
+</tr>
+<tr>
+<td>订单、账户等 OLTP</td>
+<td>不适合</td>
+<td>需要事务和行级更新</td>
+</tr>
+<tr>
+<td>高频点查（按 ID 查一条）</td>
+<td>不适合</td>
+<td>稀疏索引帮不上，每次读一个 granule</td>
+</tr>
+<tr>
+<td>全文检索 &#x2F; 模糊搜索</td>
+<td>不适合</td>
+<td>有 text index 但不专业，用 ES</td>
+</tr>
+<tr>
+<td>频繁 <code>UPDATE</code> &#x2F; <code>DELETE</code> 单行</td>
+<td>不适合</td>
+<td>每次都是重写 part 的 mutation</td>
+</tr>
+<tr>
+<td>小数据量（几百万行以内）</td>
+<td>没必要</td>
+<td>SQLite &#x2F; DuckDB &#x2F; PostgreSQL 更省事</td>
+</tr>
+</tbody></table>
+<h3 id="和其他分析引擎怎么选"><a href="#和其他分析引擎怎么选" class="headerlink" title="和其他分析引擎怎么选"></a>和其他分析引擎怎么选</h3><table>
+<thead>
+<tr>
+<th>系统</th>
+<th>一句话定位</th>
+<th>和 ClickHouse 的差别</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Doris &#x2F; StarRocks</strong></td>
+<td>MPP 架构的分析数据库</td>
+<td>对 <code>JOIN</code> 和多表关联更友好，运维组件更多（FE&#x2F;BE）</td>
+</tr>
+<tr>
+<td><strong>DuckDB</strong></td>
+<td>嵌入式分析数据库</td>
+<td>单机、零运维，适合本地分析文件；并发和集群不行</td>
+</tr>
+<tr>
+<td><strong>Elasticsearch</strong></td>
+<td>搜索引擎</td>
+<td>全文检索强，聚合精度和成本不如列存</td>
+</tr>
+<tr>
+<td><strong>PostgreSQL</strong></td>
+<td>通用关系库</td>
+<td>事务、点查、生态强；大宽表扫描性能差一个数量级</td>
+</tr>
+<tr>
+<td><strong>Spark &#x2F; Flink</strong></td>
+<td>计算引擎</td>
+<td>不是存储，通常和上面某个组合使用</td>
+</tr>
+</tbody></table>
+<p>选型判据其实就一句：<strong>你的查询是”扫一大片、算聚合”还是”查几条、要事务”</strong>。前者 ClickHouse，后者别用。</p>
+<h2 id="九、心智模型：一句话记住它"><a href="#九、心智模型：一句话记住它" class="headerlink" title="九、心智模型：一句话记住它"></a>九、心智模型：一句话记住它</h2><blockquote>
+<p>ClickHouse 把数据按列切成不可变的 part，按排序键排好序，用稀疏索引跳着读，后台不断把小 part 合并成大 part；它用”放弃行级更新和事务”换来了极致的扫描与聚合速度。</p>
+</blockquote>
+<p>如果你只能记住三件事：</p>
+<ol>
+<li><strong>排序键决定一切</strong>。查询能不能跳过数据，全看你把什么列放在 <code>ORDER BY</code> 的前面。</li>
+<li><strong>写入要批量</strong>。part 是合并出来的，不是写出来的；小批量写入会让后台合并追不上。</li>
+<li><strong>它是”存明细的报表引擎”</strong>，不是”能算的数据库”。原始明细留着，聚合随时重算，这才是它最舒服的用法。</li>
+</ol>
+<h2 id="附：本文实测环境"><a href="#附：本文实测环境" class="headerlink" title="附：本文实测环境"></a>附：本文实测环境</h2><ul>
+<li>ClickHouse <code>26.8.41.14</code>（LTS），单机容器，OrbStack，12.6 GB 内存分配</li>
+<li>数据集：6 列 1000 万行，磁盘占用 146.47 MiB，8 个 part</li>
+<li>耗时统一取 <code>system.query_log.query_duration_ms</code>（服务端执行时间），热缓存下三次取最小；冷读首次通常是热缓存的 5–10 倍</li>
+<li>同机比较有意义，绝对值不要当 benchmark 用——尤其不要拿容器里的数字去对比裸机 MySQL</li>
+<li>版本相关数字（<code>parts_to_delay_insert=1000</code>、<code>index_granularity=8192</code>）请以你机器上的 <code>system.merge_tree_settings</code> 为准</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://clickhouse.com/docs/en/engines/table-engines/mergetree-family/mergetree">ClickHouse 官方文档：MergeTree engine</a></li>
+<li><a target="_blank" rel="noopener" href="https://clickhouse.com/docs/en/development/architecture">ClickHouse 官方文档：Architecture Overview</a></li>
+<li><a target="_blank" rel="noopener" href="https://clickhouse.com/docs/en/engines/table-engines/mergetree-family/custom-partitioning-key">ClickHouse 官方文档：Custom Partitioning Key</a></li>
+<li><a target="_blank" rel="noopener" href="https://clickhouse.com/docs/en/engines/table-engines/special/distributed">ClickHouse 官方文档：Distributed table engine</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ClickHouse/ClickHouse">ClickHouse GitHub 仓库</a></li>
+</ul>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="/2026/11/05/%E6%95%B0%E5%AD%97%E5%91%98%E5%B7%A5%E6%9E%B6%E6%9E%84/">如何设计一个数字员工</a></li>
+<li><a href="/2026/11/11/Agent%E8%AE%B0%E5%BF%86/">Agent 的记忆怎么做：四份开源实现的拆解与取舍</a></li>
+<li><a href="/2026/11/18/Context-%E4%BB%8E%E4%BA%BA%E5%88%B0Agent/">Context：从人与人到 Agent 与 Agent</a></li>
+</ul>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Joie</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="https://benedicttom.github.io/2026/11/20/ClickHouse/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('https://benedicttom.github.io/2026/11/20/ClickHouse/')">ClickHouse 入门：一个分析型数据库为什么长这样</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="https://benedicttom.github.io/2026/11/20/ClickHouse/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=ClickHouse 入门：一个分析型数据库为什么长这样&amp;url=https://benedicttom.github.io/2026/11/20/ClickHouse/&amp;pic=/images/ClickHouse%E5%85%A5%E9%97%A8/cover.jpg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>数据库<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/ClickHouse/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>ClickHouse<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/OLAP/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>OLAP<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>列式存储<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/images/ClickHouse%E5%85%A5%E9%97%A8/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2026/11/18/Context-%E4%BB%8E%E4%BA%BA%E5%88%B0Agent/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Context-%E4%BB%8E%E4%BA%BA%E5%88%B0Agent/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Context：从人与人到 Agent 与 Agent</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description"><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">这有关于<b style="color:#fff">产品、设计、开发</b>相关的问题和看法，还有<b style="color:#fff">文章翻译</b>和<b style="color:#fff">分享</b>。</div><div style="line-height:1.38;margin:0.6rem 0;text-align:justify;color:rgba(255, 255, 255, 0.8);">相信你可以在这里找到对你有用的<b style="color:#fff">知识</b>和<b style="color:#fff">教程</b>。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Joie</h1><div class="author-info__desc"></div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/BenedictTom" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/372204786" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E8%AF%B4%E5%AE%83%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%8C%E4%B8%8D%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">一、先说它是什么，不是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%89%E4%B8%AA%E7%8E%B0%E5%9C%BA"><span class="toc-number">2.</span> <span class="toc-text">二、三个现场</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%89%A9%E7%90%86%E7%8E%B0%E5%AE%9E%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A1%8C%E5%AD%98%E5%9C%A8%E8%BF%99%E9%87%8C%E5%90%83%E4%BA%8F"><span class="toc-number">3.</span> <span class="toc-text">三、物理现实：为什么行存在这里吃亏</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%89%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%86%B3%E5%AE%9A"><span class="toc-number">4.</span> <span class="toc-text">四、三个核心决定</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E5%AE%9A%E4%B8%80%EF%BC%9A%E5%88%97%E5%AD%98-%E6%8C%89%E5%88%97%E5%8E%8B%E7%BC%A9"><span class="toc-number">4.1.</span> <span class="toc-text">决定一：列存 + 按列压缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E5%AE%9A%E4%BA%8C%EF%BC%9A%E5%90%91%E9%87%8F%E5%8C%96%E6%89%A7%E8%A1%8C"><span class="toc-number">4.2.</span> <span class="toc-text">决定二：向量化执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E5%AE%9A%E4%B8%89%EF%BC%9A%E7%A8%80%E7%96%8F%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95"><span class="toc-number">4.3.</span> <span class="toc-text">决定三：稀疏主键索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E4%BB%B7%EF%BC%9A%E4%B8%89%E4%B8%AA%E5%86%B3%E5%AE%9A%E6%94%BE%E5%BC%83%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">4.4.</span> <span class="toc-text">代价：三个决定放弃了什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81MergeTree%EF%BC%9A%E5%AE%83%E7%9A%84%E7%81%B5%E9%AD%82"><span class="toc-number">5.</span> <span class="toc-text">五、MergeTree：它的灵魂</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%86%99%E5%85%A5%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">5.1.</span> <span class="toc-text">一次写入发生了什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%91%E4%B8%80%EF%BC%9A%E5%B0%8F%E6%89%B9%E9%87%8F%E5%86%99%E5%85%A5%E4%BC%9A%E4%BA%A7%E7%94%9F%E6%B5%B7%E9%87%8F-part"><span class="toc-number">5.2.</span> <span class="toc-text">坑一：小批量写入会产生海量 part</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%91%E4%BA%8C%EF%BC%9AOPTIMIZE-FINAL-%E4%B8%8D%E6%98%AF%E6%97%A5%E5%B8%B8%E6%93%8D%E4%BD%9C"><span class="toc-number">5.3.</span> <span class="toc-text">坑二：OPTIMIZE ... FINAL 不是日常操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E6%93%8E%E5%AE%B6%E6%97%8F%EF%BC%9A%E5%90%8C%E4%B8%80%E4%B8%AA%E9%AA%A8%E6%9E%B6%EF%BC%8C%E4%B8%8D%E5%90%8C%E7%9A%84%E5%90%88%E5%B9%B6%E9%80%BB%E8%BE%91"><span class="toc-number">5.4.</span> <span class="toc-text">引擎家族：同一个骨架，不同的合并逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE%EF%BC%9A%E6%8A%8A%E2%80%9D%E6%AF%8F%E6%AC%A1%E9%87%8D%E7%AE%97%E2%80%9D%E5%8F%98%E6%88%90%E2%80%9D%E5%86%99%E5%85%A5%E6%97%B6%E5%A2%9E%E9%87%8F%E7%AE%97%E2%80%9D"><span class="toc-number">5.5.</span> <span class="toc-text">物化视图：把”每次重算”变成”写入时增量算”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%88%86%E5%B8%83%E5%BC%8F%EF%BC%9A%E4%B8%80%E5%BC%A0%E8%A1%A8%E6%80%8E%E4%B9%88%E5%8F%98%E6%88%90%E9%9B%86%E7%BE%A4"><span class="toc-number">6.</span> <span class="toc-text">六、分布式：一张表怎么变成集群</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%80%8E%E4%B9%88%E7%94%A8%EF%BC%9A%E4%B8%80%E6%9D%A1%E6%9C%80%E5%B0%8F%E8%B7%AF%E5%BE%84"><span class="toc-number">7.</span> <span class="toc-text">七、怎么用：一条最小路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="toc-number">7.1.</span> <span class="toc-text">第一步：跑起来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%BB%BA%E6%A8%A1%E5%9B%9B%E6%AD%A5"><span class="toc-number">7.2.</span> <span class="toc-text">第二步：建模四步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%86%99%E5%85%A5"><span class="toc-number">7.3.</span> <span class="toc-text">第三步：写入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E6%9F%A5%E8%AF%A2%E4%B9%A0%E6%83%AF"><span class="toc-number">7.4.</span> <span class="toc-text">第四步：查询习惯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E8%BF%90%E7%BB%B4%E8%A6%81%E7%9C%8B%E4%BB%80%E4%B9%88"><span class="toc-number">7.5.</span> <span class="toc-text">第五步：运维要看什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8%EF%BC%8C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%88%AB%E7%94%A8"><span class="toc-number">8.</span> <span class="toc-text">八、什么时候用，什么时候别用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%92%8C%E5%85%B6%E4%BB%96%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">8.1.</span> <span class="toc-text">和其他分析引擎怎么选</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E5%BF%83%E6%99%BA%E6%A8%A1%E5%9E%8B%EF%BC%9A%E4%B8%80%E5%8F%A5%E8%AF%9D%E8%AE%B0%E4%BD%8F%E5%AE%83"><span class="toc-number">9.</span> <span class="toc-text">九、心智模型：一句话记住它</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%EF%BC%9A%E6%9C%AC%E6%96%87%E5%AE%9E%E6%B5%8B%E7%8E%AF%E5%A2%83"><span class="toc-number">10.</span> <span class="toc-text">附：本文实测环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">11.</span> <span class="toc-text">参考资料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-number">12.</span> <span class="toc-text">相关阅读</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/20/ClickHouse/" title="ClickHouse 入门：一个分析型数据库为什么长这样"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/ClickHouse%E5%85%A5%E9%97%A8/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ClickHouse 入门：一个分析型数据库为什么长这样"/></a><div class="content"><a class="title" href="/2026/11/20/ClickHouse/" title="ClickHouse 入门：一个分析型数据库为什么长这样">ClickHouse 入门：一个分析型数据库为什么长这样</a><time datetime="2026-11-20T12:00:00.000Z" title="Created 2026-11-20 20:00:00">2026-11-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/18/Context-%E4%BB%8E%E4%BA%BA%E5%88%B0Agent/" title="Context：从人与人到 Agent 与 Agent"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Context-%E4%BB%8E%E4%BA%BA%E5%88%B0Agent/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Context：从人与人到 Agent 与 Agent"/></a><div class="content"><a class="title" href="/2026/11/18/Context-%E4%BB%8E%E4%BA%BA%E5%88%B0Agent/" title="Context：从人与人到 Agent 与 Agent">Context：从人与人到 Agent 与 Agent</a><time datetime="2026-11-18T10:00:00.000Z" title="Created 2026-11-18 18:00:00">2026-11-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/11/DSH-%E8%AE%B0%E5%BF%86%E6%8F%92%E4%BB%B6%E8%AE%BE%E8%AE%A1/" title="一个装在本机上的记忆插件：L0–L3 抽取、遗忘与冲突裁决"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/DSH-%E8%AE%B0%E5%BF%86%E6%8F%92%E4%BB%B6%E8%AE%BE%E8%AE%A1/flow.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="一个装在本机上的记忆插件：L0–L3 抽取、遗忘与冲突裁决"/></a><div class="content"><a class="title" href="/2026/11/11/DSH-%E8%AE%B0%E5%BF%86%E6%8F%92%E4%BB%B6%E8%AE%BE%E8%AE%A1/" title="一个装在本机上的记忆插件：L0–L3 抽取、遗忘与冲突裁决">一个装在本机上的记忆插件：L0–L3 抽取、遗忘与冲突裁决</a><time datetime="2026-11-11T13:00:00.000Z" title="Created 2026-11-11 21:00:00">2026-11-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/11/Agent%E8%AE%B0%E5%BF%86/" title="Agent 的记忆怎么做：四份开源实现的拆解与取舍"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/Agent%E8%AE%B0%E5%BF%86/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent 的记忆怎么做：四份开源实现的拆解与取舍"/></a><div class="content"><a class="title" href="/2026/11/11/Agent%E8%AE%B0%E5%BF%86/" title="Agent 的记忆怎么做：四份开源实现的拆解与取舍">Agent 的记忆怎么做：四份开源实现的拆解与取舍</a><time datetime="2026-11-11T12:00:00.000Z" title="Created 2026-11-11 20:00:00">2026-11-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/11/09/LLM-Wiki/" title="LLM Wiki：不再每次去查，而是把知识编译成一座维基"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/LLM-Wiki/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LLM Wiki：不再每次去查，而是把知识编译成一座维基"/></a><div class="content"><a class="title" href="/2026/11/09/LLM-Wiki/" title="LLM Wiki：不再每次去查，而是把知识编译成一座维基">LLM Wiki：不再每次去查，而是把知识编译成一座维基</a><time datetime="2026-11-09T13:00:00.000Z" title="Created 2026-11-09 21:00:00">2026-11-09</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="workboard"><div id="runtimeTextTip"></div></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-hexo.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/images/theme/badge-theme.svg" alt="本站使用AnZhiYu主题"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2025 - 2026 By <a class="footer-bar-link" href="/" title="Joie" target="_blank">Joie</a></div></div><div id="footer-type-tips"></div><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#footer-type-tips', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('footer-type-tips').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.cbd.int/typed.js@2.1.0/dist/typed.umd.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">Articles</div><div class="length-num">124</div></a><a href="/tags/" title="tag"><div class="headline">Tags</div><div class="length-num">79</div></a><a href="/categories/" title="category"><div class="headline">Categories</div><div class="length-num">35</div></a></div><span class="sidebar-menu-item-title">Function</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="Display Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>Display Mode</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">个人主页</div><div class="back-menu-list"><a class="back-menu-item" href="https://benedicttom.github.io/home/" title="个人主页"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="个人主页"/><span class="back-menu-item-text">个人主页</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/comments/"><i class="anzhiyufont anzhiyu-icon-envelope faa-tada" style="font-size: 0.9em;"></i><span> 留言板</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/album/"><i class="anzhiyufont anzhiyu-icon-images faa-tada" style="font-size: 0.9em;"></i><span> 相册集</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/equipment/"><i class="anzhiyufont anzhiyu-icon-dice-d20 faa-tada" style="font-size: 0.9em;"></i><span> 我的装备</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/A2A/" style="font-size: 0.88rem;">A2A<sup>1</sup></a><a href="/tags/AI/" style="font-size: 0.88rem;">AI<sup>3</sup></a><a href="/tags/Agent/" style="font-size: 0.88rem;">Agent<sup>25</sup></a><a href="/tags/CI-CD/" style="font-size: 0.88rem;">CI/CD<sup>1</sup></a><a href="/tags/ClickHouse/" style="font-size: 0.88rem;">ClickHouse<sup>1</sup></a><a href="/tags/Codemode/" style="font-size: 0.88rem;">Codemode<sup>2</sup></a><a href="/tags/Context/" style="font-size: 0.88rem;">Context<sup>4</sup></a><a href="/tags/DSH/" style="font-size: 0.88rem;">DSH<sup>5</sup></a><a href="/tags/DeepSeek/" style="font-size: 0.88rem;">DeepSeek<sup>4</sup></a><a href="/tags/Durable/" style="font-size: 0.88rem;">Durable<sup>2</sup></a><a href="/tags/ElasticSearch/" style="font-size: 0.88rem;">ElasticSearch<sup>3</sup></a><a href="/tags/Java/" style="font-size: 0.88rem;">Java<sup>10</sup></a><a href="/tags/K8S/" style="font-size: 0.88rem;">K8S<sup>2</sup></a><a href="/tags/Karpathy/" style="font-size: 0.88rem;">Karpathy<sup>1</sup></a><a href="/tags/LLM/" style="font-size: 0.88rem;">LLM<sup>2</sup></a><a href="/tags/MCP/" style="font-size: 0.88rem;">MCP<sup>3</sup></a><a href="/tags/Memory/" style="font-size: 0.88rem;">Memory<sup>2</sup></a><a href="/tags/MongoDB/" style="font-size: 0.88rem;">MongoDB<sup>1</sup></a><a href="/tags/Mysql/" style="font-size: 0.88rem;">Mysql<sup>2</sup></a><a href="/tags/OLAP/" style="font-size: 0.88rem;">OLAP<sup>1</sup></a><a href="/tags/Pi/" style="font-size: 0.88rem;">Pi<sup>11</sup></a><a href="/tags/Protocol/" style="font-size: 0.88rem;">Protocol<sup>2</sup></a><a href="/tags/RAG/" style="font-size: 0.88rem;">RAG<sup>1</sup></a><a href="/tags/Sandbox/" style="font-size: 0.88rem;">Sandbox<sup>2</sup></a><a href="/tags/Spring-Cloud/" style="font-size: 0.88rem;">Spring Cloud<sup>5</sup></a><a href="/tags/agent-loop/" style="font-size: 0.88rem;">agent-loop<sup>1</sup></a><a href="/tags/pi-durable/" style="font-size: 0.88rem;">pi-durable<sup>2</sup></a><a href="/tags/sandbox/" style="font-size: 0.88rem;">sandbox<sup>1</sup></a><a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B/" style="font-size: 0.88rem;">上下文工程<sup>1</sup></a><a href="/tags/%E5%85%AB%E8%82%A1/" style="font-size: 0.88rem;">八股<sup>1</sup></a><a href="/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 0.88rem;">列式存储<sup>1</sup></a><a href="/tags/%E5%8D%8F%E4%BD%9C/" style="font-size: 0.88rem;">协作<sup>1</sup></a><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 0.88rem;">数据库<sup>1</sup></a><a href="/tags/%E6%A0%91/" style="font-size: 0.88rem;">树<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>4</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 0.88rem;">源码解析<sup>4</sup></a><a href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" style="font-size: 0.88rem;">知识库<sup>2</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>3</sup></a><a href="/tags/%E8%AE%B0%E5%BF%86/" style="font-size: 0.88rem;">记忆<sup>2</sup></a><a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 0.88rem;">运维<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("04/01/2025 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2025 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("/images/theme/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Joie 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script async="async">(function () {
+  var grt = new Date("04/01/2025 00:00:00"); //设置网站上线时间
+  var now = new Date();
+  var dnum;
+  var hnum;
+  var mnum;
+  var snum;
+  var nowHour;
+
+  // 计算并更新天数、小时数、分钟数和秒数
+  function updateTime() {
+    now = new Date(); // 更新 now 的值
+    nowHour = now.getHours(); // 更新 nowHour 的值
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length == 1) {
+      hnum = "0" + hnum;
+    }
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length == 1) {
+      mnum = "0" + mnum;
+    }
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length == 1) {
+      snum = "0" + snum;
+    }
+  }
+
+  // 更新网页中显示的网站运行时间
+  function updateHtml() {
+    const footer = document.getElementById("footer");
+    if (!footer) return
+    let currentTimeHtml = "";
+    if (nowHour < 18 && nowHour >= 9) {
+      // 如果是上班时间，默认就是"安知鱼-上班摸鱼中.svg"图片，不需要更改
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    } else {
+      // 如果是下班时间，插入"安知鱼-下班啦.svg"图片
+      let img = document.querySelector("#workboard .workSituationImg");
+      if (img != null) {
+        img.src = "";
+        img.title = "";
+        img.alt = "";
+      }
+
+      currentTimeHtml = `本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>`;
+    }
+
+    if (document.getElementById("runtimeTextTip")) {
+      document.getElementById("runtimeTextTip").innerHTML = currentTimeHtml;
+    }
+  }
+
+  setInterval(() => {
+    updateTime();
+    updateHtml();
+  }, 1000);
+})();</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.cbd.int/mermaid@10.2.4/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  anzhiyu.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
